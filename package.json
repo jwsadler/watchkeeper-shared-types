@@ -1,0 +1,19 @@
+{
+  "name": "@watchkeeper/shared-types",
+  "version": "1.0.0",
+  "description": "Shared TypeScript types for WatchKeeper ecosystem (admin app + RN app)",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  },
+  "private": true
+}
