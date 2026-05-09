@@ -16,6 +16,8 @@ export interface ElectronicsInfo {
     battery?: string;
     /** Battery life info (e.g., "Rechargeable") */
     batteryLife?: string;
+    /** Charge time (e.g., "2.5 hours", "About 2 hours") */
+    chargeTime?: string;
     /** Timekeeping type (e.g., "Digital", "Analog") */
     timekeeping?: string;
 }
