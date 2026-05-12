@@ -9,3 +9,6 @@ export type { StrapInfo } from './StrapInfo';
 export type { WatchBrand } from './WatchBrand';
 export type { WatchLink } from './WatchLink';
 export type { WatchReference } from './WatchReference';
+export type { CalibreData } from './CalibreData';
+export type { CalibreEntry } from './CalibreEntry';
+export type { CalibreImage } from './CalibreImage';
