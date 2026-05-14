@@ -47,6 +47,12 @@ export interface CalibreData {
     hairspring?: string;
     batteryType?: string;
     batteryLifeYears?: number;
+    /** Shock resistance in G-force (e.g., 5000) */
+    shockResistanceG?: number;
+    /** Anti-magnetic rating in A/m (e.g., 4800) */
+    antiMagneticAm?: number;
+    /** Anti-magnetic rating in Gauss (e.g., 60) */
+    antiMagneticGauss?: number;
     /** Calibre images (also stored at entry level) */
     images?: CalibreImage[];
 }
