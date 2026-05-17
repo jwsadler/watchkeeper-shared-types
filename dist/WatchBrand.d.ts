@@ -21,6 +21,14 @@ export interface WatchBrand {
     mainWebsite?: string;
     mainAddress?: string;
     information?: string;
+    /** Parent organization (e.g., "Swatch Group", "LVMH", "Richemont") */
+    parentOrg?: string;
+    /** Hero/scenic image for brand detail (storage path or URL) */
+    heroImage?: string;
+    /** When true, always show hero image instead of map even if address exists */
+    useHeroImage?: boolean;
+    /** Whether this is a microbrand */
+    isMicroBrand?: boolean;
     shopifyEnabled?: boolean;
     shopifyUrl?: string;
     excludedProductTypes?: string[];
