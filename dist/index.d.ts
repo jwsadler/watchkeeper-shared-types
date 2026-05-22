@@ -12,4 +12,7 @@ export type { WatchReference } from './WatchReference';
 export type { CalibreData } from './CalibreData';
 export type { CalibreEntry } from './CalibreEntry';
 export type { CalibreImage } from './CalibreImage';
+export type { CalibreAliasDetail } from './CalibreAliasDetail';
+export type { LookupValue, LookupCollection } from './LookupTypes';
+export type { CuratedCollection, CuratedCollectionFilterCriteria } from './CuratedCollection';
 //# sourceMappingURL=index.d.ts.map
