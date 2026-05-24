@@ -7,6 +7,7 @@ export type { MovementInfo } from './MovementInfo';
 export type { ProductionInfo } from './ProductionInfo';
 export type { StrapInfo } from './StrapInfo';
 export type { WatchBrand } from './WatchBrand';
+export type { MovementManufacturer } from './MovementManufacturer';
 export type { WatchLink } from './WatchLink';
 export type { WatchReference } from './WatchReference';
 export type { CalibreData } from './CalibreData';
