@@ -49,9 +49,27 @@ export interface MovementManufacturer {
     parentManufacturerId?: string;
     /**
      * Brand IDs known to use this manufacturer's movements.
-     * Populated in Phase 3.
+     * Final list — mirrors `WatchBrand.manufacturerIds` on the other side.
+     * Populated by the Phase 3 trigger.
      */
     brandIds?: string[];
+    /**
+     * Derived from ref data — recomputed by the Cloud Function trigger as
+     * refs are written. The Phase 3 trigger has no per-manufacturer manual
+     * override surface (overrides live on the brand side); `brandIds` is
+     * currently equivalent to `brandIdsDerived`, but the field is kept for
+     * symmetry with `WatchBrand.manufacturerIdsDerived` and to leave room
+     * for future per-manufacturer overrides.
+     */
+    brandIdsDerived?: string[];
+    /**
+     * Counter aggregation: how many refs (across all brands) resolve to this
+     * manufacturer per brand. The trigger bumps these on ref write; the
+     * derived set is `{ k | brandCounts[k] > 0 }`. Internal.
+     */
+    brandCounts?: {
+        [brandId: string]: number;
+    };
     createdAt?: Date;
     updatedAt?: Date;
 }
