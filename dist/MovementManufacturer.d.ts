@@ -70,6 +70,16 @@ export interface MovementManufacturer {
     brandCounts?: {
         [brandId: string]: number;
     };
+    /**
+     * Admin-curated allowlist of brands that may link to this manufacturer via
+     * derivation. Consulted by the derivation gate only when `isGeneric` is
+     * falsy AND `admin_config/derivation_settings.enforceInHouseBrandConstraint`
+     * is true. An empty/missing list means "no brand is allowed to derive a
+     * link to this in-house manufacturer" — the gate skips the credit.
+     *
+     * Generic manufacturers bypass this gate entirely.
+     */
+    brandIdsManualInclude?: string[];
     createdAt?: Date;
     updatedAt?: Date;
 }
