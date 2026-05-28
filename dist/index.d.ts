@@ -17,4 +17,6 @@ export type { CalibreImage } from './CalibreImage';
 export type { CalibreAliasDetail } from './CalibreAliasDetail';
 export type { LookupValue, LookupCollection } from './LookupTypes';
 export type { CuratedCollection, CuratedCollectionFilterCriteria } from './CuratedCollection';
+export type { BrandManufacturerGateData, BrandManufacturerGateOptions, } from './derivationGate';
+export { isBrandManufacturerLinkAllowed } from './derivationGate';
 //# sourceMappingURL=index.d.ts.map
