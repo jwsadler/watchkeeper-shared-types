@@ -35,30 +35,12 @@ export interface WatchBrand {
   excludedProductTypes?: string[];
   lastImportedAt?: Date;
   /**
-   * Phase 3 — brand ↔ manufacturer relationship.
-   *
-   * Final list of manufacturer IDs associated with this brand.
-   * Computed server-side as: `(manufacturerIdsDerived ∪ manufacturerIdsManualInclude) \ manufacturerIdsManualExclude`.
-   * Clients should read this, not recompute.
+   * Admin-curated brand ↔ manufacturer link overrides, applied on top of the
+   * runtime rollup that resolves a brand's manufacturers from its references.
+   * Include forces a link; exclude suppresses one.
    */
-  manufacturerIds?: string[];
-  /**
-   * Derived from ref data — recomputed by Cloud Function trigger as refs are
-   * written. Read-only from the client perspective. Source of truth for the
-   * "what manufacturers do this brand's calibres come from" question.
-   */
-  manufacturerIdsDerived?: string[];
-  /** Admin-curated additions to the derived set. */
   manufacturerIdsManualInclude?: string[];
-  /** Admin-curated removals from the derived set. */
   manufacturerIdsManualExclude?: string[];
-  /**
-   * Counter aggregation: how many of this brand's refs resolve to each
-   * manufacturerId via their calibre. The trigger bumps these on ref write
-   * and derives `manufacturerIdsDerived` from non-zero keys. Internal —
-   * not intended for direct client read.
-   */
-  manufacturerCounts?: { [manufacturerId: string]: number };
   createdAt?: Date;
   updatedAt?: Date;
 }
