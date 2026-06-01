@@ -11,5 +11,7 @@ export interface ImageInfo {
     /** Display order */
     index: number;
     tags?: string[];
+    /** Optional attribution — URL the image was sourced from (shown in RN). */
+    sourceUrl?: string;
 }
 //# sourceMappingURL=ImageInfo.d.ts.map
