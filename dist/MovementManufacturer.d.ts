@@ -27,8 +27,12 @@ export interface MovementManufacturer {
     abbreviations?: string[];
     /** Storage path or URL for manufacturer logo. */
     logo?: string;
+    /** Optional attribution — URL the logo was sourced from (shown in RN). */
+    logoSourceUrl?: string;
     /** Hero/scenic image for manufacturer detail (storage path or URL). */
     heroImage?: string;
+    /** Optional attribution — URL the hero image was sourced from (shown in RN). */
+    heroImageSourceUrl?: string;
     country?: string;
     /** Year founded. */
     founded?: number;

@@ -25,6 +25,8 @@ export interface WatchBrand {
   parentOrg?: string;
   /** Hero/scenic image for brand detail (storage path or URL) */
   heroImage?: string;
+  /** Optional attribution — URL the hero image was sourced from (shown in RN). */
+  heroImageSourceUrl?: string;
   /** When true, always show hero image instead of map even if address exists */
   useHeroImage?: boolean;
   /** Whether this is a microbrand */
