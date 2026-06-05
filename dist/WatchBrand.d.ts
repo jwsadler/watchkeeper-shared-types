@@ -13,7 +13,10 @@ export interface WatchBrand {
     alternativeNames?: string[];
     abbreviations?: string[];
     windingDirections?: string[];
+    /** Brand logo — canonical URL in our own Firebase Storage (re-uploaded from the source). */
     logo?: string;
+    /** Optional attribution — external URL the logo was sourced from (shown in RN). */
+    logoSourceUrl?: string;
     country?: string;
     founded?: number;
     /** Primary website (admin uses mainWebsite, RN uses website — both supported) */
