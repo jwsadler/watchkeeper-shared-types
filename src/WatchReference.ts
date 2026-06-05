@@ -64,6 +64,16 @@ export interface WatchReference {
   imageUrls?: string[];
   links?: WatchLink[];
   source?: { url?: string };
+  /**
+   * Dedicated source product-page URL, surfaced as the "View product page"
+   * link on the RN explore reference detail screen. Set at import time (bulk
+   * import), editable in the admin ReferenceEditor, and backfilled from the
+   * legacy `links[]` "Product Page" entry by the admin Backfill Product URLs
+   * tool. This is the ONLY source the RN link reads — `source.url` is
+   * unreliable on older scraped refs (it stored an API URL) and is
+   * deliberately not consulted.
+   */
+  productUrl?: string;
   /** Whether this reference has a custom/curated image */
   usingCustomImage?: boolean;
   /** Concatenated searchable text */
