@@ -75,6 +75,39 @@ export interface WatchReference {
      * deliberately not consulted.
      */
     productUrl?: string;
+    /**
+     * Doc id of this reference's PARENT ref, when this doc is a variant.
+     *
+     * Variants are Shopify-product variations of one canonical model — strap
+     * size, dial colour, movement option — imported as their own ref docs but
+     * grouped under a single parent (the variant-aware Shopify importer sets this
+     * on each child). Semantics:
+     * - **Absent / undefined** → this doc IS a parent, or a non-variant
+     *   standalone (the default for every pre-existing ref and every non-Shopify
+     *   brand). Indexed in Algolia and visible to all consumer surfaces.
+     * - **Set** → this doc is a variant. It is NOT indexed in Algolia and is
+     *   invisible to Explore / My Watches / AI search; consumer search surfaces
+     *   only its parent. Variants are addressed directly from Firestore by
+     *   `parentReferenceId == <parentId>` (marketplace, future).
+     */
+    parentReferenceId?: string;
+    /**
+     * Variant-distinguishing field values aggregated onto a PARENT ref from its
+     * variants, so consumer search/filter still works even though the variant
+     * docs themselves are not indexed in Algolia. Set by the variant-aware
+     * Shopify importer when (and only when) the variants actually differ on that
+     * field — if every variant shares one value the parent's own field already
+     * covers it and the array is omitted. Each array holds canonical (lookup-
+     * resolved) values, same shape a single-value field would. Absent on
+     * standalones and non-variant parents.
+     */
+    dialColorVariants?: string[];
+    /** See {@link parentReferenceId} aggregation note — distinct calibres across the variants. */
+    movementVariants?: string[];
+    /** See {@link parentReferenceId} aggregation note — distinct strap types/materials across the variants. */
+    strapTypeVariants?: string[];
+    /** See {@link parentReferenceId} aggregation note — distinct case materials across the variants. */
+    caseMaterialVariants?: string[];
     /** Whether this reference has a custom/curated image */
     usingCustomImage?: boolean;
     /** Concatenated searchable text */
