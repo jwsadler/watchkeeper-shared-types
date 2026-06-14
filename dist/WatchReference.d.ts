@@ -7,6 +7,14 @@ import type { ProductionInfo } from './ProductionInfo';
 import type { StrapInfo } from './StrapInfo';
 import type { WatchLink } from './WatchLink';
 /**
+ * Which import pipeline produced a reference doc. Mirrors the admin
+ * `ImportSourceKind` set (`shopify` / `generic` / `json-feed` / `manual`) plus
+ * `ai_curation` for AI-assembled refs. `'shopify'` is the only value that
+ * changes doc-identity semantics (composite product+variant id keys); all
+ * others keep ref-string-derived identity.
+ */
+export type ReferenceSource = 'shopify' | 'generic' | 'json_feed' | 'manual' | 'ai_curation';
+/**
  * Canonical watch reference document stored in Firestore.
  * Path: watchBrands/{brandId}/references/{referenceId}
  *
@@ -75,6 +83,33 @@ export interface WatchReference {
      * deliberately not consulted.
      */
     productUrl?: string;
+    /**
+     * Provenance of this reference doc — which import pipeline created it.
+     *
+     * Drives doc-identity rules: `'shopify'` docs are keyed by composite
+     * Shopify product+variant id (see {@link shopifyProductId} /
+     * {@link shopifyVariantId}) and may share a non-unique `reference` SKU with
+     * sibling Shopify docs; every other source keeps ref-string-derived identity.
+     *
+     * NOTE: distinct from the legacy `source?: { url?: string }` field above
+     * (a source *URL* object, not a provenance tag). Absent on docs written
+     * before this field existed.
+     */
+    sourceType?: ReferenceSource;
+    /**
+     * Shopify product id (numeric, as a string) this doc was imported from.
+     * Set only when {@link sourceType} is `'shopify'`. Present on both variant
+     * docs and the synthetic parent doc of a multi-variant product. Combined with
+     * {@link shopifyVariantId} it forms the doc's composite, ref-string-independent
+     * identity (`shopify__{productId}__{variantId}`; parent: `shopify__{productId}__parent`).
+     */
+    shopifyProductId?: string;
+    /**
+     * Shopify variant id (numeric, as a string) this doc was imported from.
+     * Set on Shopify variant / standalone docs; ABSENT on the synthetic parent
+     * doc (a parent spans all variants of a product). See {@link shopifyProductId}.
+     */
+    shopifyVariantId?: string;
     /**
      * Doc id of this reference's PARENT ref, when this doc is a variant.
      *
