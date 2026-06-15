@@ -61,6 +61,16 @@ export interface WatchReference {
   crystal?: string;
   /** Top-level dial color (synced with dialAndHands.color) */
   dial?: string;
+  /**
+   * Dial STYLE / pattern — a single canonical `lookup_dial_styles` slug
+   * (e.g. `panda`, `reverse_panda`, `sunburst`, `gilt`, `salmon`). Deliberately
+   * separate from `dial`/`dialAndHands.color`: a "Panda" dial carries the colors
+   * (`dialAndHands.color: "white, black"`) AND the style (`dialStyle: "panda"`),
+   * so the stylistic distinction (Panda vs Reverse Panda, Sunburst, Tropical …)
+   * is preserved rather than collapsed into the color set. Single-value, set on
+   * any ref. Resolved to a display name via `lookup_dial_styles`.
+   */
+  dialStyle?: string;
   case?: CaseInfo;
   production?: ProductionInfo;
   strap?: StrapInfo;
@@ -148,6 +158,8 @@ export interface WatchReference {
   strapTypeVariants?: string[];
   /** See {@link parentReferenceId} aggregation note — distinct case materials across the variants. */
   caseMaterialVariants?: string[];
+  /** See {@link parentReferenceId} aggregation note — distinct dial styles ({@link dialStyle}) across the variants. */
+  dialStyleVariants?: string[];
   /** Whether this reference has a custom/curated image */
   usingCustomImage?: boolean;
   /** Concatenated searchable text */
