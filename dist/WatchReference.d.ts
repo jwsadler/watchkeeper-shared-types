@@ -155,6 +155,14 @@ export interface WatchReference {
     caseMaterialVariants?: string[];
     /** See {@link parentReferenceId} aggregation note — distinct dial styles ({@link dialStyle}) across the variants. */
     dialStyleVariants?: string[];
+    /**
+     * See {@link parentReferenceId} aggregation note — distinct dial FINISHES
+     * (`dialAndHands.finish`, e.g. `sunburst`, `matte`, `gilt`) across the
+     * variants, resolved via `lookup_dial_finish`. Distinct from
+     * {@link dialStyleVariants}: a finish is a surface treatment, a style is a
+     * themed pattern (Panda, Pepsi). Emitted only when ≥2 distinct finishes exist.
+     */
+    dialFinishVariants?: string[];
     /** Whether this reference has a custom/curated image */
     usingCustomImage?: boolean;
     /** Concatenated searchable text */
