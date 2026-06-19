@@ -10,7 +10,7 @@ export type { WatchBrand } from './WatchBrand';
 export type { MovementManufacturer } from './MovementManufacturer';
 export type { DerivationSettings } from './DerivationSettings';
 export type { WatchLink } from './WatchLink';
-export type { WatchReference } from './WatchReference';
+export type { WatchReference, ReferenceSource } from './WatchReference';
 export type { CalibreData } from './CalibreData';
 export type { CalibreEntry } from './CalibreEntry';
 export type { CalibreImage } from './CalibreImage';
