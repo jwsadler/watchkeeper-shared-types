@@ -14,6 +14,13 @@ export interface LookupValue {
   metricLabel?: string;
   imperialLabel?: string;
   description?: string;
+  /**
+   * When true, this value is omitted from AI-enrichment prompt token rendering
+   * (the `{{LOOKUP_*}}` substitution in watch-admin functions). Defaults to
+   * false / absent — value is included. Does not affect app visibility (see
+   * `isActive`).
+   */
+  excludeFromAI?: boolean;
   group?: string;
   grouping?: string;
   category?: string;
