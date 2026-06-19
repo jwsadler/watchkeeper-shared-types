@@ -160,6 +160,36 @@ export interface WatchReference {
   caseMaterialVariants?: string[];
   /** See {@link parentReferenceId} aggregation note — distinct dial styles ({@link dialStyle}) across the variants. */
   dialStyleVariants?: string[];
+  /**
+   * See {@link parentReferenceId} aggregation note — distinct dial FINISHES
+   * (`dialAndHands.finish`, e.g. `sunburst`, `matte`, `gilt`) across the
+   * variants, resolved via `lookup_dial_finish`. Distinct from
+   * {@link dialStyleVariants}: a finish is a surface treatment, a style is a
+   * themed pattern (Panda, Pepsi). Emitted only when ≥2 distinct finishes exist.
+   */
+  dialFinishVariants?: string[];
+  /**
+   * Per-field MANUAL-OVERRIDE flags for the six aggregated `*Variants` arrays
+   * above. Set on a PARENT ref by the admin "Variant Aggregates" editor.
+   *
+   * - `true`  → the array was hand-edited; the `variantAggregates` propagation
+   *   trigger / backfill callable MUST NOT recompute or touch that field.
+   * - `false` / absent → the field is auto-managed: every variant write
+   *   recomputes it from the parent + its variants (the default for every ref).
+   *
+   * Each key mirrors an aggregate array name so a single map gates all six
+   * independently (e.g. a curator can pin `dialColorVariants` while leaving
+   * `movementVariants` auto-managed). Absent on standalones and on every parent
+   * that has never been manually edited.
+   */
+  aggregateOverrides?: {
+    dialColorVariants?: boolean;
+    dialStyleVariants?: boolean;
+    dialFinishVariants?: boolean;
+    movementVariants?: boolean;
+    strapTypeVariants?: boolean;
+    caseMaterialVariants?: boolean;
+  };
   /** Whether this reference has a custom/curated image */
   usingCustomImage?: boolean;
   /** Concatenated searchable text */
