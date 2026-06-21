@@ -21,6 +21,20 @@ export interface LookupValue {
      * `isActive`).
      */
     excludeFromAI?: boolean;
+    /**
+     * Small italic muted qualifier line shown under the acquisition entry in the
+     * RN explore app (rendered by AcquisitionRelationships), only when present.
+     * Used to surface non-typical relationship structure (e.g. "via parent
+     * group", "rename, not acquisition"). When undefined/empty, the RN app
+     * renders no qualifier line — appropriate for the clean direct-to-direct
+     * cases.
+     *
+     * Currently consumed only by `lookup_acquisition_directness` values; lives on
+     * the shared `LookupValue` shape (like `metricLabel`/`excludeFromAI`) because
+     * lookup documents have no per-collection interface. Optional for backwards
+     * compatibility — existing Firestore documents won't have it.
+     */
+    rnQualifier?: string;
     group?: string;
     grouping?: string;
     category?: string;
