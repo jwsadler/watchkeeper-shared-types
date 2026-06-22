@@ -35,6 +35,20 @@ export interface LookupValue {
    * compatibility — existing Firestore documents won't have it.
    */
   rnQualifier?: string;
+  /**
+   * Reverse-direction display label for the RN explore acquisition entries.
+   * When set, the RN AcquisitionRelationships component renders this on the
+   * REVERSE side of a relationship (e.g. on the acquired brand's page).
+   * Falls back to `displayName` when undefined.
+   *
+   * Currently consumed only by `lookup_acquisition_types` values — captures
+   * directional asymmetry (e.g. "Acquired" forward / "Acquired by" reverse,
+   * "Pays homage to" forward / "Honored by" reverse). Lives on the shared
+   * `LookupValue` shape (like `rnQualifier`/`metricLabel`/`excludeFromAI`)
+   * because lookup documents have no per-collection interface. Optional for
+   * backwards compatibility — existing Firestore documents won't have it.
+   */
+  rnReverseLabel?: string;
   group?: string;
   grouping?: string;
   category?: string;
