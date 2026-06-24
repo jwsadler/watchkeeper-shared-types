@@ -52,6 +52,17 @@ export interface MovementManufacturer {
      */
     parentManufacturerId?: string;
     /**
+     * Maintained array of every ancestor manufacturer's ID (parentManufacturerId,
+     * grandparent's id, great-grandparent's id, etc.) — closest ancestor first.
+     * Server-computed by an onWrite trigger when parentManufacturerId changes.
+     * Used by the RN explore to query the full descendant tree of a manufacturer
+     * (`where('manufacturerIdAncestors', 'array-contains', X)`) in a single read
+     * instead of walking the chain level-by-level. Mirrors the brand
+     * acquiredByBrandIds pattern. Default: empty/absent for root manufacturers
+     * with no parent.
+     */
+    manufacturerIdAncestors?: string[];
+    /**
      * Admin-curated allowlist of brands that may link to this manufacturer via
      * derivation. Consulted by the derivation gate only when `isGeneric` is
      * falsy AND `admin_config/derivation_settings.enforceInHouseBrandConstraint`
