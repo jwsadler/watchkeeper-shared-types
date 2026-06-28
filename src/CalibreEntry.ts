@@ -31,6 +31,11 @@ export interface CalibreEntry {
    * Example: UWD 33.1 has manufacturerId="uwd" and additionalManufacturerIds=["sinn"].
    */
   additionalManufacturerIds?: string[];
+  /**
+   * FK to CalibreFamily. Optional — in-house calibres often don't belong to a
+   * family.
+   */
+  familyId?: string;
   /** Alternative names/aliases (e.g., "Elaboré grade", "SW200-1") */
   alsoKnownAs?: string[];
   /** Rich description: history, notable references, technical significance */

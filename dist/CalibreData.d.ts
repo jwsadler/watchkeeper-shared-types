@@ -41,8 +41,22 @@ export interface CalibreData {
      * the catalog normally (AKAs, brand, ref count) but allow consumers to
      * differentiate "I know it's THIS calibre" from "I know it's in this family".
      * Defaults to false/absent — existing calibres are reference-level.
+     *
+     * @deprecated Renamed to {@link isPlaceholder}. Kept for backward compat —
+     * migration to `isPlaceholder` happens in the admin phase. New code should
+     * write `isPlaceholder`; readers should tolerate either (`isPlaceholder ??
+     * isFamily`) until migration completes.
      */
     isFamily?: boolean;
+    /**
+     * Marks this calibre as a placeholder / catch-all entry rather than a specific
+     * model. Used when refs reference a generic calibre name we haven't broken
+     * down into a real entry yet (e.g. "Felsa Bidynator" covering the
+     * 690/692/694/1560/1700 series). Renamed from {@link isFamily} (kept for
+     * backward compat) — see migration plan in the admin phase. New code should
+     * write `isPlaceholder`; readers tolerate either until migration completes.
+     */
+    isPlaceholder?: boolean;
     liftAngleDegrees?: number;
     isInHouse?: boolean;
     countryOfManufacture?: string;
