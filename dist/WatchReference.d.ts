@@ -64,11 +64,37 @@ export interface WatchReference {
      * any ref. Resolved to a display name via `lookup_dial_styles`.
      */
     dialStyle?: string;
+    /**
+     * Per-ref display background colour for digital watches — the digital
+     * equivalent of the dial background ({@link dial} / `dialAndHands.color`).
+     * e.g. the green-grey of a classic LCD or the black of an OLED panel.
+     */
+    displayColor?: string;
+    /**
+     * Per-ref segment / text colour for digital watches — the digital equivalent
+     * of `dialAndHands.handsColor`. The colour of the digits/segments rendered on
+     * the display.
+     */
+    textColor?: string;
     case?: CaseInfo;
     production?: ProductionInfo;
     strap?: StrapInfo;
     dialAndHands?: DialInfo;
-    /** Electronics/module details for digital watches */
+    /**
+     * Pointer to the linked electronic module (`electronicModules/{moduleId}`),
+     * the source of truth for this digital watch's electronics. Analogous to a
+     * calibre link for mechanical/quartz refs. When set, the inline
+     * {@link electronics} object below is an auto-synced cache of that module
+     * doc. Absent on non-digital refs.
+     */
+    moduleId?: string;
+    /**
+     * Auto-synced cache of the linked `electronicModules/{moduleId}` doc. Source
+     * of truth lives on the module entity ({@link ElectronicModule}); these
+     * fields are kept fresh via a Cloud Function trigger when {@link moduleId}
+     * changes or the module doc updates (mirror of the brand/calibre cache
+     * pattern). Do not write directly — write to the module doc instead.
+     */
     electronics?: ElectronicsInfo;
     /** Separate from features, maps to watch functions */
     functions?: string[];
@@ -147,6 +173,10 @@ export interface WatchReference {
      * standalones and non-variant parents.
      */
     dialColorVariants?: string[];
+    /** See {@link parentReferenceId} aggregation note — distinct {@link displayColor} values (digital twin of {@link dialColorVariants}) across the variants. */
+    displayColorVariants?: string[];
+    /** See {@link parentReferenceId} aggregation note — distinct {@link textColor} values (digital twin of segment/text colour) across the variants. */
+    textColorVariants?: string[];
     /** See {@link parentReferenceId} aggregation note — distinct calibres across the variants. */
     movementVariants?: string[];
     /** See {@link parentReferenceId} aggregation note — distinct strap types/materials across the variants. */

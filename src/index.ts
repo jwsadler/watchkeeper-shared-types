@@ -2,6 +2,7 @@ export type { AccountStatus } from './AccountStatus';
 export type { CaseInfo } from './CaseInfo';
 export type { DialInfo } from './DialInfo';
 export type { ElectronicsInfo } from './ElectronicsInfo';
+export type { ElectronicModule } from './ElectronicModule';
 export type { ImageInfo } from './ImageInfo';
 export type { MovementInfo } from './MovementInfo';
 export type { ProductionInfo } from './ProductionInfo';
