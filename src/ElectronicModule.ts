@@ -26,6 +26,16 @@ export interface ElectronicModule {
    */
   manufacturerId?: string;
   /**
+   * IDs of additional manufacturers who co-developed this module with the
+   * primary (`manufacturerId`). Used for joint authorship — the module shows
+   * up under EACH manufacturer's module list in the RN app and admin.
+   *
+   * Excludes the primary manufacturerId (don't list a manufacturer in both).
+   *
+   * Mirrors {@link CalibreEntry.additionalManufacturerIds}.
+   */
+  additionalManufacturerIds?: string[];
+  /**
    * Alternative names / numbers for this module (e.g., Casio 593 → "QW-593").
    * Mirrors {@link CalibreEntry.alsoKnownAs}.
    */
