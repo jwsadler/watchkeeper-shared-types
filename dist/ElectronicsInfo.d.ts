@@ -20,5 +20,19 @@ export interface ElectronicsInfo {
     chargeTime?: string;
     /** Timekeeping type (e.g., "Digital", "Analog") */
     timekeeping?: string;
+    /**
+     * Per-ref display background colour for digital watches — the digital
+     * equivalent of the dial background (`DialInfo.color`). e.g. the green-grey
+     * of a classic LCD or the black of an OLED panel. Lives on the ref (lookup-
+     * backed via `lookup_display_colors`), not on the shared module doc.
+     */
+    displayColor?: string;
+    /**
+     * Per-ref segment / text colour for digital watches — the digital equivalent
+     * of `DialInfo.handsColor`. The colour of the digits/segments rendered on the
+     * display. Lives on the ref (lookup-backed via `lookup_text_colors`), not on
+     * the shared module doc.
+     */
+    textColor?: string;
 }
 //# sourceMappingURL=ElectronicsInfo.d.ts.map

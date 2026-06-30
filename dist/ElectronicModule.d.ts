@@ -1,3 +1,4 @@
+import type { CalibreImage } from './CalibreImage';
 /**
  * An electronic module entry in the electronic modules database.
  * Path: electronicModules/{docId}
@@ -19,14 +20,15 @@ export interface ElectronicModule {
     /**
      * FK into movement_manufacturers — the primary "made by" attribution
      * (populated by the admin app). Mirrors {@link CalibreEntry.manufacturerId}.
+     * The manufacturer's display name is resolved from this FK at read time (no
+     * denormalized snapshot, matching calibre).
      */
     manufacturerId?: string;
     /**
-     * Denormalized manufacturer display name, snapshotted from the linked
-     * manufacturer doc for cheap reads/search. Source of truth is
-     * {@link manufacturerId}; this is kept fresh alongside it.
+     * Alternative names / numbers for this module (e.g., Casio 593 → "QW-593").
+     * Mirrors {@link CalibreEntry.alsoKnownAs}.
      */
-    manufacturer?: string;
+    alsoKnownAs?: string[];
     /** Module generation / revision label (e.g., "Gen 2") */
     generation?: string;
     /**
@@ -60,6 +62,12 @@ export interface ElectronicModule {
     searchText?: string;
     /** Number of references currently linked to this module via `moduleId`. */
     referenceCount?: number;
+    /** Data source (e.g., "casio-module-list", "manual"). Mirrors {@link CalibreEntry.source}. */
+    source?: string;
+    /** URL where module data was sourced from. Mirrors {@link CalibreEntry.sourceUrl}. */
+    sourceUrl?: string;
+    /** Module images. Mirrors {@link CalibreEntry.images}. */
+    images?: CalibreImage[];
     createdAt?: Date;
     updatedAt?: Date;
 }
