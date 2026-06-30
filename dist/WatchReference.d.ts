@@ -64,18 +64,6 @@ export interface WatchReference {
      * any ref. Resolved to a display name via `lookup_dial_styles`.
      */
     dialStyle?: string;
-    /**
-     * Per-ref display background colour for digital watches — the digital
-     * equivalent of the dial background ({@link dial} / `dialAndHands.color`).
-     * e.g. the green-grey of a classic LCD or the black of an OLED panel.
-     */
-    displayColor?: string;
-    /**
-     * Per-ref segment / text colour for digital watches — the digital equivalent
-     * of `dialAndHands.handsColor`. The colour of the digits/segments rendered on
-     * the display.
-     */
-    textColor?: string;
     case?: CaseInfo;
     production?: ProductionInfo;
     strap?: StrapInfo;
@@ -173,9 +161,9 @@ export interface WatchReference {
      * standalones and non-variant parents.
      */
     dialColorVariants?: string[];
-    /** See {@link parentReferenceId} aggregation note — distinct {@link displayColor} values (digital twin of {@link dialColorVariants}) across the variants. */
+    /** See {@link parentReferenceId} aggregation note — distinct `electronics.displayColor` values (digital twin of {@link dialColorVariants}) across the variants. */
     displayColorVariants?: string[];
-    /** See {@link parentReferenceId} aggregation note — distinct {@link textColor} values (digital twin of segment/text colour) across the variants. */
+    /** See {@link parentReferenceId} aggregation note — distinct `electronics.textColor` values (digital twin of segment/text colour) across the variants. */
     textColorVariants?: string[];
     /** See {@link parentReferenceId} aggregation note — distinct calibres across the variants. */
     movementVariants?: string[];
@@ -194,7 +182,7 @@ export interface WatchReference {
      */
     dialFinishVariants?: string[];
     /**
-     * Per-field MANUAL-OVERRIDE flags for the six aggregated `*Variants` arrays
+     * Per-field MANUAL-OVERRIDE flags for the aggregated `*Variants` arrays
      * above. Set on a PARENT ref by the admin "Variant Aggregates" editor.
      *
      * - `true`  → the array was hand-edited; the `variantAggregates` propagation
@@ -202,7 +190,7 @@ export interface WatchReference {
      * - `false` / absent → the field is auto-managed: every variant write
      *   recomputes it from the parent + its variants (the default for every ref).
      *
-     * Each key mirrors an aggregate array name so a single map gates all six
+     * Each key mirrors an aggregate array name so a single map gates each
      * independently (e.g. a curator can pin `dialColorVariants` while leaving
      * `movementVariants` auto-managed). Absent on standalones and on every parent
      * that has never been manually edited.
@@ -214,6 +202,8 @@ export interface WatchReference {
         movementVariants?: boolean;
         strapTypeVariants?: boolean;
         caseMaterialVariants?: boolean;
+        displayColorVariants?: boolean;
+        textColorVariants?: boolean;
     };
     /** Whether this reference has a custom/curated image */
     usingCustomImage?: boolean;
