@@ -14,7 +14,7 @@ export type { WatchLink } from './WatchLink';
 export type { WatchReference, ReferenceSource } from './WatchReference';
 export type { CalibreData } from './CalibreData';
 export type { CalibreEntry } from './CalibreEntry';
-export type { CalibreFamily, CalibreFamilyInspiredBy } from './CalibreFamily';
+export type { CalibreFamily, CalibreFamilyInspiredBy, CalibreFamilyFunctionalCompetitor } from './CalibreFamily';
 export type { CalibreImage } from './CalibreImage';
 export type { CalibreAliasDetail } from './CalibreAliasDetail';
 export type { LookupValue, LookupCollection } from './LookupTypes';
