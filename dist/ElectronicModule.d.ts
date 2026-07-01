@@ -1,5 +1,4 @@
 import type { CalibreImage } from './CalibreImage';
-import type { LookupValue } from './LookupTypes';
 /**
  * An electronic module entry in the electronic modules database.
  * Path: electronicModules/{docId}
@@ -67,50 +66,50 @@ export interface ElectronicModule {
     sensors?: string[];
     /**
      * Display layout / segment arrangement of the module's screen (e.g.
-     * single-line, multi-line, dual-display). Single-value, lookup-backed via
+     * single-line, multi-line, dual-display). Slug, lookup-backed via
      * `lookup_display_layout`.
      */
-    displayLayout?: LookupValue;
+    displayLayout?: string;
     /**
      * Optimal viewing angle characteristic of the display panel (e.g. wide,
-     * standard). Single-value, lookup-backed via `lookup_viewing_angle`.
+     * standard). Slug, lookup-backed via `lookup_viewing_angle`.
      */
-    viewingAngle?: LookupValue;
+    viewingAngle?: string;
     /**
      * Daylight-saving-time handling of the module (e.g. manual, automatic,
-     * none). Single-value, lookup-backed via `lookup_dst_support`.
+     * none). Slug, lookup-backed via `lookup_dst_support`.
      */
-    dstSupport?: LookupValue;
+    dstSupport?: string;
     /**
      * Calendar mechanism type (e.g. auto-calendar, full-auto, perpetual).
-     * Single-value, lookup-backed via `lookup_calendar_type`.
+     * Slug, lookup-backed via `lookup_calendar_type`.
      */
-    calendarType?: LookupValue;
+    calendarType?: string;
     /**
      * Stopwatch / chronograph measuring precision (e.g. 1/100 sec, 1/1000 sec).
-     * Single-value, lookup-backed via `lookup_stopwatch_precision`.
+     * Slug, lookup-backed via `lookup_stopwatch_precision`.
      */
-    stopwatchPrecision?: LookupValue;
+    stopwatchPrecision?: string;
     /**
      * Primary power source of the module (e.g. battery, solar, kinetic).
-     * Single-value, lookup-backed via `lookup_power_source`.
+     * Slug, lookup-backed via `lookup_power_source`.
      */
-    powerSource?: LookupValue;
+    powerSource?: string;
     /**
      * Time synchronisation source (e.g. radio, GPS, Bluetooth, none).
-     * Single-value, lookup-backed via `lookup_sync_source`.
+     * Slug, lookup-backed via `lookup_sync_source`.
      */
-    syncSource?: LookupValue;
+    syncSource?: string;
     /**
      * Supported time systems / formats (e.g. 12-hour, 24-hour, world time).
-     * Multi-select, lookup-backed via `lookup_time_systems`.
+     * Multi-select slugs, lookup-backed via `lookup_time_systems`.
      */
-    timeSystems?: LookupValue[];
+    timeSystems?: string[];
     /**
      * Supported alarm types (e.g. daily, snooze, countdown, signal).
-     * Multi-select, lookup-backed via `lookup_alarm_types`.
+     * Multi-select slugs, lookup-backed via `lookup_alarm_types`.
      */
-    alarmTypes?: LookupValue[];
+    alarmTypes?: string[];
     /** Rich, manually-authored description: history, notable references. */
     description?: string;
     /** AI-generated module description (populated from enrichment). */

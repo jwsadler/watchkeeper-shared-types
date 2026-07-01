@@ -2,7 +2,6 @@ import type { CaseInfo } from './CaseInfo';
 import type { DialInfo } from './DialInfo';
 import type { ElectronicsInfo } from './ElectronicsInfo';
 import type { ImageInfo } from './ImageInfo';
-import type { LookupValue } from './LookupTypes';
 import type { MovementInfo } from './MovementInfo';
 import type { ProductionInfo } from './ProductionInfo';
 import type { StrapInfo } from './StrapInfo';
@@ -76,20 +75,20 @@ export interface WatchReference {
    * Per-ref display background colour for digital watches — the digital
    * equivalent of {@link DialInfo.color}/`dial` for analog refs. e.g. the
    * green-grey of a classic LCD or the black of an OLED panel. Lives on the
-   * ref (not the shared module cache), single-value, resolved via the NEW
+   * ref (not the shared module cache), single-value slug resolved via the NEW
    * `lookup_display_colors` lookup. Distinct from the denormalized
    * {@link ElectronicsInfo.displayColor} cache string.
    */
-  displayColor?: LookupValue;
+  displayColor?: string;
   /**
    * Per-ref segment / text colour for digital watches — the digital
    * equivalent of `dialAndHands.handsColor` for analog refs. The colour of the
    * digits/segments rendered on the display. Lives on the ref (not the shared
-   * module cache), single-value, resolved via the NEW `lookup_text_colors`
+   * module cache), single-value slug resolved via the NEW `lookup_text_colors`
    * lookup. Distinct from the denormalized {@link ElectronicsInfo.textColor}
    * cache string.
    */
-  textColor?: LookupValue;
+  textColor?: string;
   case?: CaseInfo;
   production?: ProductionInfo;
   strap?: StrapInfo;
