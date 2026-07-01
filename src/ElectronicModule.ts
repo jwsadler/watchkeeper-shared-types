@@ -65,6 +65,52 @@ export interface ElectronicModule {
    * Lookup-backed multi-select.
    */
   sensors?: string[];
+  /**
+   * Display layout / segment arrangement of the module's screen (e.g.
+   * single-line, multi-line, dual-display). Slug, lookup-backed via
+   * `lookup_display_layout`.
+   */
+  displayLayout?: string;
+  /**
+   * Optimal viewing angle characteristic of the display panel (e.g. wide,
+   * standard). Slug, lookup-backed via `lookup_viewing_angle`.
+   */
+  viewingAngle?: string;
+  /**
+   * Daylight-saving-time handling of the module (e.g. manual, automatic,
+   * none). Slug, lookup-backed via `lookup_dst_support`.
+   */
+  dstSupport?: string;
+  /**
+   * Calendar mechanism type (e.g. auto-calendar, full-auto, perpetual).
+   * Slug, lookup-backed via `lookup_calendar_type`.
+   */
+  calendarType?: string;
+  /**
+   * Stopwatch / chronograph measuring precision (e.g. 1/100 sec, 1/1000 sec).
+   * Slug, lookup-backed via `lookup_stopwatch_precision`.
+   */
+  stopwatchPrecision?: string;
+  /**
+   * Primary power source of the module (e.g. battery, solar, kinetic).
+   * Slug, lookup-backed via `lookup_power_source`.
+   */
+  powerSource?: string;
+  /**
+   * Time synchronisation source (e.g. radio, GPS, Bluetooth, none).
+   * Slug, lookup-backed via `lookup_sync_source`.
+   */
+  syncSource?: string;
+  /**
+   * Supported time systems / formats (e.g. 12-hour, 24-hour, world time).
+   * Multi-select slugs, lookup-backed via `lookup_time_systems`.
+   */
+  timeSystems?: string[];
+  /**
+   * Supported alarm types (e.g. daily, snooze, countdown, signal).
+   * Multi-select slugs, lookup-backed via `lookup_alarm_types`.
+   */
+  alarmTypes?: string[];
   /** Rich, manually-authored description: history, notable references. */
   description?: string;
   /** AI-generated module description (populated from enrichment). */
