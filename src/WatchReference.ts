@@ -71,24 +71,6 @@ export interface WatchReference {
    * any ref. Resolved to a display name via `lookup_dial_styles`.
    */
   dialStyle?: string;
-  /**
-   * Per-ref display background colour for digital watches — the digital
-   * equivalent of {@link DialInfo.color}/`dial` for analog refs. e.g. the
-   * green-grey of a classic LCD or the black of an OLED panel. Lives on the
-   * ref (not the shared module cache), single-value slug resolved via the NEW
-   * `lookup_display_colors` lookup. Distinct from the denormalized
-   * {@link ElectronicsInfo.displayColor} cache string.
-   */
-  displayColor?: string;
-  /**
-   * Per-ref segment / text colour for digital watches — the digital
-   * equivalent of `dialAndHands.handsColor` for analog refs. The colour of the
-   * digits/segments rendered on the display. Lives on the ref (not the shared
-   * module cache), single-value slug resolved via the NEW `lookup_text_colors`
-   * lookup. Distinct from the denormalized {@link ElectronicsInfo.textColor}
-   * cache string.
-   */
-  textColor?: string;
   case?: CaseInfo;
   production?: ProductionInfo;
   strap?: StrapInfo;
