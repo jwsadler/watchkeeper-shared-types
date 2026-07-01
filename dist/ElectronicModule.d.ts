@@ -48,6 +48,17 @@ export interface ElectronicModule {
     displayType?: string;
     /** LCD sub-type slug (e.g., "stn", "negative", "positive"). Lookup-backed. */
     lcdType?: string;
+    /**
+     * LCD / screen background colour slug. Lookup-backed via
+     * `lookup_display_colors`. Default; refs may override at
+     * `WatchReference.electronics.displayColor`.
+     */
+    displayColor?: string;
+    /**
+     * Segment / text colour slug. Lookup-backed via `lookup_text_colors`.
+     * Default; refs may override at `WatchReference.electronics.textColor`.
+     */
+    textColor?: string;
     /** Battery type slug (e.g., "cr2032", "ctl1616"). Lookup-backed. */
     battery?: string;
     /** Rated battery life in months. */
