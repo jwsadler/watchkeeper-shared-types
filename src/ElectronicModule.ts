@@ -1,4 +1,5 @@
 import type { CalibreImage } from './CalibreImage';
+import type { LookupValue } from './LookupTypes';
 
 /**
  * An electronic module entry in the electronic modules database.
@@ -65,6 +66,52 @@ export interface ElectronicModule {
    * Lookup-backed multi-select.
    */
   sensors?: string[];
+  /**
+   * Display layout / segment arrangement of the module's screen (e.g.
+   * single-line, multi-line, dual-display). Single-value, lookup-backed via
+   * `lookup_display_layout`.
+   */
+  displayLayout?: LookupValue;
+  /**
+   * Optimal viewing angle characteristic of the display panel (e.g. wide,
+   * standard). Single-value, lookup-backed via `lookup_viewing_angle`.
+   */
+  viewingAngle?: LookupValue;
+  /**
+   * Daylight-saving-time handling of the module (e.g. manual, automatic,
+   * none). Single-value, lookup-backed via `lookup_dst_support`.
+   */
+  dstSupport?: LookupValue;
+  /**
+   * Calendar mechanism type (e.g. auto-calendar, full-auto, perpetual).
+   * Single-value, lookup-backed via `lookup_calendar_type`.
+   */
+  calendarType?: LookupValue;
+  /**
+   * Stopwatch / chronograph measuring precision (e.g. 1/100 sec, 1/1000 sec).
+   * Single-value, lookup-backed via `lookup_stopwatch_precision`.
+   */
+  stopwatchPrecision?: LookupValue;
+  /**
+   * Primary power source of the module (e.g. battery, solar, kinetic).
+   * Single-value, lookup-backed via `lookup_power_source`.
+   */
+  powerSource?: LookupValue;
+  /**
+   * Time synchronisation source (e.g. radio, GPS, Bluetooth, none).
+   * Single-value, lookup-backed via `lookup_sync_source`.
+   */
+  syncSource?: LookupValue;
+  /**
+   * Supported time systems / formats (e.g. 12-hour, 24-hour, world time).
+   * Multi-select, lookup-backed via `lookup_time_systems`.
+   */
+  timeSystems?: LookupValue[];
+  /**
+   * Supported alarm types (e.g. daily, snooze, countdown, signal).
+   * Multi-select, lookup-backed via `lookup_alarm_types`.
+   */
+  alarmTypes?: LookupValue[];
   /** Rich, manually-authored description: history, notable references. */
   description?: string;
   /** AI-generated module description (populated from enrichment). */
