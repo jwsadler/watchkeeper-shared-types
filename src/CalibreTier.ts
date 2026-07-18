@@ -41,6 +41,14 @@ export interface CalibreTierOverrides {
   regulatorSystem?: string;
   hairspring?: string;
   rotorType?: string;
+
+  /**
+   * Anti-shock protection system override (e.g. "incabloc", "kif").
+   * String reference to the shock_protection lookup — same shape as
+   * the base `CalibreData.antiShockSystem` field.
+   */
+  antiShockSystem?: string;
+
   escapement?: string;
 
   // Specs
