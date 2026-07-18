@@ -32,6 +32,21 @@ export interface CalibreData {
    */
   accuracyUpperSecPerDay?: number;
 
+  /**
+   * Interpretation flag for `accuracyLowerSecPerDay` / `accuracyUpperSecPerDay`.
+   *
+   * When `false` or unset (default), the two accuracy fields are SIGNED bounds
+   * of an asymmetric range (e.g. COSC: lower=-4, upper=+6). Renders as a signed
+   * pair like "-4/+6 sec/day".
+   *
+   * When `true`, the fields represent a symmetric-range spec: `lower` is the
+   * best-case spread (unsigned, `lower <= upper`), `upper` is the worst-case
+   * spread. Single symmetric specs collapse `lower === upper` (e.g. ±20 s/day);
+   * otherwise renders as a range like "±10 to ±12 sec/day". Either field may
+   * still be left undefined.
+   */
+  accuracySymmetric?: boolean;
+
   diameterMm?: number;
   heightMm?: number;
 

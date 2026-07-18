@@ -57,4 +57,16 @@ export interface CalibreTierOverrides {
 
   /** Upper bound of daily accuracy in seconds per day (signed; positive = fast). */
   accuracyUpperSecPerDay?: number;
+
+  /**
+   * Interpretation flag for `accuracyLowerSecPerDay` / `accuracyUpperSecPerDay`.
+   *
+   * When `false` or unset (default), the two accuracy fields are SIGNED bounds
+   * of an asymmetric range (e.g. COSC: lower=-4, upper=+6).
+   *
+   * When `true`, the fields represent a symmetric-range spec: `lower` is the
+   * best-case spread (unsigned, `lower <= upper`), `upper` is the worst-case
+   * spread. Single symmetric specs collapse `lower === upper` (e.g. ±20 s/day).
+   */
+  accuracySymmetric?: boolean;
 }
