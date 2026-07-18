@@ -3,6 +3,7 @@ import type { DialInfo } from './DialInfo';
 import type { ElectronicsInfo } from './ElectronicsInfo';
 import type { ImageInfo } from './ImageInfo';
 import type { MovementInfo } from './MovementInfo';
+import type { PocketWatchInfo } from './PocketWatchInfo';
 import type { ProductionInfo } from './ProductionInfo';
 import type { StrapInfo } from './StrapInfo';
 import type { WatchLink } from './WatchLink';
@@ -91,6 +92,8 @@ export interface WatchReference {
    * pattern). Do not write directly — write to the module doc instead.
    */
   electronics?: ElectronicsInfo;
+  /** Pocket-watch-specific fields. Populated when watchType is pocket_watch (or the watchType lookup has showPocketWatch). */
+  pocketWatch?: PocketWatchInfo;
   /** Separate from features, maps to watch functions */
   functions?: string[];
   /** Key features (e.g., "Chronograph", "Date") */
