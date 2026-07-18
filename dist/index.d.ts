@@ -5,6 +5,7 @@ export type { ElectronicsInfo } from './ElectronicsInfo';
 export type { ElectronicModule } from './ElectronicModule';
 export type { ImageInfo } from './ImageInfo';
 export type { MovementInfo } from './MovementInfo';
+export type { PocketWatchInfo } from './PocketWatchInfo';
 export type { ProductionInfo } from './ProductionInfo';
 export type { StrapInfo } from './StrapInfo';
 export type { WatchBrand } from './WatchBrand';
