@@ -39,5 +39,11 @@ export interface CalibreTierOverrides {
     powerReserveHours?: number;
     hacking?: boolean;
     quickSetDate?: boolean;
+    /** Number of positions the tier is regulated in (e.g. 3, 5, 6). */
+    positionsAdjusted?: number;
+    /** Lower bound of daily accuracy in seconds per day (signed; negative = slow). */
+    accuracyLowerSecPerDay?: number;
+    /** Upper bound of daily accuracy in seconds per day (signed; positive = fast). */
+    accuracyUpperSecPerDay?: number;
 }
 //# sourceMappingURL=CalibreTier.d.ts.map

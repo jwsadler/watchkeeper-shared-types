@@ -12,6 +12,26 @@ export interface CalibreData {
   frequencyVph?: number;
   jewels?: number;
   powerReserveHours?: number;
+
+  /**
+   * Number of positions the calibre is regulated in (e.g. 3, 5, 6).
+   * Higher = tighter regulation. Distinct from pocket-watch `adjustments`
+   * lookup which mixes positions + temperatures for antiques.
+   */
+  positionsAdjusted?: number;
+
+  /**
+   * Lower bound of daily accuracy in seconds per day. Signed:
+   * negative = slow. E.g. COSC lower is -4.
+   */
+  accuracyLowerSecPerDay?: number;
+
+  /**
+   * Upper bound of daily accuracy in seconds per day. Signed:
+   * positive = fast. E.g. COSC upper is +6.
+   */
+  accuracyUpperSecPerDay?: number;
+
   diameterMm?: number;
   heightMm?: number;
 
