@@ -42,6 +42,11 @@ export interface WatchReference {
   /** AI-generated reference description (populated from enrichment) */
   aiDescription?: string;
   calibre?: string;
+  /**
+   * Optional tier variant of the linked calibre. Only meaningful when
+   * the calibre has `tiers[]` defined. `undefined` = tier unspecified.
+   */
+  calibreTierId?: string;
   /** Movement type (e.g., "Automatic", "Manual") */
   movementType?: string;
   movement?: MovementInfo;
