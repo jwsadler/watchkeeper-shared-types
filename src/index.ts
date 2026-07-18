@@ -14,6 +14,7 @@ export type { DerivationSettings } from './DerivationSettings';
 export type { WatchLink } from './WatchLink';
 export type { WatchReference, ReferenceSource } from './WatchReference';
 export type { CalibreData } from './CalibreData';
+export type { CalibreTier, CalibreTierOverrides } from './CalibreTier';
 export type { CalibreEntry } from './CalibreEntry';
 export type { CalibreFamily, CalibreFamilyInspiredBy, CalibreFamilyFunctionalCompetitor } from './CalibreFamily';
 export type { CalibreImage } from './CalibreImage';

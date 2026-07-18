@@ -1,4 +1,5 @@
 import type { CalibreImage } from './CalibreImage';
+import type { CalibreTier } from './CalibreTier';
 /**
  * Technical specifications for a watch calibre/movement.
  *
@@ -80,5 +81,7 @@ export interface CalibreData {
     antiMagneticGauss?: number;
     /** Calibre images (also stored at entry level) */
     images?: CalibreImage[];
+    /** Tier variants (e.g. base / Elaboré / Top / Chronometer). When absent or empty, this calibre has no tiers. */
+    tiers?: CalibreTier[];
 }
 //# sourceMappingURL=CalibreData.d.ts.map
