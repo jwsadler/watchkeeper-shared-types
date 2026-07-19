@@ -113,5 +113,13 @@ export interface CalibreData {
     images?: CalibreImage[];
     /** Tier variants (e.g. base / Elaboré / Top / Chronometer). When absent or empty, this calibre has no tiers. */
     tiers?: CalibreTier[];
+    /**
+     * Display name for the synthetic "base" row in the admin tier list.
+     * The calibre's top-level spec IS the base tier; this string is just
+     * its display label (e.g. "Base", "Standard", "Grade 0"). Only meaningful
+     * when the calibre has entries in `tiers[]` — otherwise there's no tier
+     * list to head. Default display is "Base" when unset.
+     */
+    baseTierName?: string;
 }
 //# sourceMappingURL=CalibreData.d.ts.map
