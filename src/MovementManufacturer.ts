@@ -72,6 +72,30 @@ export interface MovementManufacturer {
    * Generic manufacturers bypass this gate entirely.
    */
   brandIdsManualInclude?: string[];
+  /**
+   * Auto-populated brand set derived from actual ref usage — for each
+   * ref that uses a calibre from this manufacturer, that ref's brand
+   * gets added here. Populated by the `deriveManufacturerBrands`
+   * callable. Complements `brandIdsManualInclude` (manual curation).
+   *
+   * Effective brand set for this manufacturer = union(manual, derived) - exclusions.
+   * Undefined = never populated / no ref data available.
+   */
+  brandIdsDerivedFromRefs?: string[];
+  /**
+   * The primary brand this manufacturer is most associated with. Used
+   * for "single answer" needs (deep-link default, primary badge, etc.).
+   * Must be one of `brandIdsManualInclude` or `brandIdsDerivedFromRefs`.
+   * When multiple brands apply, this disambiguates.
+   */
+  primaryBrandId?: string;
+  /**
+   * Brand IDs to EXCLUDE from the effective brand set — dismisses false
+   * positives from `brandIdsDerivedFromRefs`. Rarely needed; explicit
+   * escape hatch for when derivation surfaces a wrong link (e.g. an
+   * ambiguous ref that misidentified the maker).
+   */
+  brandExclusions?: string[];
   createdAt?: Date;
   updatedAt?: Date;
 }

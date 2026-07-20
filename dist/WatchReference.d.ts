@@ -1,3 +1,5 @@
+import type { CalibreCacheSnapshot } from './CalibreCacheSnapshot';
+import type { CalibreOverrides } from './CalibreOverrides';
 import type { CaseInfo } from './CaseInfo';
 import type { DialInfo } from './DialInfo';
 import type { ElectronicsInfo } from './ElectronicsInfo';
@@ -40,6 +42,36 @@ export interface WatchReference {
      * the calibre has `tiers[]` defined. `undefined` = tier unspecified.
      */
     calibreTierId?: string;
+    /**
+     * Foreign key to the linked calibre in the `custom_calibres` collection.
+     * When set, `calibreCache` will be auto-populated by the ref-write cache
+     * trigger with the effective calibre spec (base + tier overrides applied).
+     *
+     * Non-breaking coexistence with the legacy `calibre` string field —
+     * refs without `calibreId` continue to render from `movement.*` strings.
+     * Refs WITH `calibreId` prefer `calibreCache` over legacy strings.
+     */
+    calibreId?: string;
+    /**
+     * Auto-populated snapshot of the linked calibre's EFFECTIVE spec — the
+     * base calibre with tier overrides (per `calibreTierId`) already applied.
+     * Populated by the ref-write cache trigger. Consumers read from here
+     * directly; no need to re-compute the tier overlay at render time.
+     *
+     * Mirror of the base CalibreData spec shape (excluding tiers/aliases/
+     * metadata — those don't apply per-ref). Full field set for future-proofing.
+     * Undefined when `calibreId` is not set.
+     */
+    calibreCache?: CalibreCacheSnapshot;
+    /**
+     * Per-reference overrides layered on top of `calibreCache`. Use when
+     * this specific reference legitimately diverges from its linked calibre
+     * (e.g. this ref uses a modified movement with a different rotor). Any
+     * field set here wins over the calibreCache equivalent at render time.
+     * Populated during the calibres-as-modules migration for refs whose
+     * legacy `movement.*` values didn't match the linked calibre.
+     */
+    calibreOverrides?: CalibreOverrides;
     /** Movement type (e.g., "Automatic", "Manual") */
     movementType?: string;
     movement?: MovementInfo;
