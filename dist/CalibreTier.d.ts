@@ -16,6 +16,28 @@ export interface CalibreTier {
     name: string;
     /** Optional short description of what makes this tier distinct. */
     description?: string;
+    /**
+     * What kind of tier this is:
+     *
+     * - `'general'` — a grade/decoration level defined by the movement
+     *   *manufacturer* (e.g. Sellita's Standard / Elaboré / Top / Chronometer).
+     *   Universal: applies across every brand that uses the base calibre.
+     * - `'brand-specific'` — a modification a specific *brand* applies on top of
+     *   the base movement (e.g. Mühle Glashütte's SW200 mod, a Rolex-adjusted
+     *   ETA 2892). Scoped to that brand's references only; `brandId` is required.
+     *
+     * Absent/undefined is treated as `'general'` by consumers for backward
+     * compatibility — tiers created before this field existed are all general
+     * grades. New code should always set it explicitly.
+     */
+    tierType?: 'general' | 'brand-specific';
+    /**
+     * FK into `watchBrands` — the brand that owns this modification. REQUIRED
+     * when `tierType === 'brand-specific'`, and must be absent for general tiers
+     * (a general grade belongs to the manufacturer, not a brand). Enforced at
+     * the application layer, not the type layer.
+     */
+    brandId?: string;
     /** Field overrides for this tier. Applied on top of the base calibre. */
     overrides: CalibreTierOverrides;
 }
