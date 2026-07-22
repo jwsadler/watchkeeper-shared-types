@@ -41,6 +41,15 @@ export interface WatchReference {
   collection?: string;
   productName?: string;
   description?: string;
+  /**
+   * Snapshot of `description` captured immediately before the first AI rewrite
+   * overwrites it. Fill-empty-only and write-once: populated by AI-rewrite
+   * paths (single-ref editor + bulk description/enrich tools) when they replace
+   * `description`, and never overwritten thereafter. Preserves the pre-AI source
+   * text for future enrichment context / audit. Not populated at import time and
+   * not backfilled — refs that are never AI-rewritten simply lack this field.
+   */
+  originalDescription?: string;
   /** AI-generated reference description (populated from enrichment) */
   aiDescription?: string;
   calibre?: string;
