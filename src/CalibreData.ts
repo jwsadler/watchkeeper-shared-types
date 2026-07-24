@@ -119,6 +119,58 @@ export interface CalibreData {
   casingDiameterMm?: number;
   hairspring?: string;
 
+  /**
+   * Balance-wheel type/material (e.g. Glucydur, screw balance, free-sprung).
+   * Backed by the `lookup_balance_type` lookup — store the lookup slug.
+   */
+  balanceType?: string;
+
+  /**
+   * Movement construction architecture (e.g. full bridge, three-quarter plate,
+   * modular, integrated). Backed by the `lookup_movement_architecture` lookup —
+   * store the lookup slug.
+   */
+  movementArchitecture?: string;
+
+  /** Number of going/train bridges in the movement. Precise count — omit unless verified. */
+  numberOfBridges?: number;
+
+  /** Number of mainspring barrels (e.g. 1, 2). Precise count — omit unless verified. */
+  barrelCount?: number;
+
+  // Decoration & finishing
+  /**
+   * Degree of openworking / skeletonisation.
+   * - `'full'` — fully skeletonised (bridges + mainplate cut away).
+   * - `'partial'` — open-heart / partial aperture exposing part of the movement.
+   * - `'none'` — solid, no openworking.
+   * Omit when unknown rather than defaulting.
+   */
+  skeletonization?: 'full' | 'partial' | 'none';
+
+  /**
+   * Overall level/quality of movement finishing (e.g. industrial, decorated,
+   * haute horlogerie). Backed by the `lookup_movement_finishing` lookup — store
+   * the lookup slug.
+   */
+  movementFinishing?: string;
+
+  /**
+   * Specific decorative techniques present on the movement (e.g. `perlage`,
+   * `cotes-de-geneve`, `anglage`, `blued-screws`, `engraving`, `guilloche`).
+   * Backed by the `lookup_movement_decoration` lookup (multi-select) — store
+   * lookup slugs. Free-form array; the dedicated `rhodiumPlated` / `giltFinish`
+   * booleans below intentionally duplicate two of these values so they remain
+   * individually queryable/facetable.
+   */
+  decorations?: string[];
+
+  /** True when the movement's components carry a rhodium plating/finish. */
+  rhodiumPlated?: boolean;
+
+  /** True when the movement carries a gilt (gilded) finish. */
+  giltFinish?: boolean;
+
   // Battery-powered movement fields
   batteryType?: string;
   batteryLifeYears?: number;
