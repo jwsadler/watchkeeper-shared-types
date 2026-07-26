@@ -24,6 +24,21 @@ export type { CalibreAliasDetail } from './CalibreAliasDetail';
 export type { LookupValue, LookupCollection } from './LookupTypes';
 export type { CuratedCollection, CuratedCollectionFilterCriteria } from './CuratedCollection';
 export type {
+  RoadmapStatus,
+  RoadmapPriority,
+  RoadmapOwner,
+  RoadmapScope,
+  RoadmapAuthor,
+  RoadmapItem,
+  RoadmapComment,
+  SaveRoadmapItemInput,
+  SaveRoadmapItemOutput,
+  AddRoadmapCommentInput,
+  AddRoadmapCommentOutput,
+  ListRoadmapItemsInput,
+  ListRoadmapItemsOutput,
+} from './Roadmap';
+export type {
   BrandManufacturerGateData,
   BrandManufacturerGateOptions,
 } from './derivationGate';
