@@ -35,6 +35,16 @@ export interface RoadmapItem {
   id: string;
   title: string;
   description: string;
+  /**
+   * Long-form markdown detail — the body of the originating memory file, or
+   * whatever has been typed into the editor since. `description` stays the
+   * one-line summary that grid rows and kanban cards render; this is the full
+   * write-up, shown only inside the editor modal.
+   *
+   * Optional because it post-dates the first seed: items written before
+   * v1.41.0 carry no such field.
+   */
+  detailedContent?: string;
   status: RoadmapStatus;
   priority: RoadmapPriority;
   tags: string[];
@@ -81,6 +91,8 @@ export interface SaveRoadmapItemInput {
    */
   title?: string;
   description?: string;
+  /** Omit to leave the stored body unchanged; '' clears it. */
+  detailedContent?: string;
   status?: RoadmapStatus;
   priority?: RoadmapPriority;
   tags?: string[];
