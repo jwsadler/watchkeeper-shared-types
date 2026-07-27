@@ -7,6 +7,7 @@
  * Firestore paths:
  *   roadmap/{itemId}
  *   roadmap/{itemId}/comments/{commentId}
+ *   roadmap/{itemId}/attachments/{attachmentId}
  *
  * Every mutation funnels through super-admin-gated callables
  * (saveRoadmapItem / addRoadmapComment / listRoadmapItems) — the callable I/O
@@ -68,6 +69,44 @@ export interface RoadmapComment {
   author: RoadmapAuthor;
   text: string;
   createdAt?: Date;
+}
+
+/**
+ * An image attached to a roadmap item.
+ *
+ * The bytes live in Firebase Storage; this doc is the metadata index over
+ * them, so a listing never has to walk the bucket. Uploads go straight to
+ * Storage from the admin client (Storage rules gate on `isAdmin()`), then this
+ * doc is written. Deletes must funnel through the `deleteRoadmapAttachment`
+ * callable so the object and the doc go away together — a client-side delete
+ * can half-fail and strand one or the other.
+ *
+ * Images only for now: the admin uploader accepts `image/*` and caps files at
+ * 25 MB. `contentType` is stored rather than inferred so a future non-image
+ * kind can be told apart without re-reading the object.
+ */
+export interface RoadmapAttachment {
+  /** Firestore doc id; also the Storage object's basename. */
+  id: string;
+  /** Original filename as chosen on the uploader's machine, e.g. 'shot-01.png'. */
+  filename: string;
+  /** MIME type reported by the browser, e.g. 'image/png'. */
+  contentType: string;
+  /** Size in bytes. */
+  size: number;
+  /** Full Storage path, e.g. 'roadmap/{itemId}/attachments/{id}.png'. */
+  storagePath: string;
+  /**
+   * Tokenised Firebase download URL, captured once at upload time.
+   *
+   * Persisted rather than re-derived per render so a thumbnail grid costs no
+   * `getDownloadURL` round-trips. Note this URL bypasses Storage rules for
+   * anyone holding it — acceptable here because roadmap content is internal
+   * planning notes behind a super-admin-only panel.
+   */
+  downloadUrl: string;
+  uploadedAt?: Date;
+  uploadedBy: RoadmapAuthor;
 }
 
 // ---------------------------------------------------------------------------
@@ -132,4 +171,18 @@ export interface ListRoadmapItemsInput {
 
 export interface ListRoadmapItemsOutput {
   items: RoadmapItem[];
+}
+
+export interface DeleteRoadmapAttachmentInput {
+  roadmapId: string;
+  attachmentId: string;
+}
+
+export interface DeleteRoadmapAttachmentOutput {
+  /**
+   * false when the Storage object could not be removed (already gone, or the
+   * delete failed) but the metadata doc was still deleted. The doc going away
+   * is what the UI cares about; a stranded object is logged server-side.
+   */
+  storageDeleted: boolean;
 }

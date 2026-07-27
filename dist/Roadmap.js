@@ -8,6 +8,7 @@
  * Firestore paths:
  *   roadmap/{itemId}
  *   roadmap/{itemId}/comments/{commentId}
+ *   roadmap/{itemId}/attachments/{attachmentId}
  *
  * Every mutation funnels through super-admin-gated callables
  * (saveRoadmapItem / addRoadmapComment / listRoadmapItems) — the callable I/O
