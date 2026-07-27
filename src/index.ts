@@ -31,12 +31,15 @@ export type {
   RoadmapAuthor,
   RoadmapItem,
   RoadmapComment,
+  RoadmapAttachment,
   SaveRoadmapItemInput,
   SaveRoadmapItemOutput,
   AddRoadmapCommentInput,
   AddRoadmapCommentOutput,
   ListRoadmapItemsInput,
   ListRoadmapItemsOutput,
+  DeleteRoadmapAttachmentInput,
+  DeleteRoadmapAttachmentOutput,
 } from './Roadmap';
 export type {
   BrandManufacturerGateData,
