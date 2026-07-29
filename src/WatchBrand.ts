@@ -17,6 +17,26 @@ export interface WatchBrand {
   logo?: string;
   /** Optional attribution — external URL the logo was sourced from (shown in RN). */
   logoSourceUrl?: string;
+  /**
+   * Short textual description of the brand's dial glyph — the visual mark that
+   * appears on the watch face in place of, or in addition to, the brand name.
+   * Used by the AI identify extraction prompt to help identify brands whose
+   * dials lack prominent brand text (e.g. Christopher Ward's twin flags,
+   * Grand Seiko's shield emblem, Cartier's four dots).
+   *
+   * Kept concise (one sentence). Should describe visual features an AI vision
+   * model can recognise — shapes, arrangement, distinctive markings — not
+   * marketing prose. A single field rather than a list: where a brand uses
+   * more than one glyph, cover them in the one description (e.g. "Four dots
+   * surrounding the hands (Santos, Panthère) or CARTIER wordmark below 12
+   * (Ballon Bleu, Tank)").
+   */
+  glyphDescription?: string;
+  /**
+   * Optional image URL of the brand's dial glyph. Reserved for future
+   * multi-image AI vision workflows (Phase 2). Not consumed by extraction yet.
+   */
+  glyphImageUrl?: string;
   country?: string;
   founded?: number;
   /** Primary website (admin uses mainWebsite, RN uses website — both supported) */
