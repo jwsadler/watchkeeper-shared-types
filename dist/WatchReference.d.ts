@@ -200,6 +200,27 @@ export interface WatchReference {
      */
     parentReferenceId?: string;
     /**
+     * True when this doc is a child variant of another reference — i.e. exactly
+     * when {@link parentReferenceId} is set. Denormalised at write time purely so
+     * server-side queries can separate parents from variants.
+     *
+     * Exists because Firestore's `where('parentReferenceId', '==', null)` does NOT
+     * match docs where the field is ABSENT, which is how parents and standalones
+     * are actually written. Without this flag, callers must over-fetch and filter
+     * client-side, which wrecks pagination for brands with many Shopify variants.
+     *
+     * Invariant: `isVariant === (parentReferenceId != null)`. Every write path
+     * (Shopify importer, admin edit, callables) MUST set it explicitly — the two
+     * fields are only ever updated together.
+     *
+     * Optional solely to cover the pre-backfill window: docs written before this
+     * field existed have it absent. Backfilled universally by the
+     * `backfillIsVariant` callable, after which absence means "stale doc", not
+     * "not a variant". Do not read it as `!isVariant` on unbackfilled data.
+     * See project_isvariant_flag memory.
+     */
+    isVariant?: boolean;
+    /**
      * Variant-distinguishing field values aggregated onto a PARENT ref from its
      * variants, so consumer search/filter still works even though the variant
      * docs themselves are not indexed in Algolia. Set by the variant-aware
