@@ -132,6 +132,15 @@ export interface CalibreData {
    */
   movementArchitecture?: string;
 
+  /**
+   * Automatic self-winding architecture (full rotor, micro-rotor, peripheral,
+   * bumper/hammer, dual rotor, oscillating weight). Backed by the
+   * `lookup_winding_architecture` lookup — stores the lookup slug. Only
+   * meaningful when `movementType` carries the `isAuto` property; absent on
+   * manual/quartz calibres. Base-movement property — not overridden by tiers.
+   */
+  windingArchitecture?: string;
+
   /** Number of going/train bridges in the movement. Precise count — omit unless verified. */
   numberOfBridges?: number;
 
