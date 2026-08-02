@@ -46,3 +46,4 @@ export type {
   BrandManufacturerGateOptions,
 } from './derivationGate';
 export { isBrandManufacturerLinkAllowed } from './derivationGate';
+export * from './Extraction';
