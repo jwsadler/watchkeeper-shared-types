@@ -30,7 +30,7 @@
  * + SHA re-pin. That friction is the point — makes "one shared type, enforced
  * by build" true rather than aspirational.
  */
-export type ExtractorId = 'watchbase';
+export type ExtractorId = 'watchbase' | 'omega';
 /** Descriptor an admin uses to render the extractor dropdown + defaults. */
 export interface ExtractorDescriptor {
     id: ExtractorId;
