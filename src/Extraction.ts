@@ -198,6 +198,15 @@ export interface ExtractionRun {
 
 /** Options an operator can set when creating a job. */
 export interface ExtractionJobOptions {
+  /**
+   * Skip the first N discovered refs before `limit` is applied. Defaults to 0.
+   *
+   * Order is discovery -> offset -> limit -> detail crawl, so
+   * `{ offset: 50, limit: 50 }` crawls refs 51-100. Batching a brand this way
+   * assumes the source's discovery order is stable between runs; if the
+   * catalogue changes underneath you, the batch boundaries shift with it.
+   */
+  offset?: number;
   /** Cap on watches to emit — useful for smoke tests. */
   limit?: number;
   /** Restrict to specific families (source-dependent slugs). */
