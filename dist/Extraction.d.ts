@@ -30,7 +30,7 @@
  * + SHA re-pin. That friction is the point — makes "one shared type, enforced
  * by build" true rather than aspirational.
  */
-export type ExtractorId = 'watchbase' | 'omega' | 'rolex';
+export type ExtractorId = 'watchbase' | 'omega' | 'rolex' | 'cartier';
 /**
  * How much of a source's catalogue a run asks for.
  *
