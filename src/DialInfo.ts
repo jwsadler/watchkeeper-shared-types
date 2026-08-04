@@ -9,10 +9,25 @@ export interface DialInfo {
   material?: string;
   /** e.g., "Sunburst", "Matte", "Glossy" */
   finish?: string;
-  /** e.g., "Arabic", "Roman", "Indices" */
-  indexes?: string;
-  /** Alternate field for indexes (multi-select in management app) */
-  numerals?: string;
+  /**
+   * HOW the hour markers are constructed — applied / printed / painted /
+   * sandwich / engraved. Multi-select, backed by `lookup_dial_marker_type`
+   * and labelled "Marker Type" in the management app; the field name stays
+   * `indexes` for backwards compatibility with the RN read side.
+   *
+   * Array since v1.51.0. Documents written before the
+   * `migrateDialIndexesNumerals` sweep hold a bare string, so readers that
+   * have not been migrated must tolerate both shapes.
+   */
+  indexes?: string[];
+  /**
+   * WHAT the markers are — arabic / roman / stick / dot / baton. Multi-select,
+   * backed by `lookup_dial_numerals`. Distinct from `indexes` above, which is
+   * the construction type: a dial can have printed (indexes) arabic (numerals).
+   *
+   * Array since v1.51.0 — same both-shapes caveat as `indexes`.
+   */
+  numerals?: string[];
   /** e.g., "Dauphine", "Baton", "Mercedes" */
   hands?: string;
   handsColor?: string;
