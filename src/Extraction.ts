@@ -31,7 +31,7 @@
  * + SHA re-pin. That friction is the point — makes "one shared type, enforced
  * by build" true rather than aspirational.
  */
-export type ExtractorId = 'watchbase' | 'omega' | 'rolex' | 'cartier';
+export type ExtractorId = 'watchbase' | 'omega' | 'lang-heyne' | 'rolex' | 'cartier';
 
 /**
  * How much of a source's catalogue a run asks for.
@@ -141,6 +141,18 @@ export interface ExtractedWatch {
   description?: string;
   /** Absolute URL of the primary product image. Extractor does NOT fetch bytes. */
   imageUrl?: string;
+  /**
+   * Additional product images, best first, `images[0]` matching `imageUrl`.
+   *
+   * Absolute URLs only, and the extractor does NOT fetch the bytes — same
+   * contract as `imageUrl`, which this supplements rather than replaces. A
+   * source that offers only one shot sets `imageUrl` and omits this.
+   *
+   * Intended for the AI corpus, where several angles of one reference are worth
+   * more than one canonical render. Extractors cap what they emit; five is the
+   * working ceiling.
+   */
+  images?: string[];
 
   // Movement
   movement?: string;
@@ -181,6 +193,29 @@ export interface ExtractedWatch {
   productionYears?: string;
   calibre?: ExtractedCalibre;
 
+  /**
+   * References of the watches that are this one in a different finish — the
+   * same base model differing only in dial, bezel, bracelet, material or case
+   * size.
+   *
+   * Entries are `reference` values, so they join directly against the
+   * `reference` of the sibling rows in the same `ExtractionResult`. They are NOT
+   * "you may also like" recommendations, and they do not span models.
+   *
+   * PRESENT-AND-EMPTY AND ABSENT MEAN DIFFERENT THINGS. An empty array is a
+   * positive statement that the source was asked and reported no siblings;
+   * absent means the extractor had no variant data to offer, either because the
+   * source publishes none or because that lookup failed on this run. Ingest
+   * should not collapse the two — the first is safe to act on, the second is
+   * not.
+   *
+   * This is an ANNOTATION, not a grouping. Extractors still emit one row per
+   * variant; deciding whether to aggregate them into a single product is the
+   * consumer's call, and this field is what makes it possible without a
+   * re-crawl.
+   */
+  variantRefs?: string[];
+
   /** Lossless passthrough of every label/value pair the source exposed. */
   rawSpecs: Record<string, string>;
 }
@@ -204,6 +239,24 @@ export interface ExtractionResult {
   brandId: string;
   brandInfo?: ExtractedBrandInfo;
   watches: ExtractedWatch[];
+  /**
+   * Calibres discovered this run, deduplicated across the catalogue.
+   *
+   * Optional and additive: modules that only ever see a calibre in the context
+   * of a watch (WatchBase, which reads one calibre page per reference) leave
+   * this unset and nest `ExtractedWatch.calibre` instead. Modules whose source
+   * publishes calibres as their own collection (Lang & Heyne's `/caliber`
+   * endpoint) populate both — the nested copy so a single watch stays
+   * self-describing, and this array so the set is emitted once rather than
+   * repeated per watch.
+   *
+   * NOT INGESTED YET. The admin's `extractionToEntries` adapter maps watches
+   * onto ScrapedWatchEntry and drops calibres entirely, so this rides along in
+   * the Cloud Storage artifact waiting for an ingest path to exist. It is
+   * populated now because the data is free at scrape time and re-crawling
+   * later to backfill it would not be.
+   */
+  calibres?: ExtractedCalibre[];
   stats: ExtractionStats;
   errors: ExtractionError[];
   startedAt: Date;
