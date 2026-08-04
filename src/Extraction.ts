@@ -115,6 +115,18 @@ export interface ExtractedWatch {
   description?: string;
   /** Absolute URL of the primary product image. Extractor does NOT fetch bytes. */
   imageUrl?: string;
+  /**
+   * Additional product images, best first, `images[0]` matching `imageUrl`.
+   *
+   * Absolute URLs only, and the extractor does NOT fetch the bytes — same
+   * contract as `imageUrl`, which this supplements rather than replaces. A
+   * source that offers only one shot sets `imageUrl` and omits this.
+   *
+   * Intended for the AI corpus, where several angles of one reference are worth
+   * more than one canonical render. Extractors cap what they emit; five is the
+   * working ceiling.
+   */
+  images?: string[];
 
   // Movement
   movement?: string;
@@ -154,6 +166,29 @@ export interface ExtractedWatch {
   functions?: string[];
   productionYears?: string;
   calibre?: ExtractedCalibre;
+
+  /**
+   * References of the watches that are this one in a different finish — the
+   * same base model differing only in dial, bezel, bracelet, material or case
+   * size.
+   *
+   * Entries are `reference` values, so they join directly against the
+   * `reference` of the sibling rows in the same `ExtractionResult`. They are NOT
+   * "you may also like" recommendations, and they do not span models.
+   *
+   * PRESENT-AND-EMPTY AND ABSENT MEAN DIFFERENT THINGS. An empty array is a
+   * positive statement that the source was asked and reported no siblings;
+   * absent means the extractor had no variant data to offer, either because the
+   * source publishes none or because that lookup failed on this run. Ingest
+   * should not collapse the two — the first is safe to act on, the second is
+   * not.
+   *
+   * This is an ANNOTATION, not a grouping. Extractors still emit one row per
+   * variant; deciding whether to aggregate them into a single product is the
+   * consumer's call, and this field is what makes it possible without a
+   * re-crawl.
+   */
+  variantRefs?: string[];
 
   /** Lossless passthrough of every label/value pair the source exposed. */
   rawSpecs: Record<string, string>;
