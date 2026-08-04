@@ -30,7 +30,19 @@
  * + SHA re-pin. That friction is the point — makes "one shared type, enforced
  * by build" true rather than aspirational.
  */
-export type ExtractorId = 'watchbase' | 'omega' | 'lang-heyne';
+export type ExtractorId = 'watchbase' | 'omega' | 'lang-heyne' | 'rolex' | 'cartier';
+/**
+ * How much of a source's catalogue a run asks for.
+ *
+ * `full`      every product the source publishes. The quarterly rebase.
+ * `new-only`  just what the source itself flags as a new release. Cheap enough
+ *             to run often, which is what keeps the watch DB fresh in between.
+ *
+ * Only meaningful where the SOURCE draws the distinction. A module cannot
+ * synthesise `new-only` by diffing against a previous run — that is the admin's
+ * job, post-ingest, where the previous run actually exists.
+ */
+export type ExtractorMode = 'full' | 'new-only';
 /** Descriptor an admin uses to render the extractor dropdown + defaults. */
 export interface ExtractorDescriptor {
     id: ExtractorId;
@@ -39,6 +51,19 @@ export interface ExtractorDescriptor {
     supportedBrands: readonly string[] | 'all';
     /** Human-readable summary shown in the admin picker. */
     description: string;
+    /**
+     * Modes this module accepts on `ExtractionJobOptions.mode`.
+     *
+     * UNDEFINED MEANS `['full']` — the module runs whole-catalogue crawls and
+     * nothing else. That convention, rather than a required field, is what makes
+     * this addition non-breaking for the modules that predate it: WatchBase and
+     * Omega leave it unset because their sources publish no new-releases view to
+     * read, so there is no second mode for them to honour.
+     *
+     * The admin should offer a mode picker only when this is set and holds more
+     * than one entry, and should not send a `mode` a module has not declared.
+     */
+    supportedModes?: readonly ExtractorMode[];
 }
 /** Lifecycle state of an extraction job. */
 export type ExtractionJobStatus = 'queued' | 'running' | 'completed' | 'failed' | 'cancelled';
@@ -230,6 +255,16 @@ export interface ExtractionJobOptions {
     concurrency?: number;
     /** Override module default politeness delay (ms). */
     politenessDelayMs?: number;
+    /**
+     * How much of the catalogue to crawl. Defaults to `full`.
+     *
+     * Only honoured by modules that declare `supportedModes`; everything else
+     * ignores it and crawls the whole catalogue, which is what an unset value
+     * means anyway. Applied at DISCOVERY, before `offset` and `limit`, so
+     * `{ mode: 'new-only', limit: 5 }` is the first five new releases rather
+     * than the new releases among the first five products.
+     */
+    mode?: ExtractorMode;
 }
 /** Firestore doc at `extraction_jobs/{jobId}`. */
 export interface ExtractionJob {
