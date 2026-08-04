@@ -94,11 +94,25 @@ export interface WatchReference {
     bezel?: string;
     /** Bezel type (e.g., "Unidirectional", "Bidirectional") */
     bezelType?: string;
-    /** Crown type (e.g., "Screw-down", "Push-pull") */
-    crownType?: string;
+    /**
+     * Crown type — MULTI-VALUE (`lookup_crown_types`). A crown is routinely
+     * several things at once: an attachment method AND a sealing system AND a
+     * shape (Rolex's is `["screw_down", "twinlock"]`). Stored as an array of
+     * slugs since v1.53.0; before that it was a scalar, and an import could cram
+     * the whole marketing phrase into it ("Screw-down, Twinlock double
+     * waterproofness system"). Readers must accept `string` too until the
+     * `migrateCrownTypeCrystal` sweep has run everywhere.
+     */
+    crownType?: string[];
     color?: string;
     glass?: string;
-    crystal?: string;
+    /**
+     * Crystal — MULTI-VALUE (`lookup_crystal_materials`). Holds the material AND
+     * its features in one list (`["sapphire_crystal", "cyclops_lens"]`): a
+     * deliberate single-vocabulary choice rather than a material/feature split.
+     * Same v1.53.0 scalar → array story as `crownType` above.
+     */
+    crystal?: string[];
     /** Top-level dial color (synced with dialAndHands.color) */
     dial?: string;
     /**
