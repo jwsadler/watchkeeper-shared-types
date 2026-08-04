@@ -31,7 +31,7 @@
  * + SHA re-pin. That friction is the point — makes "one shared type, enforced
  * by build" true rather than aspirational.
  */
-export type ExtractorId = 'watchbase' | 'omega';
+export type ExtractorId = 'watchbase' | 'omega' | 'lang-heyne';
 
 /** Descriptor an admin uses to render the extractor dropdown + defaults. */
 export interface ExtractorDescriptor {
@@ -178,6 +178,24 @@ export interface ExtractionResult {
   brandId: string;
   brandInfo?: ExtractedBrandInfo;
   watches: ExtractedWatch[];
+  /**
+   * Calibres discovered this run, deduplicated across the catalogue.
+   *
+   * Optional and additive: modules that only ever see a calibre in the context
+   * of a watch (WatchBase, which reads one calibre page per reference) leave
+   * this unset and nest `ExtractedWatch.calibre` instead. Modules whose source
+   * publishes calibres as their own collection (Lang & Heyne's `/caliber`
+   * endpoint) populate both — the nested copy so a single watch stays
+   * self-describing, and this array so the set is emitted once rather than
+   * repeated per watch.
+   *
+   * NOT INGESTED YET. The admin's `extractionToEntries` adapter maps watches
+   * onto ScrapedWatchEntry and drops calibres entirely, so this rides along in
+   * the Cloud Storage artifact waiting for an ingest path to exist. It is
+   * populated now because the data is free at scrape time and re-crawling
+   * later to backfill it would not be.
+   */
+  calibres?: ExtractedCalibre[];
   stats: ExtractionStats;
   errors: ExtractionError[];
   startedAt: Date;
