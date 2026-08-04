@@ -30,7 +30,19 @@
  * + SHA re-pin. That friction is the point — makes "one shared type, enforced
  * by build" true rather than aspirational.
  */
-export type ExtractorId = 'watchbase' | 'omega';
+export type ExtractorId = 'watchbase' | 'omega' | 'lang-heyne' | 'rolex' | 'cartier';
+/**
+ * How much of a source's catalogue a run asks for.
+ *
+ * `full`      every product the source publishes. The quarterly rebase.
+ * `new-only`  just what the source itself flags as a new release. Cheap enough
+ *             to run often, which is what keeps the watch DB fresh in between.
+ *
+ * Only meaningful where the SOURCE draws the distinction. A module cannot
+ * synthesise `new-only` by diffing against a previous run — that is the admin's
+ * job, post-ingest, where the previous run actually exists.
+ */
+export type ExtractorMode = 'full' | 'new-only';
 /** Descriptor an admin uses to render the extractor dropdown + defaults. */
 export interface ExtractorDescriptor {
     id: ExtractorId;
@@ -39,6 +51,19 @@ export interface ExtractorDescriptor {
     supportedBrands: readonly string[] | 'all';
     /** Human-readable summary shown in the admin picker. */
     description: string;
+    /**
+     * Modes this module accepts on `ExtractionJobOptions.mode`.
+     *
+     * UNDEFINED MEANS `['full']` — the module runs whole-catalogue crawls and
+     * nothing else. That convention, rather than a required field, is what makes
+     * this addition non-breaking for the modules that predate it: WatchBase and
+     * Omega leave it unset because their sources publish no new-releases view to
+     * read, so there is no second mode for them to honour.
+     *
+     * The admin should offer a mode picker only when this is set and holds more
+     * than one entry, and should not send a `mode` a module has not declared.
+     */
+    supportedModes?: readonly ExtractorMode[];
 }
 /** Lifecycle state of an extraction job. */
 export type ExtractionJobStatus = 'queued' | 'running' | 'completed' | 'failed' | 'cancelled';
@@ -93,6 +118,18 @@ export interface ExtractedWatch {
     description?: string;
     /** Absolute URL of the primary product image. Extractor does NOT fetch bytes. */
     imageUrl?: string;
+    /**
+     * Additional product images, best first, `images[0]` matching `imageUrl`.
+     *
+     * Absolute URLs only, and the extractor does NOT fetch the bytes — same
+     * contract as `imageUrl`, which this supplements rather than replaces. A
+     * source that offers only one shot sets `imageUrl` and omits this.
+     *
+     * Intended for the AI corpus, where several angles of one reference are worth
+     * more than one canonical render. Extractors cap what they emit; five is the
+     * working ceiling.
+     */
+    images?: string[];
     movement?: string;
     movementType?: string;
     jewels?: string;
@@ -122,6 +159,28 @@ export interface ExtractedWatch {
     functions?: string[];
     productionYears?: string;
     calibre?: ExtractedCalibre;
+    /**
+     * References of the watches that are this one in a different finish — the
+     * same base model differing only in dial, bezel, bracelet, material or case
+     * size.
+     *
+     * Entries are `reference` values, so they join directly against the
+     * `reference` of the sibling rows in the same `ExtractionResult`. They are NOT
+     * "you may also like" recommendations, and they do not span models.
+     *
+     * PRESENT-AND-EMPTY AND ABSENT MEAN DIFFERENT THINGS. An empty array is a
+     * positive statement that the source was asked and reported no siblings;
+     * absent means the extractor had no variant data to offer, either because the
+     * source publishes none or because that lookup failed on this run. Ingest
+     * should not collapse the two — the first is safe to act on, the second is
+     * not.
+     *
+     * This is an ANNOTATION, not a grouping. Extractors still emit one row per
+     * variant; deciding whether to aggregate them into a single product is the
+     * consumer's call, and this field is what makes it possible without a
+     * re-crawl.
+     */
+    variantRefs?: string[];
     /** Lossless passthrough of every label/value pair the source exposed. */
     rawSpecs: Record<string, string>;
 }
@@ -143,6 +202,24 @@ export interface ExtractionResult {
     brandId: string;
     brandInfo?: ExtractedBrandInfo;
     watches: ExtractedWatch[];
+    /**
+     * Calibres discovered this run, deduplicated across the catalogue.
+     *
+     * Optional and additive: modules that only ever see a calibre in the context
+     * of a watch (WatchBase, which reads one calibre page per reference) leave
+     * this unset and nest `ExtractedWatch.calibre` instead. Modules whose source
+     * publishes calibres as their own collection (Lang & Heyne's `/caliber`
+     * endpoint) populate both — the nested copy so a single watch stays
+     * self-describing, and this array so the set is emitted once rather than
+     * repeated per watch.
+     *
+     * NOT INGESTED YET. The admin's `extractionToEntries` adapter maps watches
+     * onto ScrapedWatchEntry and drops calibres entirely, so this rides along in
+     * the Cloud Storage artifact waiting for an ingest path to exist. It is
+     * populated now because the data is free at scrape time and re-crawling
+     * later to backfill it would not be.
+     */
+    calibres?: ExtractedCalibre[];
     stats: ExtractionStats;
     errors: ExtractionError[];
     startedAt: Date;
@@ -178,6 +255,16 @@ export interface ExtractionJobOptions {
     concurrency?: number;
     /** Override module default politeness delay (ms). */
     politenessDelayMs?: number;
+    /**
+     * How much of the catalogue to crawl. Defaults to `full`.
+     *
+     * Only honoured by modules that declare `supportedModes`; everything else
+     * ignores it and crawls the whole catalogue, which is what an unset value
+     * means anyway. Applied at DISCOVERY, before `offset` and `limit`, so
+     * `{ mode: 'new-only', limit: 5 }` is the first five new releases rather
+     * than the new releases among the first five products.
+     */
+    mode?: ExtractorMode;
 }
 /** Firestore doc at `extraction_jobs/{jobId}`. */
 export interface ExtractionJob {
