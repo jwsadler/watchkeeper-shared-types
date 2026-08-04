@@ -105,6 +105,49 @@ export interface ExtractedCalibre {
     additional?: Record<string, string[]>;
 }
 /**
+ * The tag vocabulary an extractor may put on an image.
+ *
+ * Mirrors `GALLERY_IMAGE_TAGS` in admin's ReferenceEditor.tsx VERBATIM, and is
+ * a closed union for the same reason `ExtractorId` is: admin renders these as
+ * toggleable chips, so a tag outside the list arrives on a reference the curator
+ * can neither see nor clear.
+ *
+ * `primary` / `hero` are deliberately ABSENT. Admin assigns those itself at
+ * enrichment-call time (PRIMARY_TAGS in functions/src/enrichImageSelection.ts);
+ * they are not curator-assignable, so an extractor emitting one would write a
+ * chip the gallery cannot render. An extractor signals its primary shot the way
+ * it always has — `imageUrl`, and position 0 of the array.
+ */
+export type ImageTag = 'dial' | 'caseback' | 'crown' | 'movement' | 'bracelet' | 'clasp' | 'bezel' | 'lume' | 'strap' | 'side' | 'wrist' | 'box' | 'papers';
+/**
+ * One product image with whatever the extractor could infer about its content.
+ *
+ * Structurally a superset of the `{ url, tags }` admin's
+ * `selectImagesByPriority` consumes, so it can be handed to the enrichment path
+ * unchanged; `autoTagged` is extra context that side ignores.
+ *
+ * These tags are GUESSES and the field name says so. They exist to save the
+ * curator keystrokes, and to let the enrichment prompt route a field at the
+ * image that actually shows it — never as ground truth. A curator's edit wins.
+ */
+export interface TaggedImage {
+    /** Absolute URL. Same contract as `imageUrl`: the extractor does NOT fetch bytes. */
+    url: string;
+    /**
+     * Inferred tags, possibly several, possibly none. Empty means "no signal on
+     * this page identified this image" — an explicit "please tag me", not a gap.
+     */
+    tags: ImageTag[];
+    /**
+     * True when the extractor put at least one tag here, i.e. exactly
+     * `tags.length > 0`. Redundant by construction and kept anyway, because it is
+     * what makes the ABSENCE of tags legible downstream: `autoTagged: false` reads
+     * as "the extractor looked and found nothing", where a bare empty array reads
+     * as "something forgot to populate this".
+     */
+    autoTagged: boolean;
+}
+/**
  * One watch, as scraped. Field names deliberately mirror admin's
  * ScrapedWatchEntry (BulkImport.tsx). Only `sourceUrl` and `reference` are
  * guaranteed; everything else is best-effort.
@@ -130,6 +173,16 @@ export interface ExtractedWatch {
      * working ceiling.
      */
     images?: string[];
+    /**
+     * The same shots as `images`, in the same order, carrying inferred content
+     * tags. ADDITIVE — `images` stays populated and authoritative for ordering, so
+     * a consumer that has not been taught about tags keeps working unchanged.
+     *
+     * Read this in preference to `images` when present; fall back to `images`
+     * when it is absent, which is what every extractor that has not implemented
+     * inference yet emits.
+     */
+    taggedImages?: TaggedImage[];
     movement?: string;
     movementType?: string;
     jewels?: string;
