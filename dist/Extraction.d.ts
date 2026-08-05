@@ -148,6 +148,67 @@ export interface TaggedImage {
     autoTagged: boolean;
 }
 /**
+ * One sibling SKU of a watch, with whatever the source could say about how it
+ * differs from it.
+ *
+ * WHY THIS EXISTS BESIDE `variantRefs`. That field says a watch has eighteen
+ * siblings and stops. To learn what any one of them actually IS — 41 mm or
+ * 36 mm, Everose Rolesor or Oystersteel, fluted bezel or diamond-set — a
+ * consumer has to find that sibling's own row and read it, eighteen times, and
+ * hope every one of them was crawled. On a `new-only` run most of them were
+ * not. This carries the differentiating facets on the row that names the
+ * sibling, so an "Also available with" table renders off one record.
+ *
+ * EVERY FACET IS OPTIONAL AND ABSENCE IS NOT A CLAIM. A missing `bezel` means
+ * the source does not publish one at catalogue level, not that the watch has no
+ * bezel. An extractor populates what its source gives it and leaves the rest
+ * out; Rolex, the first source to emit this, fills everything below except
+ * `calibre`, which nothing in its catalogue API names.
+ */
+export interface ExtractedWatchVariant {
+    /**
+     * The sibling's `reference`, in the same spelling as the sibling's own row.
+     *
+     * REQUIRED, and the join key: this matches the `reference` of another row in
+     * the same `ExtractionResult` exactly as a `variantRefs` entry did, so a
+     * consumer that already joins on one joins on the other unchanged.
+     */
+    reference: string;
+    /**
+     * The source's own primary key for this SKU, where it has one distinct from
+     * the reference — Rolex's rmc (`m126334-0037`), Cartier's SFCC id. Worth
+     * keeping because it is what an upstream aggregation pass would join on, and
+     * it is free at scrape time and expensive to backfill.
+     */
+    sku?: string;
+    /** Model name, `Datejust 41`. What distinguishes a case-size sibling. */
+    model?: string;
+    /** Case size, verbatim: `41 mm`. */
+    size?: string;
+    /** Case material, verbatim: `Yellow Rolesor`, `Oystersteel`. */
+    material?: string;
+    /** Dial, verbatim: `Green ombré`. */
+    dialColor?: string;
+    /** Bezel, verbatim: `Fluted`, `Brilliant diamond-set`. */
+    bezel?: string;
+    /** Bracelet or strap, verbatim: `Jubilee`, `Oysterflex`. */
+    bracelet?: string;
+    /** Calibre, verbatim. Unset by every extractor so far. */
+    calibre?: string;
+    /**
+     * The axes this sibling differs from the subject on, in the SOURCE'S OWN
+     * vocabulary — Rolex publishes `material`, `bezel`, `dial`, `bracelet` and
+     * `size`, and a sibling can be on more than one.
+     *
+     * Deliberately not normalised into this schema's field names: it is the
+     * source's own statement about its own catalogue, and translating it would
+     * turn a quotation into a claim. It is also the one thing no facet-by-facet
+     * comparison can reconstruct, since two siblings may both omit the facet they
+     * actually differ on.
+     */
+    differsBy?: string[];
+}
+/**
  * One watch, as scraped. Field names deliberately mirror admin's
  * ScrapedWatchEntry (BulkImport.tsx). Only `sourceUrl` and `reference` are
  * guaranteed; everything else is best-effort.
@@ -242,8 +303,32 @@ export interface ExtractedWatch {
      * variant; deciding whether to aggregate them into a single product is the
      * consumer's call, and this field is what makes it possible without a
      * re-crawl.
+     *
+     * PREFER `variantDetails` WHERE IT IS PRESENT. It carries the same references
+     * plus what each sibling differs by. This field stays for the sources that
+     * can name their siblings and say nothing more about them.
      */
     variantRefs?: string[];
+    /**
+     * The same siblings as `variantRefs`, each with the facets that distinguish
+     * it — material, bezel, bracelet, dial, size — so a consumer can render an
+     * "Also available with" table without looking up eighteen other rows.
+     *
+     * READ THIS IN PREFERENCE TO `variantRefs` WHEN PRESENT, and fall back to
+     * `variantRefs` when it is absent. `variantDetails[].reference` holds exactly
+     * what `variantRefs` holds, in the same order, so the fallback is lossless in
+     * the direction that matters: a consumer reading only references can read
+     * either field and get the same answer.
+     *
+     * An extractor emits ONE of the two, not both — carrying both would put two
+     * spellings of one relationship in every row. Rolex emits this; Cartier emits
+     * `variantRefs`, because its siblings come from a page-level cross-link modal
+     * with no catalogue record behind them to enrich from.
+     *
+     * The `variantRefs` distinction between PRESENT-AND-EMPTY and ABSENT governs
+     * this field identically, and for the same reason.
+     */
+    variantDetails?: ExtractedWatchVariant[];
     /** Lossless passthrough of every label/value pair the source exposed. */
     rawSpecs: Record<string, string>;
 }
