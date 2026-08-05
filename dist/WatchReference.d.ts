@@ -90,10 +90,27 @@ export interface WatchReference {
     series?: string;
     /** e.g., "Analog", "Digital", "Smartwatch" */
     watchType?: string;
-    /** Bezel material */
+    /**
+     * Bezel MATERIAL (`lookup_bezel_material`). Named `bezel` rather than
+     * `bezelMaterial` for history — it predates the lookup and every reader (the
+     * RN app, the brand portal, the dedup differ) is on this key, so the name
+     * stays and the lookup is what changed. Single-select: a bezel has one
+     * primary material, with a `mixed` slug for two-tone / insert-on-metal cases.
+     */
     bezel?: string;
     /** Bezel type (e.g., "Unidirectional", "Bidirectional") */
     bezelType?: string;
+    /**
+     * Bezel COLOURS — MULTI-VALUE (`lookup_bezel_colors`). A bezel routinely has
+     * more than one: a GMT-Master "Pepsi" insert is `["red", "blue"]`, a
+     * "Kermit" is `["green", "black"]`. Stored as an array of slugs (the
+     * `crownType` / `crystal` / `dialAndHands.indexes` convention), NOT the
+     * comma-joined string `handsColor` / `indexColor` use.
+     *
+     * Distinct from `bezel` (the material) and from `dialAndHands.color` — an
+     * all-black ceramic bezel over a white dial carries `["black"]` here.
+     */
+    bezelColors?: string[];
     /**
      * Crown type — MULTI-VALUE (`lookup_crown_types`). A crown is routinely
      * several things at once: an attachment method AND a sealing system AND a
