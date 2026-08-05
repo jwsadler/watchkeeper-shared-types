@@ -65,6 +65,27 @@ export interface WatchBrand {
      */
     manufacturerIdsManualInclude?: string[];
     manufacturerIdsManualExclude?: string[];
+    /**
+     * Denormalised count of the brand's LISTABLE references — parents and
+     * standalones, i.e. `isVariant === false`. Variants (those carrying a
+     * `parentReferenceId`) are excluded, matching the admin references listing and
+     * the `referenceCount` semantics on `CustomCalibre` / `ElectronicModule`.
+     *
+     * SERVER-MAINTAINED — written only by the watchlock Cloud Functions
+     * `maintainWatchBrandReferenceCount` trigger (on every ref create/delete/
+     * variant-flip under the brand) and the one-shot
+     * `recomputeAllWatchBrandReferenceCounts` callable. Never write it from a
+     * client; a brand edit that does a full-document `set()` without merging will
+     * wipe it until the next ref write or recompute sweep repairs it.
+     *
+     * Exists so the brands listing can render per-brand counts from the brand docs
+     * it already loaded, instead of firing one aggregation query per brand
+     * (~200 `runAggregationQuery` calls per page open).
+     *
+     * Absent on brands that pre-date the field and have not been swept yet — treat
+     * `undefined` as "not yet computed", not as zero.
+     */
+    parentReferenceCount?: number;
     createdAt?: Date;
     updatedAt?: Date;
 }

@@ -29,8 +29,15 @@
  * a typed dropdown from it, and adding a module is a shared-types version bump
  * + SHA re-pin. That friction is the point — makes "one shared type, enforced
  * by build" true rather than aspirational.
+ *
+ * THESE ARE MODULE IDS, NOT BRAND SLUGS, and `glashutte-original` is where that
+ * distinction stops being pedantic: the brand doc admin's slug derivation
+ * produces for "Glashütte Original" is `glashtte-original` — no `u`, because
+ * the ü is DROPPED rather than transliterated (see the HARD REQUIREMENT note at
+ * the top of this file). The module id keeps the readable spelling; the two
+ * strings are one character apart and mean different things.
  */
-export type ExtractorId = 'watchbase' | 'omega' | 'lang-heyne' | 'rolex' | 'cartier';
+export type ExtractorId = 'watchbase' | 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original';
 /**
  * How much of a source's catalogue a run asks for.
  *
