@@ -207,6 +207,16 @@ export interface ExtractedWatch {
     dialMaterial?: string;
     hands?: string;
     handsColor?: string;
+    /**
+     * Date complication, as scraped. One slug per field, mirroring
+     * `DialInfo.dateDisplay` / `dateWindowPosition` / `dateWindowFrame` /
+     * `dateWheelColor` — the importer writes them straight through to
+     * `dialAndHands`. Extractors that don't yet emit them simply omit them.
+     */
+    dateDisplay?: string;
+    dateWindowPosition?: string;
+    dateWindowFrame?: string;
+    dateWheelColor?: string;
     strapMaterial?: string;
     strapColor?: string;
     functions?: string[];

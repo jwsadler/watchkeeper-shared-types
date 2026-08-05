@@ -52,5 +52,30 @@ export interface DialInfo {
     luminova?: boolean;
     /** Number of subdials (for chronographs) */
     subdials?: number;
+    /**
+     * The KIND of date complication — `date_window`, `big_date`, `pointer_date`,
+     * `subsidiary_dial`, `day_date`, `annual_calendar`, … Backed by
+     * `lookup_date_display`. This is the field that decides whether the three
+     * window-specific fields below apply at all: a `pointer_date` or
+     * `subsidiary_dial` has no aperture, so it carries none of them.
+     */
+    dateDisplay?: string;
+    /**
+     * Where the aperture sits on the dial, by hour position — `3`, `4_30`, `6`,
+     * `9`, `12`, `peripheral`. Backed by `lookup_date_window_position`. Only
+     * meaningful when `dateDisplay` is a window/aperture type.
+     */
+    dateWindowPosition?: string;
+    /**
+     * The treatment around the aperture edge — `none`, `framed`, `beveled`,
+     * `applied`. Backed by `lookup_date_window_frame`. Window types only.
+     */
+    dateWindowFrame?: string;
+    /**
+     * The colour of the date DISC visible through the aperture, NOT the colour of
+     * the numerals printed on it — `white`, `black`, `color_matched`, `silver`,
+     * `mixed`. Backed by `lookup_date_wheel_color`. Window types only.
+     */
+    dateWheelColor?: string;
 }
 //# sourceMappingURL=DialInfo.d.ts.map
