@@ -77,5 +77,16 @@ export interface DialInfo {
      * `mixed`. Backed by `lookup_date_wheel_color`. Window types only.
      */
     dateWheelColor?: string;
+    /**
+     * The colour(s) of the NUMERALS PRINTED ON the date disc — the counterpart to
+     * `dateWheelColor`, which is the disc's own background. Backed by
+     * `lookup_text_colors`, the same lookup `ElectronicsInfo.textColor` uses.
+     *
+     * MULTI-select, stored comma-joined (`"black, red"`) like `indexColor` and
+     * `handTypes`: a day-date routinely prints the weekend positions in red and
+     * the weekdays in black on one wheel, so a single reference legitimately has
+     * two or more values. Window types only.
+     */
+    dateWheelTextColor?: string;
 }
 //# sourceMappingURL=DialInfo.d.ts.map
