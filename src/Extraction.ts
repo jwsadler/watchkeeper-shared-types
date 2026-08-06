@@ -37,6 +37,11 @@
  * the ü is DROPPED rather than transliterated (see the HARD REQUIREMENT note at
  * the top of this file). The module id keeps the readable spelling; the two
  * strings are one character apart and mean different things.
+ *
+ * `breitling` is the counter-example that makes the rule legible: no
+ * diacritics, no ampersand, nothing for the slug derivation to strip, so its
+ * module id and its brand doc id are the same string. Most brands are like
+ * this; `glashutte-original` is the one that is not.
  */
 export type ExtractorId =
   | 'watchbase'
@@ -44,7 +49,8 @@ export type ExtractorId =
   | 'lang-heyne'
   | 'rolex'
   | 'cartier'
-  | 'glashutte-original';
+  | 'glashutte-original'
+  | 'breitling';
 
 /**
  * How much of a source's catalogue a run asks for.
