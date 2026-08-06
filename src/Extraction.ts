@@ -41,7 +41,8 @@
  * `breitling` is the counter-example that makes the rule legible: no
  * diacritics, no ampersand, nothing for the slug derivation to strip, so its
  * module id and its brand doc id are the same string. Most brands are like
- * this; `glashutte-original` is the one that is not.
+ * this; `glashutte-original` is the one that is not. `richard-mille` is the
+ * same easy case as `breitling` — a two-word name with nothing to strip.
  */
 export type ExtractorId =
   | 'watchbase'
@@ -50,7 +51,8 @@ export type ExtractorId =
   | 'rolex'
   | 'cartier'
   | 'glashutte-original'
-  | 'breitling';
+  | 'breitling'
+  | 'richard-mille';
 
 /**
  * How much of a source's catalogue a run asks for.
