@@ -55,10 +55,10 @@ export interface DialInfo {
 
   // ── Date complication ──────────────────────────────────────────────────────
   // Flat under `dialAndHands`, matching every other field on this interface —
-  // there are no nested sub-objects here. All four are SINGLE-select slugs, so
-  // plain strings rather than the comma-joined convention `indexColor` and
-  // `handTypes` use for multi-select. A reference with no date display carries
-  // none of them.
+  // there are no nested sub-objects here. The first four are SINGLE-select
+  // slugs, so plain strings. The fifth, `dateWheelTextColor`, is MULTI-select
+  // and follows the comma-joined convention `indexColor` and `handTypes` use.
+  // A reference with no date display carries none of them.
 
   /**
    * The KIND of date complication — `date_window`, `big_date`, `pointer_date`,
@@ -85,4 +85,15 @@ export interface DialInfo {
    * `mixed`. Backed by `lookup_date_wheel_color`. Window types only.
    */
   dateWheelColor?: string;
+  /**
+   * The colour(s) of the NUMERALS PRINTED ON the date disc — the counterpart to
+   * `dateWheelColor`, which is the disc's own background. Backed by
+   * `lookup_text_colors`, the same lookup `ElectronicsInfo.textColor` uses.
+   *
+   * MULTI-select, stored comma-joined (`"black, red"`) like `indexColor` and
+   * `handTypes`: a day-date routinely prints the weekend positions in red and
+   * the weekdays in black on one wheel, so a single reference legitimately has
+   * two or more values. Window types only.
+   */
+  dateWheelTextColor?: string;
 }

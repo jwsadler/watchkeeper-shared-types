@@ -337,13 +337,19 @@ export interface ExtractedWatch {
   /**
    * Date complication, as scraped. One slug per field, mirroring
    * `DialInfo.dateDisplay` / `dateWindowPosition` / `dateWindowFrame` /
-   * `dateWheelColor` — the importer writes them straight through to
-   * `dialAndHands`. Extractors that don't yet emit them simply omit them.
+   * `dateWheelColor` / `dateWheelTextColor` — the importer writes them straight
+   * through to `dialAndHands`. Extractors that don't yet emit them simply omit
+   * them.
+   *
+   * `dateWheelTextColor` is the only multi-select of the five and arrives
+   * comma-joined (`"black, red"`), matching how it is stored — the disc's
+   * printed numerals are commonly two colours on a day-date.
    */
   dateDisplay?: string;
   dateWindowPosition?: string;
   dateWindowFrame?: string;
   dateWheelColor?: string;
+  dateWheelTextColor?: string;
 
   // Strap
   strapMaterial?: string;
