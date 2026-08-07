@@ -35,7 +35,7 @@ export interface DialInfo {
      * Comma-joined index color slugs, e.g. "white, gold". Multi-select
      * field backed by `lookup_index_colors`. Mirrors `handsColor`
      * convention. Separate from `color` (the dial background color)
-     * and from lume color (planned Phase 2 of dial & hands expansion).
+     * and from the lume colours (`lumeDayColor` / `lumeGlowColor` below).
      */
     indexColor?: string;
     /**
@@ -52,6 +52,45 @@ export interface DialInfo {
     luminova?: boolean;
     /** Number of subdials (for chronographs) */
     subdials?: number;
+    /**
+     * WHERE the luminous material is applied — `none`, `hands_only`,
+     * `markers_only`, `hands_and_markers`, `full_dial`, `unknown`. Backed by
+     * `lookup_lume_presence`.
+     *
+     * The gating field of the four: `none` means the other three do not apply,
+     * the same way `dateDisplay` gates the date block below.
+     */
+    lumePresence?: string;
+    /**
+     * WHAT the luminous material is — `super_luminova`, `luminova`, `tritium`,
+     * `radium`, `promethium`, `mixed`, `unknown`. Backed by
+     * `lookup_lume_material`.
+     *
+     * Collector-relevant well beyond brightness: `radium` and `tritium` date a
+     * vintage piece (and `radium` is why some are handled with care), and a
+     * relumed dial routinely mixes eras — hence `mixed`.
+     */
+    lumeMaterial?: string;
+    /**
+     * The material's colour in DAYLIGHT, unlit — `white`, `off_white`, `cream`,
+     * `yellow`, `greenish`, `brown`, `orange`, `mixed`, `unknown`. Backed by
+     * `lookup_lume_day_color`.
+     *
+     * The counterpart to `lumeGlowColor` below, and a different answer: the
+     * faux-patina `cream` lume every modern homage advertises glows plain green.
+     * On a vintage piece the day colour is also the age tell — tritium tans from
+     * white toward `brown` as it decays.
+     */
+    lumeDayColor?: string;
+    /**
+     * The colour it GLOWS in the dark — `green`, `blue`, `aqua`, `orange`,
+     * `yellow`, `mixed`, `unknown`. Backed by `lookup_lume_glow_color`.
+     *
+     * `mixed` is the two-tone answer a dive watch gives when the bezel pip or the
+     * minute hand is deliberately a second colour (Rolex Chromalight glows blue
+     * where most Super-LumiNova glows green).
+     */
+    lumeGlowColor?: string;
     /**
      * The KIND of date complication — `date_window`, `big_date`, `pointer_date`,
      * `subsidiary_dial`, `day_date`, `annual_calendar`, … Backed by
