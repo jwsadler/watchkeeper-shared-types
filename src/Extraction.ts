@@ -44,6 +44,24 @@
  * this; `glashutte-original` is the one that is not. `richard-mille` is the
  * same easy case as `breitling` — a two-word name with nothing to strip, and so
  * is `audemars-piguet`.
+ *
+ * `jacob-and-co` is the SECOND case after `glashutte-original` where the module
+ * id and the brand doc id come apart, and here it is an ampersand rather than a
+ * diacritic that does it. The brand writes itself "Jacob & Co.", and admin's
+ * derivation strips both the `&` and the `.` — `buildBrandSlug('Jacob & Co.')`
+ * is `jacob-co`, with the "and" gone entirely. The module id spells the "and"
+ * out so the dropdown reads as the brand does.
+ *
+ * `iwc` is the case that inverts the warning above, and it is the more
+ * dangerous shape precisely because the two strings COINCIDE. The brand doc is
+ * `watchBrands/iwc` and the module id is `iwc`, so nothing here looks unusual —
+ * but the name the source publishes everywhere (`<title>`, `h1`, and JSON-LD
+ * `brand.name` on every product page) is "IWC Schaffhausen", and
+ * `buildBrandSlug('IWC Schaffhausen')` is `iwc-schaffhausen`, which is a
+ * `movement_manufacturers` document, NOT a brand. Deriving the slug from the
+ * displayed name therefore writes a full catalogue to the wrong collection
+ * without erroring. The module hard-codes `supportedBrands: ['iwc']` for this
+ * reason; see `docs/iwc-port-plan.md` §11 in the extractors repo.
  */
 export type ExtractorId =
   | 'watchbase'
@@ -54,7 +72,9 @@ export type ExtractorId =
   | 'glashutte-original'
   | 'breitling'
   | 'richard-mille'
-  | 'audemars-piguet';
+  | 'audemars-piguet'
+  | 'jacob-and-co'
+  | 'iwc';
 
 /**
  * How much of a source's catalogue a run asks for.
