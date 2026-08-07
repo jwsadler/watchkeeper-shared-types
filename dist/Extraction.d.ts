@@ -41,9 +41,10 @@
  * diacritics, no ampersand, nothing for the slug derivation to strip, so its
  * module id and its brand doc id are the same string. Most brands are like
  * this; `glashutte-original` is the one that is not. `richard-mille` is the
- * same easy case as `breitling` — a two-word name with nothing to strip.
+ * same easy case as `breitling` — a two-word name with nothing to strip, and so
+ * is `audemars-piguet`.
  */
-export type ExtractorId = 'watchbase' | 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille';
+export type ExtractorId = 'watchbase' | 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille' | 'audemars-piguet';
 /**
  * How much of a source's catalogue a run asks for.
  *
