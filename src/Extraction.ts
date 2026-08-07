@@ -62,6 +62,17 @@
  * displayed name therefore writes a full catalogue to the wrong collection
  * without erroring. The module hard-codes `supportedBrands: ['iwc']` for this
  * reason; see `docs/iwc-port-plan.md` §11 in the extractors repo.
+ *
+ * `nomos-glashuette` is the THIRD divergent case and the closest repeat of the
+ * first: same Saxon town, same umlaut, same single missing character.
+ * `buildBrandSlug('NOMOS Glashütte')` is `nomos-glashtte`, so the module id and
+ * the brand doc id come apart exactly as they do for `glashutte-original`. Note
+ * that the two brands are unrelated despite sharing a town and a trap. The URL
+ * slug NOMOS itself uses — `nomos-glashuette`, transliterating the umlaut where
+ * admin's derivation drops it — is what the module id mirrors, and it is a
+ * third distinct spelling of the same name; the module hard-codes
+ * `supportedBrands: ['nomos-glashtte']` rather than deriving any of them. See
+ * `docs/nomos-glashuette-port-plan.md` §9 in the extractors repo.
  */
 export type ExtractorId =
   | 'watchbase'
@@ -74,7 +85,8 @@ export type ExtractorId =
   | 'richard-mille'
   | 'audemars-piguet'
   | 'jacob-and-co'
-  | 'iwc';
+  | 'iwc'
+  | 'nomos-glashuette';
 
 /**
  * How much of a source's catalogue a run asks for.
