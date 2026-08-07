@@ -52,6 +52,23 @@ export interface DialInfo {
   luminova?: boolean;
   /** Number of subdials (for chronographs) */
   subdials?: number;
+  /**
+   * WHAT the subdials are — `chronograph_minutes`, `running_seconds`,
+   * `24_hour`, `power_reserve`, `moonphase`, … Comma-joined slugs
+   * (`"chronograph_minutes, chronograph_hours, running_seconds"`), MULTI-select
+   * and backed by `lookup_dial_subdials`, following the same convention
+   * `indexColor` / `handTypes` / `dateWheelTextColor` use.
+   *
+   * The companion to `subdials` above, which stays exactly as it is: that is
+   * the COUNT, this is the function of each register. They answer different
+   * questions and neither derives from the other — a three-register
+   * chronograph and a triple-calendar both read `subdials: 3`, and only this
+   * field says which one you are looking at. Deliberately not validated
+   * against the count: a reference can legitimately carry one without the
+   * other, since the count comes off any dial photo while the functions
+   * usually need the printed sub-dial labels.
+   */
+  subdialTypes?: string;
 
   // ── Date complication ──────────────────────────────────────────────────────
   // Flat under `dialAndHands`, matching every other field on this interface —
