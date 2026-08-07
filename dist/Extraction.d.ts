@@ -43,8 +43,15 @@
  * this; `glashutte-original` is the one that is not. `richard-mille` is the
  * same easy case as `breitling` — a two-word name with nothing to strip, and so
  * is `audemars-piguet`.
+ *
+ * `jacob-and-co` is the SECOND case after `glashutte-original` where the module
+ * id and the brand doc id come apart, and here it is an ampersand rather than a
+ * diacritic that does it. The brand writes itself "Jacob & Co.", and admin's
+ * derivation strips both the `&` and the `.` — `buildBrandSlug('Jacob & Co.')`
+ * is `jacob-co`, with the "and" gone entirely. The module id spells the "and"
+ * out so the dropdown reads as the brand does.
  */
-export type ExtractorId = 'watchbase' | 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille' | 'audemars-piguet';
+export type ExtractorId = 'watchbase' | 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille' | 'audemars-piguet' | 'jacob-and-co';
 /**
  * How much of a source's catalogue a run asks for.
  *
