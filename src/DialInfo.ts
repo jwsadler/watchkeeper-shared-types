@@ -35,7 +35,7 @@ export interface DialInfo {
    * Comma-joined index color slugs, e.g. "white, gold". Multi-select
    * field backed by `lookup_index_colors`. Mirrors `handsColor`
    * convention. Separate from `color` (the dial background color)
-   * and from lume color (planned Phase 2 of dial & hands expansion).
+   * and from the lume colours (`lumeDayColor` / `lumeGlowColor` below).
    */
   indexColor?: string;
   /**
