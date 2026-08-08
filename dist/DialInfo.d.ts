@@ -70,6 +70,70 @@ export interface DialInfo {
      */
     subdialTypes?: string;
     /**
+     * The RING between the dial face and the crystal, where a watch has one —
+     * `none`, `rehaut` (the vertical inner wall, the surface Rolex laser-etches),
+     * `internal_chapter_ring` (a separate ring lying flat on the dial's outer
+     * edge), `flange` (a sloped ring bridging dial and case), `stepped` (the ring
+     * sits at a raised level above the dial), `unknown`. SINGLE-select, backed by
+     * `lookup_chapter_ring_type`.
+     *
+     * A structural question, not a decorative one: this is WHERE the ring is, and
+     * `minuteTrack` below is WHAT is printed on it — which is why the two are
+     * separate fields and why neither implies the other. A chapter ring can be
+     * bare, and a minute track is very often printed on the dial itself with no
+     * ring at all.
+     */
+    chapterRing?: string;
+    /**
+     * The style of the minute/second markings around the dial's edge —
+     * `none`, `railroad` (two concentric rails with cross-ticks between them),
+     * `hash` (bare tick marks with no enclosing rails), `printed`, `applied`,
+     * `mixed`, `unknown`. SINGLE-select, backed by `lookup_minute_track_type`.
+     *
+     * The vocabulary deliberately mixes two axes — `railroad`/`hash` describe the
+     * PATTERN, `printed`/`applied` the CONSTRUCTION — so the answer is whichever
+     * is the more specific true statement about the dial, with the construction
+     * slugs as the fallback when the pattern has no name of its own.
+     *
+     * Independent of `chapterRing`: the track sits on the ring when there is one
+     * and on the dial face when there is not.
+     */
+    minuteTrack?: string;
+    /**
+     * Measurement scales carried by the watch — `tachymeter`, `telemeter`,
+     * `pulsometer`, `decimal`, `slide_rule`, `diving`, `regatta`, `compass`,
+     * `gmt_24h`, `worldtime`. MULTI-select, stored comma-joined
+     * (`"tachymeter, telemeter"`) like `indexColor` / `handTypes` /
+     * `subdialTypes`, and backed by `lookup_dial_scales`.
+     *
+     * Multi because a doctor's chronograph routinely prints two or three
+     * concentric scales on one dial, and because a dial scale and a bezel scale
+     * are both scales: this field covers the whole watch's scale complement
+     * regardless of the surface it is printed on, so a Daytona's bezel tachymeter
+     * belongs here even though the field lives on the dial block. That is a
+     * deliberate departure from the strict dial/bezel split the rest of these
+     * interfaces keep — a collector asking "does it have a tachymeter" does not
+     * care which surface carries it, and splitting the vocabulary in two would
+     * have meant two lookups holding the same ten slugs.
+     *
+     * A plain time-only dial carries none of them and leaves the field unset.
+     */
+    dialScales?: string;
+    /**
+     * How the brand mark is applied to the dial — `applied` (a separate metal
+     * piece fixed to the dial, which catches light and casts a shadow), `printed`
+     * (flat ink), `embossed` / `relief` (formed from the dial material itself),
+     * `none` (a sterile or unbranded dial), `mixed` (the brand mark and the model
+     * text differ in treatment — an applied coronet above a printed wordmark is
+     * the common case), `unknown`. SINGLE-select, backed by
+     * `lookup_dial_logo_type`.
+     *
+     * A finishing-quality signal rather than a branding one: an applied logo is a
+     * separate manufacturing step, which is why homages print what the original
+     * applies.
+     */
+    logoType?: string;
+    /**
      * The KIND of date complication — `date_window`, `big_date`, `pointer_date`,
      * `subsidiary_dial`, `day_date`, `annual_calendar`, … Backed by
      * `lookup_date_display`. This is the field that decides whether the three

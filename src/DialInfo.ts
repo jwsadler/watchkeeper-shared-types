@@ -70,56 +70,79 @@ export interface DialInfo {
    */
   subdialTypes?: string;
 
-  // ── Lume ───────────────────────────────────────────────────────────────────
-  // Flat under `dialAndHands`, like everything else here. All four are
-  // SINGLE-select slugs, so plain strings.
-  //
-  // These are the DETAIL behind the `lume` / `luminova` booleans above, which
-  // stay: they are what the RN read side and every legacy import already
-  // answer, and "does it glow at all" is a cheaper question than "what with,
-  // and what colour". A reference can carry the boolean alone; a reference
-  // that carries `lumePresence: 'none'` is saying the opposite of the boolean
-  // and the boolean is the one to trust less.
+  // ── Chapter ring & dial furniture ──────────────────────────────────────────
+  // The ring of markings around the dial's edge and the brand mark at its
+  // centre — the parts of a dial that are neither the colour, the markers nor
+  // the hands, and that nothing on this interface has ever recorded. Flat under
+  // `dialAndHands` like everything else here. All four are independent: unlike
+  // the date block below, none of them gates any other. A `chapterRing: none`
+  // dial can still carry a minute track printed straight onto the dial face,
+  // and every dial has a logo treatment whether or not it has a chapter ring.
 
   /**
-   * WHERE the luminous material is applied — `none`, `hands_only`,
-   * `markers_only`, `hands_and_markers`, `full_dial`, `unknown`. Backed by
-   * `lookup_lume_presence`.
+   * The RING between the dial face and the crystal, where a watch has one —
+   * `none`, `rehaut` (the vertical inner wall, the surface Rolex laser-etches),
+   * `internal_chapter_ring` (a separate ring lying flat on the dial's outer
+   * edge), `flange` (a sloped ring bridging dial and case), `stepped` (the ring
+   * sits at a raised level above the dial), `unknown`. SINGLE-select, backed by
+   * `lookup_chapter_ring_type`.
    *
-   * The gating field of the four: `none` means the other three do not apply,
-   * the same way `dateDisplay` gates the date block below.
+   * A structural question, not a decorative one: this is WHERE the ring is, and
+   * `minuteTrack` below is WHAT is printed on it — which is why the two are
+   * separate fields and why neither implies the other. A chapter ring can be
+   * bare, and a minute track is very often printed on the dial itself with no
+   * ring at all.
    */
-  lumePresence?: string;
+  chapterRing?: string;
   /**
-   * WHAT the luminous material is — `super_luminova`, `luminova`, `tritium`,
-   * `radium`, `promethium`, `mixed`, `unknown`. Backed by
-   * `lookup_lume_material`.
+   * The style of the minute/second markings around the dial's edge —
+   * `none`, `railroad` (two concentric rails with cross-ticks between them),
+   * `hash` (bare tick marks with no enclosing rails), `printed`, `applied`,
+   * `mixed`, `unknown`. SINGLE-select, backed by `lookup_minute_track_type`.
    *
-   * Collector-relevant well beyond brightness: `radium` and `tritium` date a
-   * vintage piece (and `radium` is why some are handled with care), and a
-   * relumed dial routinely mixes eras — hence `mixed`.
+   * The vocabulary deliberately mixes two axes — `railroad`/`hash` describe the
+   * PATTERN, `printed`/`applied` the CONSTRUCTION — so the answer is whichever
+   * is the more specific true statement about the dial, with the construction
+   * slugs as the fallback when the pattern has no name of its own.
+   *
+   * Independent of `chapterRing`: the track sits on the ring when there is one
+   * and on the dial face when there is not.
    */
-  lumeMaterial?: string;
+  minuteTrack?: string;
   /**
-   * The material's colour in DAYLIGHT, unlit — `white`, `off_white`, `cream`,
-   * `yellow`, `greenish`, `brown`, `orange`, `mixed`, `unknown`. Backed by
-   * `lookup_lume_day_color`.
+   * Measurement scales carried by the watch — `tachymeter`, `telemeter`,
+   * `pulsometer`, `decimal`, `slide_rule`, `diving`, `regatta`, `compass`,
+   * `gmt_24h`, `worldtime`. MULTI-select, stored comma-joined
+   * (`"tachymeter, telemeter"`) like `indexColor` / `handTypes` /
+   * `subdialTypes`, and backed by `lookup_dial_scales`.
    *
-   * The counterpart to `lumeGlowColor` below, and a different answer: the
-   * faux-patina `cream` lume every modern homage advertises glows plain green.
-   * On a vintage piece the day colour is also the age tell — tritium tans from
-   * white toward `brown` as it decays.
+   * Multi because a doctor's chronograph routinely prints two or three
+   * concentric scales on one dial, and because a dial scale and a bezel scale
+   * are both scales: this field covers the whole watch's scale complement
+   * regardless of the surface it is printed on, so a Daytona's bezel tachymeter
+   * belongs here even though the field lives on the dial block. That is a
+   * deliberate departure from the strict dial/bezel split the rest of these
+   * interfaces keep — a collector asking "does it have a tachymeter" does not
+   * care which surface carries it, and splitting the vocabulary in two would
+   * have meant two lookups holding the same ten slugs.
+   *
+   * A plain time-only dial carries none of them and leaves the field unset.
    */
-  lumeDayColor?: string;
+  dialScales?: string;
   /**
-   * The colour it GLOWS in the dark — `green`, `blue`, `aqua`, `orange`,
-   * `yellow`, `mixed`, `unknown`. Backed by `lookup_lume_glow_color`.
+   * How the brand mark is applied to the dial — `applied` (a separate metal
+   * piece fixed to the dial, which catches light and casts a shadow), `printed`
+   * (flat ink), `embossed` / `relief` (formed from the dial material itself),
+   * `none` (a sterile or unbranded dial), `mixed` (the brand mark and the model
+   * text differ in treatment — an applied coronet above a printed wordmark is
+   * the common case), `unknown`. SINGLE-select, backed by
+   * `lookup_dial_logo_type`.
    *
-   * `mixed` is the two-tone answer a dive watch gives when the bezel pip or the
-   * minute hand is deliberately a second colour (Rolex Chromalight glows blue
-   * where most Super-LumiNova glows green).
+   * A finishing-quality signal rather than a branding one: an applied logo is a
+   * separate manufacturing step, which is why homages print what the original
+   * applies.
    */
-  lumeGlowColor?: string;
+  logoType?: string;
 
   // ── Date complication ──────────────────────────────────────────────────────
   // Flat under `dialAndHands`, matching every other field on this interface —
