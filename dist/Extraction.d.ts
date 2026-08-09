@@ -80,8 +80,24 @@
  * module id and the brand doc id are the same string, and the derivation has
  * nothing to strip. See `docs/christopher-ward-port-plan.md` §8 in the
  * extractors repo.
+ *
+ * `muehle-glashuette` is the FOURTH divergent case, the second Glashütte umlaut
+ * in three modules, and the first to lose TWO characters to the derivation. The
+ * brand publishes itself as "Mühle-Glashütte" — hyphenated; `og:site_name` and
+ * JSON-LD `name` agree on every product page — and
+ * `buildBrandSlug('Mühle-Glashütte')` is `mhle-glashtte`, with both umlauts
+ * dropped rather than transliterated. Mühle-Glashütte is an independent family
+ * firm unrelated to BOTH `glashutte-original` and `nomos-glashuette` despite
+ * the shared town, so three brands from one Saxon village now sit in this
+ * union, each carrying its own spelling of the same trap. The module id mirrors
+ * the brand's own domain (muehle-glashuette.de), which transliterates the
+ * umlaut where admin's derivation strips it — a third spelling, and a fourth if
+ * you count the WordPress theme directory, `muhle-glashutte`, which drops the
+ * diacritics without transliterating. The module hard-codes
+ * `supportedBrands: ['mhle-glashtte']` rather than deriving any of them. See
+ * `docs/muehle-glashuette-port-plan.md` §8 in the extractors repo.
  */
-export type ExtractorId = 'watchbase' | 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille' | 'audemars-piguet' | 'jacob-and-co' | 'iwc' | 'nomos-glashuette' | 'christopher-ward';
+export type ExtractorId = 'watchbase' | 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille' | 'audemars-piguet' | 'jacob-and-co' | 'iwc' | 'nomos-glashuette' | 'christopher-ward' | 'muehle-glashuette';
 /**
  * How much of a source's catalogue a run asks for.
  *
