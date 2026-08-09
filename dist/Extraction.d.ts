@@ -368,8 +368,30 @@ export interface ExtractedWatch {
     dateWindowFrame?: string;
     dateWheelColor?: string;
     dateWheelTextColor?: string;
+    /**
+     * The three strap fields are FLAT MIRRORS of `StrapInfo`, not a nested
+     * object, and that is the established convention on this interface rather
+     * than an accident:
+     *
+     *     ExtractedWatch.strapMaterial    ->  WatchReference.strap.material
+     *     ExtractedWatch.strapColor       ->  WatchReference.strap.color
+     *     ExtractedWatch.strapBuckleType  ->  WatchReference.strap.buckleType
+     *
+     * `DialInfo` is mirrored the same way (`dialColor`, `dialFinish`, the five
+     * `date*` fields), so a nested `strap?: StrapInfo` here would be the odd one
+     * out AND would sit next to two flat siblings describing the same object.
+     *
+     * `strapBuckleType` is admin's own name for this pair — `bulkEnrichFields.ts`
+     * declares `strField('strapBuckleType', 'Buckle type', … 'strap.buckleType')`
+     * and the enrichment prompt lists `strapBuckleType` among the strap fields —
+     * so the importer needs no new mapping to route it.
+     *
+     * Deliberately NOT called `clasp`: nothing in the data model uses that word,
+     * and a top-level `clasp` would have no home in `WatchReference`.
+     */
     strapMaterial?: string;
     strapColor?: string;
+    strapBuckleType?: string;
     functions?: string[];
     productionYears?: string;
     calibre?: ExtractedCalibre;
