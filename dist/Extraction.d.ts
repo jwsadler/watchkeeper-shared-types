@@ -72,8 +72,16 @@
  * third distinct spelling of the same name; the module hard-codes
  * `supportedBrands: ['nomos-glashtte']` rather than deriving any of them. See
  * `docs/nomos-glashuette-port-plan.md` §9 in the extractors repo.
+ *
+ * `christopher-ward` returns to the `breitling` shape after three divergent
+ * cases in a row, and it is worth naming as such so the exception stops looking
+ * like the rule. "Christopher Ward" carries no diacritic, no ampersand and no
+ * period, so `buildBrandSlug('Christopher Ward')` is `christopher-ward` — the
+ * module id and the brand doc id are the same string, and the derivation has
+ * nothing to strip. See `docs/christopher-ward-port-plan.md` §8 in the
+ * extractors repo.
  */
-export type ExtractorId = 'watchbase' | 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille' | 'audemars-piguet' | 'jacob-and-co' | 'iwc' | 'nomos-glashuette';
+export type ExtractorId = 'watchbase' | 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille' | 'audemars-piguet' | 'jacob-and-co' | 'iwc' | 'nomos-glashuette' | 'christopher-ward';
 /**
  * How much of a source's catalogue a run asks for.
  *
