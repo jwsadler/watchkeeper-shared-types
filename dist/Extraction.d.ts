@@ -113,8 +113,31 @@
  * relationship from that — the group structure is invisible on this origin, and
  * the brand docs are unrelated peers. See `docs/swatch-port-plan.md` §§4.1, 9
  * in the extractors repo.
+ *
+ * `tutima` is the FOURTH Glashütte brand in this union and the first of them
+ * whose name survives the derivation intact: "Tutima" carries no diacritic, no
+ * ampersand and no period, so `buildBrandSlug('Tutima')` is `tutima` and the
+ * module id, the brand doc id and the derived slug are one string. It is
+ * independent of `glashutte-original`, `nomos-glashuette` and
+ * `muehle-glashuette` despite the shared town.
+ *
+ * The trap is the name the brand actually publishes. Every page titles itself
+ * "Tutima Glashütte/Sa." — that is `og:site_name`, the `<title>` suffix and the
+ * WordPress site name — and `buildBrandSlug('Tutima Glashütte/Sa.')` is
+ * `tutima-glashttesa`, with the umlaut dropped and the slash and period
+ * stripped. The derivation is therefore safe only as long as it is never handed
+ * the displayed name; the module hard-codes `supportedBrands: ['tutima']`.
+ *
+ * The second thing to know is the `iwc` shape rather than the slug shape.
+ * Tutima is a manufacture and every calibre it fits is its own
+ * (`Tutima 310`…`Tutima 800`, eleven across the catalogue), so
+ * `movement_manufacturers/tutima` is exactly the kind of document that may
+ * already exist under this id. That is a different collection and a collision
+ * there is not a slug bug, but it is unconfirmed at the time of writing and
+ * worth settling before a first live job. See `docs/tutima-port-plan.md` §13 in
+ * the extractors repo.
  */
-export type ExtractorId = 'watchbase' | 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille' | 'audemars-piguet' | 'jacob-and-co' | 'iwc' | 'nomos-glashuette' | 'christopher-ward' | 'muehle-glashuette' | 'swatch';
+export type ExtractorId = 'watchbase' | 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille' | 'audemars-piguet' | 'jacob-and-co' | 'iwc' | 'nomos-glashuette' | 'christopher-ward' | 'muehle-glashuette' | 'swatch' | 'tutima';
 /**
  * How much of a source's catalogue a run asks for.
  *
