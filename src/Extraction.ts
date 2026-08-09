@@ -97,6 +97,23 @@
  * diacritics without transliterating. The module hard-codes
  * `supportedBrands: ['mhle-glashtte']` rather than deriving any of them. See
  * `docs/muehle-glashuette-port-plan.md` §8 in the extractors repo.
+ *
+ * `swatch` is the `breitling`/`christopher-ward` shape again — no diacritic, no
+ * ampersand, no period, so `buildBrandSlug('Swatch')` is `swatch` and the
+ * module id, the brand doc id and the derived slug are one string. The trap
+ * here is not the slug, it is the NEIGHBOURS, and there are two.
+ *
+ * First, `swatch.com` also serves 52 Flik Flak products, and Flik Flak is a
+ * different brand with its own domain and its own sitemap entry in the same
+ * `robots.txt`; `buildBrandSlug('Flik Flak')` is `flik-flak`, which is not this
+ * id. The module filters on the source's own `brand` field rather than on the
+ * origin, or it writes 52 children's watches into `watchBrands/swatch`.
+ *
+ * Second, and more tempting: Swatch Group owns `omega`, plus Longines, Tissot
+ * and others. NOTHING in this module may infer a manufacturer or parent
+ * relationship from that — the group structure is invisible on this origin, and
+ * the brand docs are unrelated peers. See `docs/swatch-port-plan.md` §§4.1, 9
+ * in the extractors repo.
  */
 export type ExtractorId =
   | 'watchbase'
@@ -112,7 +129,8 @@ export type ExtractorId =
   | 'iwc'
   | 'nomos-glashuette'
   | 'christopher-ward'
-  | 'muehle-glashuette';
+  | 'muehle-glashuette'
+  | 'swatch';
 
 /**
  * How much of a source's catalogue a run asks for.
