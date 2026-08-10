@@ -139,7 +139,6 @@
  * the extractors repo.
  */
 export type ExtractorId =
-  | 'watchbase'
   | 'omega'
   | 'lang-heyne'
   | 'rolex'
@@ -182,9 +181,9 @@ export interface ExtractorDescriptor {
    *
    * UNDEFINED MEANS `['full']` — the module runs whole-catalogue crawls and
    * nothing else. That convention, rather than a required field, is what makes
-   * this addition non-breaking for the modules that predate it: WatchBase and
-   * Omega leave it unset because their sources publish no new-releases view to
-   * read, so there is no second mode for them to honour.
+   * this addition non-breaking for the modules that predate it: Omega leaves
+   * it unset because its source publishes no new-releases view to read, so
+   * there is no second mode for it to honour.
    *
    * The admin should offer a mode picker only when this is set and holds more
    * than one entry, and should not send a `mode` a module has not declared.
@@ -558,8 +557,8 @@ export interface ExtractionResult {
    * Calibres discovered this run, deduplicated across the catalogue.
    *
    * Optional and additive: modules that only ever see a calibre in the context
-   * of a watch (WatchBase, which reads one calibre page per reference) leave
-   * this unset and nest `ExtractedWatch.calibre` instead. Modules whose source
+   * of a watch — one calibre page read per reference — leave this unset and
+   * nest `ExtractedWatch.calibre` instead. Modules whose source
    * publishes calibres as their own collection (Lang & Heyne's `/caliber`
    * endpoint) populate both — the nested copy so a single watch stays
    * self-describing, and this array so the set is emitted once rather than
@@ -626,7 +625,7 @@ export interface ExtractionJob {
   jobId: string;
   extractorId: ExtractorId;
   brandId: string;
-  /** Source-specific brand identifier (e.g. WatchBase slug). */
+  /** Source-specific brand identifier (the source's own brand slug). */
   brandSlug: string;
   options: ExtractionJobOptions;
   status: ExtractionJobStatus;
