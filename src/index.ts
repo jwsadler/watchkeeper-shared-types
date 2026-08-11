@@ -22,6 +22,16 @@ export type { CalibreFamily, CalibreFamilyInspiredBy, CalibreFamilyFunctionalCom
 export type { CalibreImage } from './CalibreImage';
 export type { CalibreAliasDetail } from './CalibreAliasDetail';
 export type { LookupValue, LookupCollection } from './LookupTypes';
+export type { StorageLocationCategory } from './StorageLocation';
+export { STORAGE_LOCATION_CATEGORIES } from './StorageLocation';
+export type { WinderEntry } from './Winder';
+export type { UserWinder } from './UserWinder';
+export type {
+  WatchStorageFields,
+  WatchStorageFieldKey,
+  OmitWatchStorageFields,
+} from './WatchStorageFields';
+export { WATCH_STORAGE_FIELD_KEYS } from './WatchStorageFields';
 export type { CuratedCollection, CuratedCollectionFilterCriteria } from './CuratedCollection';
 export type {
   RoadmapStatus,

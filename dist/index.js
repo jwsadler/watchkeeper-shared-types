@@ -14,7 +14,11 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isBrandManufacturerLinkAllowed = void 0;
+exports.isBrandManufacturerLinkAllowed = exports.WATCH_STORAGE_FIELD_KEYS = exports.STORAGE_LOCATION_CATEGORIES = void 0;
+var StorageLocation_1 = require("./StorageLocation");
+Object.defineProperty(exports, "STORAGE_LOCATION_CATEGORIES", { enumerable: true, get: function () { return StorageLocation_1.STORAGE_LOCATION_CATEGORIES; } });
+var WatchStorageFields_1 = require("./WatchStorageFields");
+Object.defineProperty(exports, "WATCH_STORAGE_FIELD_KEYS", { enumerable: true, get: function () { return WatchStorageFields_1.WATCH_STORAGE_FIELD_KEYS; } });
 var derivationGate_1 = require("./derivationGate");
 Object.defineProperty(exports, "isBrandManufacturerLinkAllowed", { enumerable: true, get: function () { return derivationGate_1.isBrandManufacturerLinkAllowed; } });
 __exportStar(require("./Extraction"), exports);
