@@ -46,6 +46,14 @@ export interface WinderEntry {
    * (e.g., `[650, 750, 900, 1200]`).
    */
   turnsPerDay?: number[] | null;
+  /**
+   * Alternative to `turnsPerDay` for programmable winders that operate over a
+   * continuous range. Not both — editor UI enforces mutual exclusion.
+   *
+   * Consumers that support both representations prefer this one when set
+   * (e.g., render "300 to 1200 TPD") and fall back to `turnsPerDay` otherwise.
+   */
+  turnsPerDayRange?: { min: number; max: number } | null;
   /** Direction(s) the winder can rotate. Lookup-backed via `lookup_winder_rotation_directions`. */
   rotationDirection?: 'clockwise' | 'counter_clockwise' | 'bidirectional' | null;
   /**
@@ -69,6 +77,14 @@ export interface WinderEntry {
   hasLock?: boolean | null;
   /** Doubles as a display case (glass front / vitrine). */
   hasDisplayCase?: boolean | null;
+  /**
+   * True when the winder itself is integrated into a safe (e.g. Buben & Zörweg
+   * Object series). Watch storage category stays `winder` — this flag is for a
+   * secondary safe overlay on the badge, not category reassignment.
+   *
+   * Distinct from {@link WinderEntry.hasLock}, which only means the case locks.
+   */
+  isSafe?: boolean | null;
   /**
    * Price positioning (e.g., entry, mid, premium, ultra-premium).
    * Slug, lookup-backed via `lookup_winder_price_tiers`.
