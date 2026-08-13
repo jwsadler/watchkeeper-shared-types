@@ -136,8 +136,47 @@
  * there is not a slug bug, but it is unconfirmed at the time of writing and
  * worth settling before a first live job. See `docs/tutima-port-plan.md` §13 in
  * the extractors repo.
+ *
+ * The five `casio-*` ids are the first entries in this union that are NOT one
+ * id per brand. casio.com serves five watch lines off one AEM instance — 742
+ * products on the `ca-en` locale, of which G-Shock is 434 — and they share an
+ * endpoint shape so completely that a line slug is the only variable between
+ * them. They are five ids because an operator wants to run Baby-G without
+ * re-crawling G-Shock, not because they are five sources.
+ *
+ * `casio-gshock` is implemented. `casio-babyg`, `casio-edifice`,
+ * `casio-protrek` and `casio-collection` are RESERVED — they name lines that
+ * exist and are already reachable through the same two endpoints, and they are
+ * added now so that filling one is a `LineConfig` literal in the extractors
+ * repo rather than another round-trip through this union. Until then they sit
+ * in `UnimplementedExtractorId` in `src/core/registry.ts` beside `lang-heyne`,
+ * which is what keeps the registry's exhaustiveness check honest.
+ *
+ * `casio-collection` is the line the site itself files under `/watches/casio/`
+ * — 228 refs, the non-G-Shock Casio-branded watches. The id spells out
+ * "collection" because a bare `casio` id sitting next to a `casio` BRAND id
+ * would read as the whole marque rather than as one line of it.
+ *
+ * ON THE SLUG this is the `breitling` / `christopher-ward` shape, and the
+ * derivation has nothing to strip: `buildBrandSlug('Casio')` is `casio`, which
+ * is the brand doc all five lines point at for now. Each line declares it on
+ * its OWN `supportedBrands` rather than sharing one entry, because admin's
+ * `brandOverrides` map is keyed by DECLARED BRAND ID and not by extractor id —
+ * so five lines declaring one string would be re-pointed by one override, all
+ * together, and Baby-G could never be moved off `casio` without dragging
+ * G-Shock with it.
+ *
+ * THE TRAP IS THE NAME THE SOURCE PUBLISHES, and it is the `iwc` shape rather
+ * than a diacritic. Every G-Shock page calls the brand "G-SHOCK" — that is
+ * `brandDisp` on all 358 rows of the catalogue feed, the `<title>`, and
+ * `productBrandTitle` in the page model — and `buildBrandSlug('G-SHOCK')` is
+ * `g-shock`, a different document from `casio` and one that may well exist.
+ * Deriving the slug from the displayed name therefore writes 434 watches to the
+ * wrong brand WITHOUT ERRORING, exactly as IWC would have. Every `casio-*`
+ * module hard-codes its `supportedBrands` for this reason. See
+ * `docs/casio-port-plan.md` §§3, 11 in the extractors repo.
  */
-export type ExtractorId = 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille' | 'audemars-piguet' | 'jacob-and-co' | 'iwc' | 'nomos-glashuette' | 'christopher-ward' | 'muehle-glashuette' | 'swatch' | 'tutima';
+export type ExtractorId = 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille' | 'audemars-piguet' | 'jacob-and-co' | 'iwc' | 'nomos-glashuette' | 'christopher-ward' | 'muehle-glashuette' | 'swatch' | 'tutima' | 'casio-gshock' | 'casio-babyg' | 'casio-edifice' | 'casio-protrek' | 'casio-collection';
 /**
  * How much of a source's catalogue a run asks for.
  *
