@@ -119,6 +119,32 @@ export interface WatchReference {
    */
   bezelColors?: string[];
   /**
+   * Case COLOURS — MULTI-VALUE (`lookup_case_colors`). The colour of the case
+   * body itself, distinct from `case.material` (what it is made of) and
+   * `case.finish` (how the surface is treated): a G-Shock in yellow resin and
+   * the same reference in black resin share a material and a finish and differ
+   * only here.
+   *
+   * Array for the same reason `bezelColors` is one — two-tone cases are
+   * ordinary (a steel case with a gold bezel-side, a black case with a red
+   * accent ring) and forcing a single value would make the second colour
+   * unrepresentable.
+   *
+   * NAMED PLURAL, deliberately, matching `bezelColors`. The singular/plural
+   * split is not cosmetic here: an indexer reading `data.bezelColor` — a field
+   * that never existed — left that attribute empty on ~87K records for weeks
+   * without anything failing, because a missing field and an unauthored one are
+   * indistinguishable downstream. One convention for multi-value colours
+   * removes the guess.
+   *
+   * SCORING: the AI identify scorers compare this against a colour read off the
+   * photo, and treat an absent value as NEUTRAL rather than a mismatch. That is
+   * what makes authoring the control: populate it on references where case
+   * colour distinguishes siblings (digital watches, most obviously), leave it
+   * blank elsewhere, and the slot simply does not participate.
+   */
+  caseColors?: string[];
+  /**
    * Crown type — MULTI-VALUE (`lookup_crown_types`). A crown is routinely
    * several things at once: an attachment method AND a sealing system AND a
    * shape (Rolex's is `["screw_down", "twinlock"]`). Stored as an array of
