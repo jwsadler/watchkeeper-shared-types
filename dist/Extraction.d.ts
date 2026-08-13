@@ -390,7 +390,48 @@ export interface ExtractedWatch {
      * inference yet emits.
      */
     taggedImages?: TaggedImage[];
+    /**
+     * The CALIBRE STRING, and the name undersells how load-bearing that is.
+     *
+     * This field is what admin's bulk importer means by a calibre: its
+     * `ScrapedWatchEntry.movement` is commented "caliber string, e.g.
+     * `Seiko NH35A`", its AI field map routes `calibre -> 'movement'`, and the
+     * import wizard's Check Calibres step scans this value RAW and offers
+     * match-or-create against the calibre database.
+     *
+     * So anything put here becomes a calibre. An electronic module number put
+     * here becomes a calibre named `5611` — see {@link module}, which is where it
+     * belongs.
+     */
     movement?: string;
+    /**
+     * Electronic module identifier — the digital counterpart of {@link movement},
+     * NOT a spelling of it.
+     *
+     * A digital or analog-quartz watch has an electronic module where a
+     * mechanical one has a calibre, and WatchKeeper models the two as separate
+     * first-class entities: a module resolves to an `electronicModules/{id}` doc
+     * and hangs off `WatchReference.moduleId`, where a calibre resolves to
+     * `custom_calibres` and hangs off `calibreId`. Mirrors
+     * `ScrapedWatchEntry.module` ("Digital-watch module identifier (electronic
+     * equivalent of a calibre), e.g. Casio `3229`"), so the importer needs no new
+     * vocabulary for it.
+     *
+     * THE MISTAKE THIS FIELD EXISTS TO PREVENT, because it has already been made
+     * once: the Casio extractor put module numbers on `movement`, which was
+     * populated correctly, looked entirely sensible at a 100% fill rate, and
+     * quietly manufactured calibres out of 81 module numbers. A fill-rate check
+     * cannot catch a field that is full and semantically wrong.
+     *
+     * Casio is the shape to reason from — it publishes NO calibre anywhere in the
+     * G-Shock catalogue. Measured across 434 references: 49 distinct raw spec
+     * labels, none of them naming a calibre, jewel count, frequency or
+     * escapement, and all 434 carrying a numeric module. Analog quartz is not the
+     * exception people expect — those references carry a module too and nothing
+     * else. So an extractor emitting this should usually leave `movement` and
+     * `calibre` UNSET rather than filling them with the same value.
+     */
+    module?: string;
     movementType?: string;
     jewels?: string;
     powerReserve?: string;
