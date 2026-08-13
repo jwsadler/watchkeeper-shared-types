@@ -432,6 +432,33 @@ export interface ExtractedWatch {
      * `calibre` UNSET rather than filling them with the same value.
      */
     module?: string;
+    /**
+     * Display/form category HINT — `ana-digi`, `digital`, `analog`, `smartwatch`,
+     * `pocket watch` — and deliberately NOT a canonical slug.
+     *
+     * Admin resolves it against the `lookup_watch_types` collection
+     * (`resolveWatchType`), so the spelling only has to match that lookup's
+     * value, display name or synonyms; an unresolved hint passes through
+     * unchanged rather than being dropped. This mirrors the manual extractor's
+     * `ExtractedProduct.watchType`, whose own comment calls it "a loose
+     * display/form-category HINT … NOT a canonical slug", and extractors should
+     * emit the same vocabulary rather than inventing slugs.
+     *
+     * WHY IT IS WORTH EMITTING AT ALL. Absent this, admin derives the category
+     * from the fields it does have, and the derivation reads an electronic module
+     * with no `hands` as a pure-digital watch. That is right for most sources and
+     * wrong for Casio, which fits module numbers to analog quartz as well: 35
+     * analog G-Shock references classify as `digital` on that heuristic, and the
+     * 227 analog-digital ones do too, because the derivation's text match looks
+     * for `analog-digital` and the source says `digital-analog`.
+     *
+     * A source that publishes its own display type — Casio's `displayType` facet
+     * is 100% filled and single-valued — should say so here rather than leave a
+     * heuristic to guess. Where a source publishes nothing, leave this UNSET and
+     * let the derivation do its job; an absent hint and a guessed one are
+     * different things.
+     */
+    watchType?: string;
     movementType?: string;
     jewels?: string;
     powerReserve?: string;
