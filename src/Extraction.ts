@@ -176,6 +176,30 @@
  * wrong brand WITHOUT ERRORING, exactly as IWC would have. Every `casio-*`
  * module hard-codes its `supportedBrands` for this reason. See
  * `docs/casio-port-plan.md` §§3, 11 in the extractors repo.
+ *
+ * `vacheron-constantin` needs nothing from the derivation: no diacritic, no
+ * ampersand and no period, so `buildBrandSlug('Vacheron Constantin')` is
+ * `vacheron-constantin` and the module id, the brand doc id and the derived
+ * slug are one string — the `breitling` / `christopher-ward` /
+ * `audemars-piguet` shape rather than the Glashütte one. The name IS accented
+ * in the brand's own French prose, but never in the places a slug could reach:
+ * the `<title>`, `og:site_name` and the domain all spell it unaccented. The
+ * diacritics on this source are all in PRODUCT names (`Égérie`,
+ * `Métiers d'Art`), which never touch the brand slug.
+ *
+ * The trap here is not the name but the SPEC TABS, and it is worth recording
+ * because it fails silently at a 100% fill rate. VC publishes `Reference`,
+ * `Diameter` and `Thickness` in BOTH of its two spec panels — the watch's and
+ * the movement's — so a flat label map puts the CALIBRE in `reference` and the
+ * movement's dimensions in the case's, with nothing missing to notice. It is
+ * the `movement`-is-not-`module` failure from v1.80.0 wearing a different hat:
+ * a full column of semantically wrong values. Every spec read in the module is
+ * scoped to its `<vac-tab-panel>` first.
+ *
+ * Ported from `audemars-piguet` — the same AEM + server-rendered-Vue origin,
+ * the same two-phase crawl, no bot protection that bites. 175 watches, 177
+ * requests, no browser. See `src/modules/vacheron-constantin/README.md` in the
+ * extractors repo; there is no separate port-plan doc for this one.
  */
 export type ExtractorId =
   | 'omega'
@@ -197,7 +221,8 @@ export type ExtractorId =
   | 'casio-babyg'
   | 'casio-edifice'
   | 'casio-protrek'
-  | 'casio-collection';
+  | 'casio-collection'
+  | 'vacheron-constantin';
 
 /**
  * How much of a source's catalogue a run asks for.
