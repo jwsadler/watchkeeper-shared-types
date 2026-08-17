@@ -199,20 +199,78 @@
  * the same two-phase crawl, no bot protection that bites. 175 watches, 177
  * requests, no browser. See `src/modules/vacheron-constantin/README.md` in the
  * extractors repo; there is no separate port-plan doc for this one.
+ *
+ * `longines` is the fourth Swatch Group brand this union can name — after
+ * `omega`, `swatch` itself and the group's ownership of Tissot and Hamilton,
+ * which have no module — and NOTHING may infer a parent relationship from that.
+ * The group structure is invisible on longines.com, and `watchBrands/longines`
+ * is a peer of `watchBrands/omega`, not a child of `watchBrands/swatch`. The
+ * `swatch` module's own comment above says the same thing from the other side.
+ *
+ * The slug is the easy shape: no diacritic, no ampersand, no period, so
+ * `buildBrandSlug('Longines')` is `longines` and the module id, the brand doc id
+ * and the derived slug are one string — the `tutima` case, where the name
+ * survives the derivation intact.
+ *
+ * THE TRAP IS THAT NO LOCALE CARRIES THE WHOLE CATALOGUE, and it is the Swatch
+ * divergence again but worse: the union across longines.com's 40 locales is 979
+ * watches, the best single locale has 843, and the two large English ones differ
+ * in BOTH directions (`en-us \ en-gb` = 68, `en-gb \ en-us` = 70). Worse still,
+ * a slug a locale does not carry answers HTTP 200 with an EMPTY payload rather
+ * than 404, so a single-locale crawl is not merely short — it cannot even
+ * discover what it is missing. The module unions the English locale sitemaps and
+ * fetches each slug from the first locale that actually serves it.
  */
-export type ExtractorId = 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille' | 'audemars-piguet' | 'jacob-and-co' | 'iwc' | 'nomos-glashuette' | 'christopher-ward' | 'muehle-glashuette' | 'swatch' | 'tutima' | 'casio-gshock' | 'casio-babyg' | 'casio-edifice' | 'casio-protrek' | 'casio-collection' | 'vacheron-constantin';
+export type ExtractorId = 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille' | 'audemars-piguet' | 'jacob-and-co' | 'iwc' | 'nomos-glashuette' | 'christopher-ward' | 'muehle-glashuette' | 'swatch' | 'tutima' | 'casio-gshock' | 'casio-babyg' | 'casio-edifice' | 'casio-protrek' | 'casio-collection' | 'vacheron-constantin' | 'longines';
 /**
  * How much of a source's catalogue a run asks for.
  *
  * `full`      every product the source publishes. The quarterly rebase.
  * `new-only`  just what the source itself flags as a new release. Cheap enough
  *             to run often, which is what keeps the watch DB fresh in between.
+ * `heritage`  the source's own PRE-OWNED or archival boutique, where it keeps
+ *             one distinct from its current line. A DIFFERENT CATALOGUE, not a
+ *             slice of the current one — see below.
  *
  * Only meaningful where the SOURCE draws the distinction. A module cannot
  * synthesise `new-only` by diffing against a previous run — that is the admin's
- * job, post-ingest, where the previous run actually exists.
+ * job, post-ingest, where the previous run actually exists. The same rule
+ * governs `heritage`: it means the source publishes a separate archival
+ * catalogue and says which products are in it, not that the extractor guessed
+ * from a production year.
+ *
+ * ------------------------------- `heritage` -------------------------------
+ *
+ * Added in v1.83.0 for `longines`, whose site serves 48 pre-owned watches from
+ * its Heritage boutique alongside the 762 current references. They sit under a
+ * different Magento attribute set, they are absent from every catalogue
+ * listing, and `full` deliberately excludes them, because they are a different
+ * kind of claim:
+ *
+ *   They are INDIVIDUAL PHYSICAL WATCHES, not references. Each carries a
+ *   `serial_number`, a `production_date` and a condition grade ("New old
+ *   stock", "Excellent overall condition, original dial"), so the row describes
+ *   one object with one history rather than a model that can be bought again.
+ *   Two of them can share a model and differ in what they have lived through.
+ *
+ *   Their SPECIFICATIONS ARE THINNER and shaped differently. Case thickness is
+ *   absent on all 48; the calibre field carries vintage movement numbers
+ *   (`13ZN`, `12.68Z`, `19AS`) including a literal `-` where the movement is
+ *   unrecorded; and every gallery image is captioned identically, so none of
+ *   them can be content-tagged.
+ *
+ * Folding the two into one ingest would put "this model has a 12.30 mm case"
+ * and "this individual watch was made in 1936 and has its original dial" in one
+ * table under one schema. The separate mode is what keeps a consumer's decision
+ * to take one, the other or both an explicit one.
+ *
+ * A source with no such boutique simply does not declare it, exactly as with
+ * `new-only`. The admin renders its mode picker from `supportedModes`, so a
+ * third value is SELECTABLE with no admin change — but a Run dialog that
+ * hard-codes two labels for display will need one. Tracked separately from the
+ * module PR.
  */
-export type ExtractorMode = 'full' | 'new-only';
+export type ExtractorMode = 'full' | 'new-only' | 'heritage';
 /** Descriptor an admin uses to render the extractor dropdown + defaults. */
 export interface ExtractorDescriptor {
     id: ExtractorId;
