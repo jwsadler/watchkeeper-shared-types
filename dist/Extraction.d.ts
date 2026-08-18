@@ -220,8 +220,54 @@
  * than 404, so a single-locale crawl is not merely short — it cannot even
  * discover what it is missing. The module unions the English locale sitemaps and
  * fetches each slug from the first locale that actually serves it.
+ *
+ * `a-lange-soehne` IS THE MOST SEVERE SLUG DIVERGENCE IN THIS UNION, and it is
+ * the only one whose derived slug is not a word:
+ *
+ *     buildBrandSlug('A. Lange & Söhne') -> 'a-lange-shne'
+ *
+ * The period and the ampersand are stripped — the `jacob-and-co` -> `jacob-co`
+ * shape — and then the umlaut is DROPPED rather than transliterated, because
+ * the derivation keeps `[^a-z0-9\s-]` and `ö` is neither transliterated to `oe`
+ * nor folded to `o`. It simply disappears, leaving `söhne` as `shne`. So the
+ * module id spells the umlaut out as `oe` in the German manner while the brand
+ * document cannot, and the two are NOT the same string. This is the
+ * `glashutte-original` / `nomos-glashuette` / `muehle-glashuette` family taken
+ * to its limit, and the failure mode of "correcting" `a-lange-shne` to
+ * something that looks right is not an error but a successful write to a brand
+ * document nobody reads.
+ *
+ * It is also the first id in this union whose brand document was VERIFIED IN
+ * FIRESTORE before the module was written rather than after — `watchBrands/
+ * a-lange-shne` exists in `watchlock-1e53d` with `name` and `displayName` both
+ * `A. Lange & Söhne`. Vacheron and Longines both shipped with that check still
+ * outstanding.
+ *
+ * THE TRAP IS THAT THE SPECIFICATIONS ARE PUBLISHED TWICE, under two class
+ * prefixes one word apart: `.technical-details__` is a 3-row "Highlights"
+ * decoy and `.technical-details-panel__` is the real 14-row set, both
+ * server-rendered in the same response. A substring selector reads both and a
+ * naive one reads only the decoy — the `vacheron-constantin` spec-tab failure
+ * in a new costume, silent at a 100% fill rate either way. Two further
+ * accidents are worth naming here because they are invisible downstream: the
+ * URL drops the reference suffix on 59 of 369 watches (`-410-038` for
+ * "410.038 E"), and two family slugs that reached production are plainly CMS
+ * mistakes (`foobar`, 71 watches, and `lange1`, 1) — routed, never dropped.
+ *
+ * `full` ONLY. The source publishes no newness signal at all: sitemap
+ * `<lastmod>` is a bulk re-publish (three consecutive days in April 2025 cover
+ * 56% of the catalogue), and the brand's own `novelties` page is a curated
+ * marketing selection rather than a date, so a `new-only` backed by it would
+ * not mean what `new-only` means anywhere else in this fleet. `heritage` is
+ * declined for the same reason the definition above gives: the 71 archive
+ * references share one sitemap, one catalogue and one URL space with the
+ * current line, so there is no separate archival boutique to point at.
+ *
+ * 369 references, 369/369 HTTP 200 from plain Node — Akamai Bot Manager is in
+ * front and never challenges. See `src/modules/a-lange-soehne/README.md` in the
+ * extractors repo.
  */
-export type ExtractorId = 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille' | 'audemars-piguet' | 'jacob-and-co' | 'iwc' | 'nomos-glashuette' | 'christopher-ward' | 'muehle-glashuette' | 'swatch' | 'tutima' | 'casio-gshock' | 'casio-babyg' | 'casio-edifice' | 'casio-protrek' | 'casio-collection' | 'vacheron-constantin' | 'longines';
+export type ExtractorId = 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille' | 'audemars-piguet' | 'jacob-and-co' | 'iwc' | 'nomos-glashuette' | 'christopher-ward' | 'muehle-glashuette' | 'swatch' | 'tutima' | 'casio-gshock' | 'casio-babyg' | 'casio-edifice' | 'casio-protrek' | 'casio-collection' | 'vacheron-constantin' | 'longines' | 'a-lange-soehne';
 /**
  * How much of a source's catalogue a run asks for.
  *
