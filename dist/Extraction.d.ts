@@ -263,11 +263,64 @@
  * references share one sitemap, one catalogue and one URL space with the
  * current line, so there is no separate archival boutique to point at.
  *
+ *
+ * `seiko` IS THE TRIVIAL SLUG, and it is recorded here precisely because the
+ * check was run rather than assumed:
+ *
+ *     buildBrandSlug('Seiko') -> 'seiko'
+ *
+ * No diacritic to drop, no ampersand to strip, no period to lose — the opposite
+ * end of this union's range from `a-lange-shne`. `watchBrands/seiko` EXISTS in
+ * `watchlock-1e53d` with `name` and `displayName` both `Seiko`, verified before
+ * the module was written, as Lange was and as Vacheron and Longines were not.
+ *
+ * IT IS SEIKO-BRANDED ONLY, AND GRAND SEIKO'S EXCLUSION IS THE SOURCE'S OWN
+ * RULING rather than a judgement made here. The watchfinder configuration
+ * directs visitors to the separate Grand Seiko site, no Grand Seiko reference
+ * appears in any watchfinder payload, and Firestore already holds
+ * `watchBrands/grand-seiko` as a document distinct from `watchBrands/seiko` —
+ * also verified live. If Grand Seiko is ever crawled it is a second id against
+ * that second document, never a widening of this one.
+ *
+ * THE TRAP IS THAT NO MARKET CARRIES THE CATALOGUE, and it is the `longines`
+ * locale divergence again, worse by a wide margin. Nine English markets union
+ * to 1219 references; `ca-en`, the market this module was commissioned against,
+ * publishes 205 of them — 17% — and omits Lukia, Coutura and Seiko Premier
+ * entirely. The union is safe to take because slugs are market-independent: of
+ * the 191 references shared between `ca-en`, `uk-en` and `us-en` the slug is
+ * identical on 191 and divergent on zero, so the nine payloads dedupe cleanly
+ * and `ca-en` supplies the `sourceUrl` for everything it carries.
+ *
+ * Two further accidents are worth naming because both are silent. A MISSING
+ * PRODUCT ANSWERS HTTP 200 WITH A "404 PAGE NOT FOUND" BODY — full chrome,
+ * ~64.7 KB, `response.ok` true — which is the Longines empty-payload trap in a
+ * new costume and must be guarded on content, never on status. And THE
+ * REFERENCE IS NOT THE `<h1>`: the heading reads `SPB155` where the printed
+ * product code is `SPB155J1`, differing on 97 of 244 sampled pages. That is the
+ * exact INVERSE of the Lange accident above, where the URL was the short form
+ * and the page was right.
+ *
+ * `full` AND `new-only`, and `new-only` IS HONEST HERE — the first in this
+ * fleet for some time. Every watchfinder record carries Seiko's own `IsNew`
+ * flag, which agrees with the PDP's scoped `_new` badge on 71 of 71 sampled
+ * pages and flags 62 of the 1219. That is a flag the source sets, not a
+ * synthesised diff. `heritage` is declined after a specific investigation, not
+ * by omission: the watchfinder's complete eight-group facet tree contains no
+ * heritage, legacy, archive, discontinued or release-year facet, and six
+ * candidate archive URLs are 404s. A split COULD be synthesised from the real
+ * `data-dsta` launch date, and is not, because that is what the definition
+ * below forbids in terms.
+ *
+ * Discovery is one JSON call per market — every filter parameter the API
+ * accepts is applied client-side over one fixed payload — and extraction is
+ * server-rendered HTML. No browser, no stealth, no proxy; robots.txt is
+ * thirteen bytes with no `Disallow`. See `src/modules/seiko/README.md` in the
+ * extractors repo.
  * 369 references, 369/369 HTTP 200 from plain Node — Akamai Bot Manager is in
  * front and never challenges. See `src/modules/a-lange-soehne/README.md` in the
  * extractors repo.
  */
-export type ExtractorId = 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille' | 'audemars-piguet' | 'jacob-and-co' | 'iwc' | 'nomos-glashuette' | 'christopher-ward' | 'muehle-glashuette' | 'swatch' | 'tutima' | 'casio-gshock' | 'casio-babyg' | 'casio-edifice' | 'casio-protrek' | 'casio-collection' | 'vacheron-constantin' | 'longines' | 'a-lange-soehne';
+export type ExtractorId = 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille' | 'audemars-piguet' | 'jacob-and-co' | 'iwc' | 'nomos-glashuette' | 'christopher-ward' | 'muehle-glashuette' | 'swatch' | 'tutima' | 'casio-gshock' | 'casio-babyg' | 'casio-edifice' | 'casio-protrek' | 'casio-collection' | 'vacheron-constantin' | 'longines' | 'a-lange-soehne' | 'seiko';
 /**
  * How much of a source's catalogue a run asks for.
  *
