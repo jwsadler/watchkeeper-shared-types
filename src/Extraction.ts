@@ -406,6 +406,101 @@
  * honest 404, which is the exact opposite of Seiko and is why this module
  * guards on status rather than on content. See `src/modules/citizen/README.md`
  * in the extractors repo.
+ *
+ *
+ * `chopard` IS THE TRIVIAL SLUG, run rather than assumed:
+ *
+ *     buildBrandSlug('Chopard') -> 'chopard'
+ *
+ * No diacritic to drop, no ampersand to strip, no period to lose — the
+ * `breitling` / `christopher-ward` / `citizen` shape, where the module id and
+ * the brand document id are the same string. `buildBrandSlug('CHOPARD')` gives
+ * the same result, so the casing the source uses cannot move it, and the
+ * inverted IWC trap does not arise: Chopard's markup, its analytics payload and
+ * its breadcrumb all name the brand `Chopard` and nothing longer.
+ * `supportedBrands` is hard-coded regardless, as every id here now is.
+ *
+ * `watchBrands/chopard` IS NOT YET CONFIRMED in Firestore. The derivation is
+ * certain; the document is a production read the module has not made. This is
+ * the open item Tutima, Vacheron and Longines all shipped with, and Lange,
+ * Seiko and Citizen did not — worth settling before the first live job.
+ *
+ * THE SITEMAP IS THE GOOD SOURCE HERE, AND THAT INVERTS `citizen` DIRECTLY
+ * ABOVE. 451 references under `/en-ca/watch/` against 275 from the fully-paged
+ * grid, with the grid contributing nothing the sitemap lacks. The grid carries
+ * `prefn1=status&prefv1=enabled` and is therefore filtered by construction; the
+ * 176 it withholds are live pages that answer 200. Citizen's soft-404 sitemap
+ * is a property of that deployment, not of SFCC, and carrying the prior across
+ * would have cost 39% of this catalogue.
+ *
+ * ALL 43 LOCALES ARE BYTE-IDENTICAL — 2123 product paths each, `en-ca`, `en-us`
+ * and `en-gb` differing pairwise by zero. So the market union that `longines`
+ * and `seiko` both needed buys nothing at all here, and `en-ca` is the whole of
+ * this id rather than a slice of it. The check is cheap and belongs before any
+ * multi-market assumption.
+ *
+ * TWO GRID TRAPS ARE WORTH NAMING because either one silently ends a crawl in
+ * the wrong place. `robots.txt` disallows `/*?start=*&sz=*` and then Allows
+ * exactly `sz=32` at 32-step offsets, so Citizen's `sz=500` sweep is FORBIDDEN
+ * here and page one must be the bare category URL. And past the last page the
+ * grid SERVES PAGE ONE AGAIN — full body, HTTP 200, the same 32 products — so
+ * page-until-empty never terminates and page-until-short never starts. The
+ * module stops on the first page contributing no new reference.
+ *
+ * `full` AND `new-only`. `item_is_new` is a BOOLEAN CHOPARD PUBLISHES PER
+ * PRODUCT in the analytics payload of both the grid and every PDP, true on 25
+ * references today; it is a flag the source sets, not a diff, which is the
+ * distinction the definition below draws. It is read from the grid, so the mode
+ * costs nine requests rather than 451. `heritage` is ABSENT AFTER A SEARCH IN
+ * THREE PLACES — all 202 category paths this market publishes, the cross-locale
+ * category list, and the `L.U.C` line where a brand with this history would
+ * plausibly keep one — and is omitted rather than aliased onto something
+ * approximate.
+ *
+ * THE CASE SIZE NEEDS THE BREADCRUMB, and the obvious substitute is a decoy.
+ * `Case Diameter` is present on 61% of references; the last breadcrumb crumb,
+ * Chopard's own composed descriptor, supplies 164 more and takes it to 98%. The
+ * analytics `item_variant` reads `33 mm`, looks like exactly the answer, and
+ * covers the same 59% — the `vacheron-constantin` spec-tab failure in yet
+ * another costume, wrong at a fill rate that reads as fine.
+ *
+ * `movement` HAS TWO DECOYS AROUND IT, and this is the v1.80.0
+ * module-is-not-calibre incident with the names shuffled. The analytics
+ * `movement` key is a WINDING TYPE spelled eight ways for four concepts and
+ * reads `ethical rose gold` on one reference. `Type of Winding` is that same
+ * fact said properly and maps to `movementType`. The `Movement` SPEC ROW is the
+ * calibre and is the only thing that may reach `movement`.
+ *
+ * TEN REFERENCES BEGIN WITH A LITERAL `@` (`@10A065-1100`, `%40` in the URL),
+ * so the reference is taken from `data-pid` and the analytics
+ * `productReference`, never from the URL slug. And the variations rail is a
+ * TRUNCATION: three thumbnails plus a "13 more variations" button, with the
+ * full list in a modal rendered into the same document. Reading the rail alone
+ * was wrong by ten siblings and looked complete. The sibling edges are the
+ * source's own and survive the IWC cross-model test — 2029 edges, all sharing
+ * the reference base, all present in the sitemap.
+ *
+ * IMAGES ARE TAGGED ON 99.9%, THE BEST IN THIS FLEET, ahead of Lange's 95.3%.
+ * The `alt` is a closed seven-value view vocabulary (`Front view`, `Back view`,
+ * `Clasp closed view`, a lower-case `worn view`) rather than the product
+ * descriptor Rolex publishes; the model name shares the string, so everything
+ * before the last `Watch` is discarded first, and gallery assets are filtered to
+ * the page's OWN reference because a page-wide CDN sweep returns ~11.6 assets
+ * against a true gallery of 4.4.
+ *
+ * NO PRICE, NO STOCK — DELIBERATELY OMITTED, and as on `citizen` that is a
+ * REFUSAL rather than an absence. Chopard publishes a price on every page
+ * TWICE, in the analytics payload and on every variant tile, alongside
+ * `availability`. The refusal is structural: the module's detail type has no
+ * field a price could land in.
+ *
+ * NO BOT MANAGER IN THE PATH AT ALL — roughly 700 requests across
+ * characterisation, zero challenges and zero 403s, from plain Node `fetch` at
+ * concurrency 5. That is softer than Citizen, where PerimeterX loads and never
+ * fires, and it is a measurement with a shelf life rather than a property of
+ * the origin. A fabricated reference answers an honest 404, so this module
+ * guards on status like Citizen and unlike Seiko. 451 emitted, 0 errors. See
+ * `src/modules/chopard/README.md` in the extractors repo.
  */
 export type ExtractorId =
   | 'omega'
@@ -432,7 +527,8 @@ export type ExtractorId =
   | 'longines'
   | 'a-lange-soehne'
   | 'seiko'
-  | 'citizen';
+  | 'citizen'
+  | 'chopard';
 
 /**
  * How much of a source's catalogue a run asks for.
