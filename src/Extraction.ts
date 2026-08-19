@@ -320,6 +320,92 @@
  * 369 references, 369/369 HTTP 200 from plain Node — Akamai Bot Manager is in
  * front and never challenges. See `src/modules/a-lange-soehne/README.md` in the
  * extractors repo.
+ *
+ *
+ * `citizen` IS THE TRIVIAL SLUG AGAIN, checked rather than assumed:
+ *
+ *     buildBrandSlug('Citizen') -> 'citizen'
+ *
+ * Nothing to strip — the `breitling` / `christopher-ward` shape, where the
+ * module id and the brand document id are the same string. `watchBrands/citizen`
+ * is the confirmed document id, checked before the module was written. The
+ * inverted IWC trap does not arise here, but its guard is kept anyway:
+ * `supportedBrands` is hard-coded rather than derived, because the source
+ * displays `CITIZEN` in upper case everywhere including the JSON-LD
+ * `brand.name`. `buildBrandSlug('CITIZEN')` also gives `citizen`, so the
+ * hard-coding costs nothing and removes the question.
+ *
+ * IT IS THE FIRST MODULE IN THIS FLEET TO DECLARE ALL THREE MODES, and each one
+ * is a category Citizen merchandises itself rather than anything synthesised
+ * here:
+ *
+ *     full       mens + womens + collabs      583 references
+ *     new-only   new-arrivals                  53
+ *     heritage   archive                      276 (275 unique)
+ *
+ * `new-only` IS A REAL CATEGORY, and the absence of a facet was established
+ * rather than assumed: the grid's complete refinement set is seven filters,
+ * none of them about newness, and the one place the word appears is
+ * `srule=new-arrival-storefront` — a SORT ORDER, which reorders all 466 men's
+ * references rather than filtering them. A module that mistook it for a filter
+ * would crawl the whole catalogue and report it as new.
+ *
+ * `heritage` WIDENS WHAT THE MODE MEANS, and the widening should be read
+ * deliberately. Longines, the mode's first caller, publishes 48 INDIVIDUAL
+ * pre-owned watches carrying serial numbers, production dates and condition
+ * grades under a thinner and differently-shaped spec set — the argument there
+ * was that two kinds of claim do not belong in one table. Citizen's archive is
+ * 276 discontinued REFERENCES: identical spec table, identical gallery markup,
+ * parsed by the same code with no branch anywhere in the module. So the
+ * justification here is not schema incompatibility. It is that these watches
+ * cannot be bought, and whether that belongs in the same ingest is a consumer's
+ * decision to make. The source agrees they are separate — `robots.txt` singles
+ * the archive out for a `Disallow` under `User-agent: Googlebot` while leaving
+ * every other collection page crawlable. No production year is read, and none
+ * is available to read, which is what keeps this the source's ruling rather
+ * than the synthesised split the definition below forbids.
+ *
+ * ONE MARKET, AND THE OTHER ONE IS NOT A LOCALE SWAP. This is where Citizen
+ * parts company with `seiko` directly above. Seiko's nine English markets are
+ * one catalogue served nine ways, and they union cleanly on a market-independent
+ * slug. Citizen's `/us/en` answers HTTP 200 with about 1 MB and is A DIFFERENT
+ * STOREFRONT: no `Sites-…-Site` id anywhere in the body, zero product links in
+ * the category grid, and PDP URLs that redirect to drop the `.html`. It would
+ * need its own parser, so the 858 references on `ca/en` are the whole of this
+ * id by decision rather than by omission.
+ *
+ * THE TRAP IS A SITEMAP THAT LIES WITH A 200. `citizenwatch.com/sitemap.xml`
+ * is a SOFT 404 — HTTP 200, `content-type: text/html`, and an 877 KB body that
+ * is the homepage, with no `<urlset>` and not one `<loc>`; `sitemap_index.xml`
+ * returns the identical body. A crawler that trusted the status code would
+ * parse the homepage, find the 78 products the global nav happens to link — 9%
+ * of the catalogue — and look like it had succeeded. Discovery is the SFCC grid
+ * controller instead, one `Search-UpdateGrid` call per category at `sz=500`.
+ *
+ * A second accident is worth naming because it is silent in the other
+ * direction. The spec drawer renders TWO tables, and the second is not the
+ * narrow-screen duplicate that its `d-none d-lg-table` class makes it look
+ * like: it carries `Functions`, which appears in the first table on no page at
+ * all. Reading only the first emits a complete-looking watch with no
+ * complications on 99% of the catalogue, and nothing flags it.
+ *
+ * NO PRICE, NO STOCK — DELIBERATELY OMITTED, and on this source that is a
+ * REFUSAL rather than an absence. Citizen publishes three price surfaces per
+ * reference and merchandises a `sale` category, and the JSON-LD block this
+ * module declines to parse carries `offers.price`, `offers.priceCurrency` and
+ * `offers.availability` on 61 of the 61 pages that have it. The refusal is
+ * structural — the module's detail type has no field a price could land in —
+ * and the run log reports `priceSurfacesDeclined` so the omission stays legible.
+ *
+ * Server-rendered SFCC throughout: no browser, no stealth, no proxy. Every page
+ * loads PerimeterX and it never fires — 858/858 HTTP 200 from plain Node at
+ * concurrency 5 in 190 seconds, zero challenges and no `_px` cookie set. That
+ * is a measurement with a shelf life rather than a property of the origin; bulk
+ * 403s would mean it has been switched from monitor to block, and the fix then
+ * is stealth Playwright, not a slower crawl. A missing reference answers an
+ * honest 404, which is the exact opposite of Seiko and is why this module
+ * guards on status rather than on content. See `src/modules/citizen/README.md`
+ * in the extractors repo.
  */
 export type ExtractorId =
   | 'omega'
@@ -345,7 +431,8 @@ export type ExtractorId =
   | 'vacheron-constantin'
   | 'longines'
   | 'a-lange-soehne'
-  | 'seiko';
+  | 'seiko'
+  | 'citizen';
 
 /**
  * How much of a source's catalogue a run asks for.
