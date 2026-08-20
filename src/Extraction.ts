@@ -501,6 +501,104 @@
  * the origin. A fabricated reference answers an honest 404, so this module
  * guards on status like Citizen and unlike Seiko. 451 emitted, 0 errors. See
  * `src/modules/chopard/README.md` in the extractors repo.
+ *
+ *
+ * `bulova` AND `caravelle` ARE ONE CODE MODULE AND TWO IDS, and they enter this
+ * union together in one bump because splitting them would only create a version
+ * where half of that module can be registered. `casio-gshock` and its four
+ * siblings are the precedent for one factory behind several ids, but those five
+ * are lines of ONE brand family; these two are SEPARATELY REGISTERED BRANDS —
+ * `watchBrands/bulova` and `watchBrands/caravelle` are distinct documents — sold
+ * out of one Salesforce Commerce Cloud storefront at `bulova.com/ca/en`.
+ * Caravelle is Bulova's value line and is merchandised inside the same `mens`
+ * and `womens` categories rather than anywhere of its own.
+ *
+ * A SINGLE MULTI-BRAND MODULE IS NOT EXPRESSIBLE, and that is a schema fact
+ * rather than a preference. `brandId` is a property of the JOB: it enters on
+ * `CreateExtractionJobInput`, is stored on `ExtractionJob`, is copied to
+ * `ExtractionResult` and decides the artifact path. `ExtractedWatch` has
+ * forty-nine fields and not one of them is a brand, so one run emits one brand
+ * for every watch in it and a module routing per reference would have nowhere to
+ * put the decision. The two modules differ in `ownsReference` and nothing else.
+ *
+ * BOTH SLUGS ARE TRIVIAL AND BOTH DOCUMENTS WERE CONFIRMED, run rather than
+ * assumed:
+ *
+ *     buildBrandSlug('Bulova')    -> 'bulova'
+ *     buildBrandSlug('Caravelle') -> 'caravelle'
+ *
+ * `buildBrandSlug('BULOVA')` gives the same string, so the upper case the source
+ * uses cannot move it. Unlike `tutima`, `vacheron-constantin`, `longines` and
+ * `chopard`, both brand documents were READ IN FIRESTORE before the module was
+ * written — and that read is the premise of the whole split, since if
+ * `watchBrands/caravelle` did not exist the right answer would have been one
+ * module.
+ *
+ * THE BRAND SIGNAL IS THE REFERENCE PREFIX — 43/44/45 Caravelle, 96/97/98
+ * Bulova — because every obvious signal is wrong and each was tried. The JSON-LD
+ * `brand.name` reads `BULOVA` on 606/606 pages INCLUDING every Caravelle one
+ * (`43B151` is named "Caravelle Dress"), and no other brand attribute exists
+ * anywhere in the markup. Eleven references in the source's own caravelle
+ * collection carry no brand token in their name at all, and that collection
+ * covers the current line only — zero of the archive's 72 Caravelle references.
+ * The prefix was checked as a SET EQUALITY against that collection, the same 67
+ * references with no disagreement in either direction. 663 references split 524
+ * `bulova` / 139 `caravelle`.
+ *
+ * DISCOVERY IS PAGINATED AND `sz` IS NOT HONOURED, which inverts `citizen` on
+ * the same cartridge. `mens` returns 47 tiles whether asked for 12 or 1000
+ * against a real total of 278, answering HTTP 200 with a complete-looking 936 KB
+ * body — so Citizen's single `sz=500` sweep silently yields 17% of the category,
+ * while `womens` honours `sz` and would have looked correct. Tiles are read from
+ * `data-pid` rather than hrefs: the men's grid renders 231 product links that
+ * are not results of the query, and its page-one href set happens to equal the
+ * paginated union, so an href reader is right today by accident. The source
+ * states no total anywhere, so the per-page walk is logged rather than
+ * cross-checked the way Citizen's can be.
+ *
+ * SAME SFCC CARTRIDGE AS `citizen`, so both of that module's spec-drawer traps
+ * apply byte-identically: `Functions` lives only in the `d-none d-lg-table`
+ * second table (662/663 references), and its value list is the one row whose
+ * class carries a utility suffix. But FOUR OF THE NINE LABELS ARE RENAMED
+ * despite identical markup — `Band Type`, `Water-Resistance`, `Movement
+ * Technology`, `Lug Width (mm)` — so Citizen's constants lifted verbatim read
+ * four rows as empty, losing the calibre, movement type, strap material, water
+ * resistance and lug width, while the other five fill perfectly and the run
+ * looks healthy. Inheriting a sibling module's selectors is the cheap move here
+ * and it is wrong in a way nothing flags.
+ *
+ * `full`, `new-only` AND `heritage`. `heritage` is `archive`, an unlinked `cgid`
+ * the grid controller serves that appears in no navigation at all, and all 261
+ * of its references appear in no other category; no year is published and none
+ * is read. It is also where the prefix classifier does real work, since 72 of
+ * the 261 are Caravelle and the source publishes no caravelle collection for the
+ * archive. Per brand, full / new-only / heritage: `bulova` 335 / 35 / 189,
+ * `caravelle` 67 / 16 / 72.
+ *
+ * IMAGES ARE TAGGED ON 79.8% (2542/3184) off `data-slide-name`, with the
+ * `alternateImageNURL` family left untagged on purpose and
+ * `productMarketingVideo` dropped as not a photograph of the watch. There is no
+ * sibling rail to read — `data-swatchable-attributes` is declared and zero
+ * swatches render, sampled over 83 references — so variants are DERIVED on model
+ * plus calibre plus diameter: 335 groups, mean 1.98, max 9.
+ *
+ * `strapBuckleType` IS AN ABSENCE, NOT A REFUSAL, and it is worth naming because
+ * `citizen` fills it at 100% off the row that looks like this one. Citizen's
+ * `Band` is [type, material, clasp]; Bulova's `Band Type` is a fixed TWO on
+ * 663/663 and no clasp appears on the page. `dialFinish` is omitted for the same
+ * measured reason — `Dial[1]` is a features list, the shape that would have been
+ * wrong on 217 of Citizen's 220.
+ *
+ * NO PRICE, NO STOCK — DELIBERATELY OMITTED, and as on `citizen` and `chopard`
+ * that is a REFUSAL rather than an absence: three price surfaces per reference.
+ * It is structural — the module's detail type has no field a price could land in
+ * — and the run log reports `priceSurfacesDeclined`.
+ *
+ * Server-rendered SFCC throughout: no browser, no stealth, no proxy. A missing
+ * reference answers HTTP 410 Gone rather than Citizen's 404, so this module
+ * guards on status but not on a single code. Measured end to end over both
+ * brands and both catalogue modes: 663 emitted, 0 fetch errors, 0 skipped, 90
+ * distinct calibres. See `src/modules/bulova/README.md` in the extractors repo.
  */
 export type ExtractorId =
   | 'omega'
@@ -528,7 +626,9 @@ export type ExtractorId =
   | 'a-lange-soehne'
   | 'seiko'
   | 'citizen'
-  | 'chopard';
+  | 'chopard'
+  | 'bulova'
+  | 'caravelle';
 
 /**
  * How much of a source's catalogue a run asks for.
