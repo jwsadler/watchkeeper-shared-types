@@ -597,9 +597,83 @@
  * reference answers HTTP 410 Gone rather than Citizen's 404, so this module
  * guards on status but not on a single code. Measured end to end over both
  * brands and both catalogue modes: 663 emitted, 0 fetch errors, 0 skipped, 90
- * distinct calibres. See `src/modules/bulova/README.md` in the extractors repo.
+ * distinct calibres. See `src/modules/bulova/README.md` in the extractors repo. *
+ * `parmigiani-fleurier` — WORDPRESS + WOOCOMMERCE at parmigiani.com/en (Yoast,
+ * Polylang, Carbon Fields, Impreza), server-rendered throughout, 71 English
+ * references. IT NEEDS A BROWSER AND NOT FOR RENDERING: Cloudflare answers a
+ * 103-byte HTTP 403 in ~40 ms to plain Node `fetch`, to `fetch` carrying a full
+ * desktop-Chrome header set with Client Hints, and to curl, on every HTML and
+ * XML path — `robots.txt` alone answers 200, which is what makes the block look
+ * like a dead origin. It is a fingerprint rule with no interstitial and no
+ * clearance cookie to earn, and the existing stealth fingerprint clears it on
+ * 76 of 76 requests with no retry and no proxy. Two Playwright traps follow:
+ * `page.request` is a SEPARATE HTTP CLIENT that 403s like bare `fetch`, and
+ * `page.content()` returns an EMPTY STRING for XML, so the module reads
+ * `response.text()` and cannot use the shared `fetchHtml`.
+ *
+ * DISCOVERY IS THE OPEN WOOCOMMERCE STORE API — one call with `?lang=en` gives
+ * all 71 WITH THE SKU, which neither the sitemap nor `wp/v2/product` carries.
+ * Three structures name the catalogue and disagree (Store API 71, sitemap 71,
+ * grid 69) and the grid is the weakest and most deceptive: `page/2` and `page/3`
+ * serve page one verbatim with HTTP 200, and every card is rendered up to four
+ * times — 241 card elements over 72 distinct ids, which reported 46 novelties
+ * where there are 13. FOUR INDEX TRAPS: the Store API OMITS THE `Legacy`
+ * CATEGORY, returning `categories: []` for the three watches `wp/v2` places in
+ * it, so family comes from `wp/v2`; the post `slug` IS NOT the permalink slug
+ * and diverges on 11 of 71, four of them named `new-watch-1` or `510869`, so the
+ * two APIs join on the numeric post id; six products carry a CHILD term with no
+ * parent, so family is the tree ROOT and 65/71 becomes 71/71; and the CMS
+ * taxonomy labels are drifted, with `bracelet_material` labelled "Collections"
+ * and `watch_type` labelled "Watch Size" while being a size bucket, so the term
+ * VALUES are read and the labels ignored.
+ *
+ * THE SPEC SURFACE IS THE CLEANEST IN THE FLEET: the theme renders every custom
+ * field with ITS OWN CMS KEY IN THE CLASS ATTRIBUTE, so extraction is KEYED
+ * rather than label-matched and neither Vacheron's duplicate-label problem nor
+ * Mühle's German-label problem can arise. Two things still bite — the movement
+ * panel is rendered twice and the calibre three times, once as `Calibre: PF703`,
+ * so first-occurrence-wins is load-bearing; and there are TWO TEMPLATES plus one
+ * bespoke page with no spec block at all, with 6 of 71 stating NO REFERENCE
+ * ANYWHERE, which is why identity comes from the index and only the
+ * specification from the page.
+ *
+ * `full` AND `new-only`, NO `heritage`. `new-only` reads a `Novelty` badge off
+ * the grid in one request, 13 references. `Legacy` is the one heritage candidate
+ * and fails the test: three pieces INSIDE the same 71 rather than a second
+ * catalogue, and Kalpa, Bugatti, Pershing and Toric Chronomètre are not on the
+ * site in any form.
+ *
+ * IMAGE TAGGING IS 59% (165/278) AND THE CEILING IS THE SOURCE: every `alt`
+ * attribute in every gallery on every page is EMPTY, so the only signal is a
+ * filename suffix — and each was decided by DOWNLOADING THE IMAGES AND LOOKING
+ * AT THEM. The bare `{REF}.png` is the watch front (`dial`); `-v` and `-r` are
+ * BOTH BARE MOVEMENT SHOTS, rotor side and dial side, with no case in frame, so
+ * neither is a caseback and the DOM agrees, since both are background-images
+ * inside the movement panel. `-p1` and `-p2` ship untagged because the obvious
+ * rule was FALSIFIED on sampling. Every watch with a photograph gets a `dial`,
+ * 68 of 68. The gallery must be SCOPED BY FILENAME: one page carries 159 upload
+ * URLs and names twelve other watches, because the foot-of-page rail is static
+ * navigation rendered identically on all 71 pages.
+ *
+ * VARIANTS ARE DERIVED AND LABELLED AS DERIVED — the source publishes no
+ * declination list — grouping on the six-character model code in the reference,
+ * adopted only after measuring it: 12 of 15 multi-member groups share an
+ * identical calibre AND diameter, and the 3 that differ are anniversary or COSC
+ * sub-variants of one model line. The run re-checks and logs that count. 350
+ * edges across 65 watches.
+ *
+ * NO BEZEL DATA OF ANY KIND EXISTS on this source — no field, no row, no term —
+ * and the word appears only inside marketing prose about incision counts, so
+ * `bezel` and `bezelType` are deliberately unset rather than mined. NO PRICE, NO
+ * CURRENCY, NO STOCK — a REFUSAL rather than an absence: every Store API record
+ * hands over a `prices` object, a `price_html`, an `is_in_stock` and an
+ * `add_to_cart` unasked, so the record is read through a declared ALLOWLIST
+ * rather than spread, and the run log reports 141 declined surfaces. Measured
+ * end to end: 71 emitted, 0 errors, 76 fetches, 21 distinct calibres, 4
+ * collections, 0 family gaps. See `src/modules/parmigiani-fleurier/README.md` in
+ * the extractors repo.
  */
-export type ExtractorId = 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille' | 'audemars-piguet' | 'jacob-and-co' | 'iwc' | 'nomos-glashuette' | 'christopher-ward' | 'muehle-glashuette' | 'swatch' | 'tutima' | 'casio-gshock' | 'casio-babyg' | 'casio-edifice' | 'casio-protrek' | 'casio-collection' | 'vacheron-constantin' | 'longines' | 'a-lange-soehne' | 'seiko' | 'citizen' | 'chopard' | 'bulova' | 'caravelle';
+export type ExtractorId = 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille' | 'audemars-piguet' | 'jacob-and-co' | 'iwc' | 'nomos-glashuette' | 'christopher-ward' | 'muehle-glashuette' | 'swatch' | 'tutima' | 'casio-gshock' | 'casio-babyg' | 'casio-edifice' | 'casio-protrek' | 'casio-collection' | 'vacheron-constantin' | 'longines' | 'a-lange-soehne' | 'seiko' | 'citizen' | 'chopard' | 'bulova' | 'caravelle' | 'parmigiani-fleurier';
 /**
  * How much of a source's catalogue a run asks for.
  *
