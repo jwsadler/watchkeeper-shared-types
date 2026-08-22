@@ -57,6 +57,14 @@ export interface CalibreTierOverrides {
     hairspring?: string;
     rotorType?: string;
     /**
+     * REPLACES the base `balanceType` list wholesale for this tier — same shape
+     * as base, list the tier's FULL balance attribute set (not just the
+     * additions). Example: ETA 2824 Top tier upgrades from base `['glucydur']`
+     * to `['glucydur', 'free-sprung']` — send both slugs. Absent means no
+     * change from base; empty array strips the base's balance metadata.
+     */
+    balanceType?: string[];
+    /**
      * Anti-shock protection system override (e.g. "incabloc", "kif").
      * String reference to the shock_protection lookup — same shape as
      * the base `CalibreData.antiShockSystem` field.

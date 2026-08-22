@@ -102,10 +102,24 @@ export interface CalibreData {
     casingDiameterMm?: number;
     hairspring?: string;
     /**
-     * Balance-wheel type/material (e.g. Glucydur, screw balance, free-sprung).
-     * Backed by the `lookup_balance_type` lookup — store the lookup slug.
+     * Balance-wheel attributes, multi-select. Slugs cover three orthogonal axes
+     * — a well-specified calibre carries at most one from each:
+     *   - Material: `glucydur`, `brass`, `silicon`, `gyromax`, `nickel`
+     *   - Construction: `variable_inertia`, `screw_balance`, `monometallic`,
+     *     `bimetallic`
+     *   - Regulation architecture: `free-sprung` (add when the balance has no
+     *     regulator index — Chronometer-grade and above)
+     *
+     * Example: a Glucydur balance in a Rolex Chronometer-grade movement →
+     * `['glucydur', 'variable_inertia', 'free-sprung']`. Backed by the
+     * `lookup_balance_type` lookup (isMultiSelect); store lookup slugs.
+     *
+     * Migration note: existing records may still carry the legacy single-string
+     * shape (`balanceType: 'glucydur'`) until the one-shot migration completes.
+     * Read paths should coerce a string value to a single-element array
+     * defensively during the transition window.
      */
-    balanceType?: string;
+    balanceType?: string[];
     /**
      * Movement construction architecture (e.g. full bridge, three-quarter plate,
      * modular, integrated). Backed by the `lookup_movement_architecture` lookup —
