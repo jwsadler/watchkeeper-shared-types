@@ -75,6 +75,31 @@ export interface CalibreTierOverrides {
 
   escapement?: string;
 
+  // Complications
+  /**
+   * Whether this tier carries a date complication, overriding the base
+   * calibre's `date[]` presence. `true` — the tier adds a date the base
+   * lacks; `false` — the tier drops the date the base carries (a no-date
+   * Rolex 3230 against the dated 3235, the subseconds-only Panerai P.9000
+   * variants). Absent leaves the base `date[]` untouched, and `true` on a
+   * base that already carries `date[]` is a no-op. Coarse presence only —
+   * it cannot name the date TYPE, so a tier that adds a date the base has
+   * no entry for renders as an unqualified date.
+   */
+  hasDate?: boolean;
+
+  // Decoration & finishing
+  /**
+   * Decorative techniques this tier carries (e.g. `perlage`,
+   * `cotes-de-geneve`, `anglage`, `blued-screws`). Backed by the
+   * `lookup_movement_decoration` lookup (multi-select) — store lookup slugs,
+   * same shape as the base `CalibreData.decorations` field. REPLACES the
+   * base array wholesale rather than merging into it, so list the tier's
+   * full set: NOMOS 1TSDP carries everything the plain 1TS does plus its
+   * added finishing. An empty array strips the base decoration entirely.
+   */
+  decorations?: string[];
+
   // Specs
   jewels?: number;
   powerReserveHours?: number;
