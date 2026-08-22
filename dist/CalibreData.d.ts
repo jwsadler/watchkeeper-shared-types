@@ -139,6 +139,40 @@ export interface CalibreData {
     /** Number of mainspring barrels (e.g. 1, 2). Precise count — omit unless verified. */
     barrelCount?: number;
     /**
+     * Material of the automatic winding rotor / oscillating weight (e.g.
+     * `steel`, `brass`, `18k-rose-gold`, `18k-yellow-gold`, `18k-white-gold`,
+     * `platinum`, `tungsten`, `tungsten-carbide`). Backed by the
+     * `lookup_rotor_material` lookup (single-select) — store the lookup slug.
+     * What the rotor is MADE OF; its construction lives in
+     * {@link windingArchitecture} and its style in {@link rotorType}. Only
+     * meaningful on automatic calibres — omit on manual/quartz.
+     */
+    rotorMaterial?: string;
+    /**
+     * Material of the movement's bridges — and, where the two share a material,
+     * the mainplate (e.g. `german-silver`, `nickel-silver`, `brass`, `steel`,
+     * `18k-rose-gold`, `18k-yellow-gold`, `platinum`). Backed by the
+     * `lookup_bridge_material` lookup (single-select) — store the lookup slug.
+     * What the parts are MADE OF; the surface treatment applied on top lives in
+     * {@link plateFinishing} and {@link decorations}. Omit when the bridges and
+     * mainplate differ rather than picking one of the two.
+     */
+    bridgeMaterial?: string;
+    /**
+     * Case materials this calibre is OFFERED in (e.g. `steel`, `titanium`,
+     * `18k-rose-gold`, `platinum`, `ceramic`). Backed by the
+     * `lookup_case_material` lookup (multi-select) — store lookup slugs.
+     *
+     * Availability, not composition: it constrains which references can legitimately
+     * carry this calibre, so a movement sold only in precious metal reads
+     * `['18k-rose-gold', 'platinum']`. Distinct from the per-reference
+     * {@link CaseInfo.material} (what one watch's case actually is) and from
+     * `WatchReference.caseMaterialVariants` (what a parent's children happen to
+     * use). Omit when the calibre is unrestricted rather than listing every
+     * material.
+     */
+    caseMaterialsAvailable?: string[];
+    /**
      * Degree of openworking / skeletonisation.
      * - `'full'` — fully skeletonised (bridges + mainplate cut away).
      * - `'partial'` — open-heart / partial aperture exposing part of the movement.
@@ -152,6 +186,20 @@ export interface CalibreData {
      * the lookup slug.
      */
     movementFinishing?: string;
+    /**
+     * PRIMARY finishing treatment of the mainplate — the single surface
+     * treatment that defines its look (e.g. `sunburst`, `frosted`,
+     * `sandblasted`, `perlage-mainplate`, `cotes-de-geneve-mainplate`). Backed
+     * by the `lookup_plate_finishing` lookup (single-select) — store the lookup
+     * slug.
+     *
+     * Narrower than {@link movementFinishing}, which grades the movement's
+     * overall finishing quality, and distinct from {@link decorations}, which
+     * lists every decorative technique present across the movement without
+     * ranking them. Pick the treatment a spec sheet would name first; leave the
+     * rest to `decorations`.
+     */
+    plateFinishing?: string;
     /**
      * Specific decorative techniques present on the movement (e.g. `perlage`,
      * `cotes-de-geneve`, `anglage`, `blued-screws`, `engraving`, `guilloche`).

@@ -57,6 +57,36 @@ export interface CalibreTierOverrides {
     hairspring?: string;
     rotorType?: string;
     /**
+     * Rotor / oscillating weight material for this tier (e.g. `steel`,
+     * `18k-rose-gold`, `platinum`, `tungsten`). Backed by the
+     * `lookup_rotor_material` lookup (single-select) — store the lookup slug,
+     * same shape as the base `CalibreData.rotorMaterial` field. REPLACES the
+     * base value when set: a Top tier fitted with a gold rotor over the base's
+     * steel one sends `'18k-rose-gold'`. Absent means no change from base.
+     */
+    rotorMaterial?: string;
+    /**
+     * Bridge (and, where they share a material, mainplate) material for this
+     * tier (e.g. `german-silver`, `nickel-silver`, `brass`, `18k-rose-gold`).
+     * Backed by the `lookup_bridge_material` lookup (single-select) — store the
+     * lookup slug, same shape as the base `CalibreData.bridgeMaterial` field.
+     * REPLACES the base value when set — the common case for a tier that swaps
+     * rhodium-plated brass bridges for German silver or solid gold. Absent
+     * means no change from base.
+     */
+    bridgeMaterial?: string;
+    /**
+     * Case materials this TIER is offered in (e.g. `18k-rose-gold`,
+     * `platinum`). Backed by the `lookup_case_material` lookup (multi-select) —
+     * store lookup slugs, same shape as the base
+     * `CalibreData.caseMaterialsAvailable` field. REPLACES the base list
+     * wholesale rather than merging into it, so list the tier's FULL set: a
+     * precious-metal-only tier of a calibre otherwise sold in steel sends
+     * `['18k-rose-gold', 'platinum']`, not just the additions. Absent means no
+     * change from base; an empty array strips the base restriction entirely.
+     */
+    caseMaterialsAvailable?: string[];
+    /**
      * REPLACES the base `balanceType` list wholesale for this tier — same shape
      * as base, list the tier's FULL balance attribute set (not just the
      * additions). Example: ETA 2824 Top tier upgrades from base `['glucydur']`
@@ -82,6 +112,16 @@ export interface CalibreTierOverrides {
      * no entry for renders as an unqualified date.
      */
     hasDate?: boolean;
+    /**
+     * Primary mainplate finishing treatment for this tier (e.g. `sunburst`,
+     * `frosted`, `sandblasted`, `perlage-mainplate`,
+     * `cotes-de-geneve-mainplate`). Backed by the `lookup_plate_finishing`
+     * lookup (single-select) — store the lookup slug, same shape as the base
+     * `CalibreData.plateFinishing` field. REPLACES the base value when set;
+     * absent means no change from base. Names the one defining treatment —
+     * every other technique the tier adds belongs in `decorations` below.
+     */
+    plateFinishing?: string;
     /**
      * Decorative techniques this tier carries (e.g. `perlage`,
      * `cotes-de-geneve`, `anglage`, `blued-screws`). Backed by the
