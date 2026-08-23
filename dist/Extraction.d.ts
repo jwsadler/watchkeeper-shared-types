@@ -672,8 +672,93 @@
  * end to end: 71 emitted, 0 errors, 76 fetches, 21 distinct calibres, 4
  * collections, 0 family gaps. See `src/modules/parmigiani-fleurier/README.md` in
  * the extractors repo.
+ *
+ * `ball-watch` — OPENCART 3.x ON LITESPEED/PHP at ballwatch.com/en,
+ * server-rendered throughout with no SPA, no client-rendered grid and no XHR to
+ * wait for, so the module OPENS NO BROWSER. THERE IS NO BOT MANAGER AT ALL:
+ * several hundred requests from plain Node `fetch` returned HTTP 200 every
+ * time, with no challenge, no 403 and no bot-management script in the markup.
+ * `robots.txt` is 31 bytes and declares only `Crawl-Delay: 20`, honoured as a
+ * 3s serial default that `BALL_CRAWL_DELAY_MS` can raise to the declared value;
+ * concurrency is 1, because a delay multiplied across four workers is not that
+ * delay.
+ *
+ * DISCOVERY IS THE OPENCART SITEMAP FEED, AND IT IS NOT WHERE A SITEMAP LIVES:
+ * `/sitemap.xml` and `/sitemap_index.xml` are both 404s, and the first one's
+ * canonical points at `index.php?route=feed/google_sitemap`, the OpenCart 2
+ * route, WHICH IS ALSO A 404. The live feed is
+ * `index.php?route=extension/feed/google_sitemap` — 5.5 MB, 13,483 `<loc>`
+ * elements holding 1,390 distinct URLs. The seven-page watchfinder is unioned
+ * in to vouch for the handful of products published under a vanity slug,
+ * turning ~440 speculative fetches into 7 real ones.
+ *
+ * THE KILLER TRAP IS THE REFERENCE ITSELF. A builder page — one OpenCart
+ * product with a strap/dial options builder over it, selected by `?model=` —
+ * renders its SPECS AND GALLERY correctly for the selected build but assembles
+ * `.ciopmodel` client-side from a `concat_model` routine that fails two ways:
+ * `?model=NM9080D-S1J-BE` renders `NM9080D`, truncated to the stem, and
+ * `?model=DG2118C-S9C-BK` renders `DGC`, corrupted outright. Roughly 8% of
+ * variant pages are affected and neither failure is visible from the row, since
+ * one is a real product stem and the other is merely a short string. So the
+ * `model=` QUERY PARAMETER IS AUTHORITATIVE and `.ciopmodel` is believed only
+ * on single-reference PDPs; the disagreement is written to `rawSpecs` so it
+ * stays countable.
+ *
+ * SPECS ARE READ BY NUMERIC `attribute-id`, NEVER BY LABEL, because the site
+ * serves five locales off one product record and the `<h6>` label is translated
+ * while the id is not — a label-keyed parser is an English-only parser that
+ * returns an empty spec table on `zh-TW` without erroring. Attribute 13 is a
+ * LIST, not a string, carrying the calibre line, the COSC line and a combined
+ * power-reserve/vph line; only the text after `caliber`/`calibre` becomes
+ * `movement`, because joining the list would manufacture a calibre named after
+ * the whole paragraph — the Casio module-number mistake in a different costume.
+ *
+ * FOUR BALL-SPECIFIC MEASUREMENTS ARE CAPTURED AND NONE BECOMES A FIELD:
+ * anti-magnetic resistance normalised to A/m, tritium micro gas tube count,
+ * shock resistance in Gs, and COSC certification. They travel in `rawSpecs`
+ * under `Derived:` keys plus `functions[]`, DELIBERATELY NOT as first-class
+ * members of `ExtractedWatch` — admin has no mapping, no UI and no query for an
+ * `antiMagneticAm`, so a field would be dead schema, and `module` is the
+ * precedent that says which way to lean, having earned its place only because
+ * `ScrapedWatchEntry.module` already existed to receive it. The anti-magnetism
+ * parse is the one with teeth: six spellings appear, and the three
+ * Gauss-leading ones (`1,000 Gauss (80,000 A/m)`) trap a first-number parse into
+ * returning 1,000 on ~12% of the catalogue, so each unit is matched by the
+ * number preceding ITS OWN symbol. Shock resistance sits in attribute 35 on 41%
+ * of pages and inside the Functions prose on another 41%, sometimes
+ * parenthesised mid-sentence, so reading only the dedicated attribute halves it.
+ *
+ * IMAGE TAGGING IS THE FLEET'S BEST LUME SIGNAL. Ball photographs every watch
+ * lit and unlit and files the dark shot under `_night`, which maps straight onto
+ * `lume` with no inference and no positional assumption; about half of every
+ * gallery is a night shot. Match `_night` and NOT `_night_front` — one current
+ * reference is filed as `_night_frontr`, and an exact match drops its only night
+ * shot while reporting a healthy fill rate. The gallery must be SCOPED TO
+ * `.product-main--slider`: the page also carries an accessories rail, a
+ * cross-sell rail and the builder's swatches on the same CDN, 36 images for a
+ * watch that has 2. Filename filtering was tried and FAILS, because a watch's
+ * gallery is routinely filed under a DIFFERENT reference.
+ *
+ * `full` ONLY — no `new-only`, no `heritage`, and both were sought. The
+ * watchfinder tiles carry no novelty or year badge of any kind; the only
+ * badge-shaped class in the grid is a strap-builder swatch label. And the
+ * apparent archive is an artefact: the sitemap's 477 `?model=` references
+ * against the watchfinder's ~205 tiles look like ~300 discontinued models, but
+ * the two differ by GRANULARITY rather than currency — the watchfinder lists one
+ * representative build per builder product where the sitemap enumerates every
+ * build. Grouped by BASE PAGE, only 4 of 127 builder pages and 8 of 90 plain
+ * reference pages are absent from the watchfinder, which is noise rather than a
+ * second catalogue, and `/en/heritage` carries ZERO product tiles — it is
+ * editorial about Webb C. Ball and railroad timekeeping, while `/en/archive`,
+ * `/en/discontinued` and `/en/vintage` are all 404.
+ *
+ * NO PRICE, NO STOCK — a REFUSAL rather than an absence: every PDP renders a
+ * price, a struck-through RRP and an availability string, and `rawSpecs` is
+ * built from the attribute-id ALLOWLIST rather than a DOM sweep so none of them
+ * has a path through. See `src/modules/ball-watch/README.md` in the extractors
+ * repo.
  */
-export type ExtractorId = 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille' | 'audemars-piguet' | 'jacob-and-co' | 'iwc' | 'nomos-glashuette' | 'christopher-ward' | 'muehle-glashuette' | 'swatch' | 'tutima' | 'casio-gshock' | 'casio-babyg' | 'casio-edifice' | 'casio-protrek' | 'casio-collection' | 'vacheron-constantin' | 'longines' | 'a-lange-soehne' | 'seiko' | 'citizen' | 'chopard' | 'bulova' | 'caravelle' | 'parmigiani-fleurier';
+export type ExtractorId = 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille' | 'audemars-piguet' | 'jacob-and-co' | 'iwc' | 'nomos-glashuette' | 'christopher-ward' | 'muehle-glashuette' | 'swatch' | 'tutima' | 'casio-gshock' | 'casio-babyg' | 'casio-edifice' | 'casio-protrek' | 'casio-collection' | 'vacheron-constantin' | 'longines' | 'a-lange-soehne' | 'seiko' | 'citizen' | 'chopard' | 'bulova' | 'caravelle' | 'parmigiani-fleurier' | 'ball-watch';
 /**
  * How much of a source's catalogue a run asks for.
  *
