@@ -698,12 +698,14 @@
  * renders its SPECS AND GALLERY correctly for the selected build but assembles
  * `.ciopmodel` client-side from a `concat_model` routine that fails two ways:
  * `?model=NM9080D-S1J-BE` renders `NM9080D`, truncated to the stem, and
- * `?model=DG2118C-S9C-BK` renders `DGC`, corrupted outright. Roughly 8% of
- * variant pages are affected and neither failure is visible from the row, since
- * one is a real product stem and the other is merely a short string. So the
- * `model=` QUERY PARAMETER IS AUTHORITATIVE and `.ciopmodel` is believed only
- * on single-reference PDPs; the disagreement is written to `rawSpecs` so it
- * stays countable.
+ * `?model=DG2118C-S9C-BK` renders `DGC`, corrupted outright. Measured over the
+ * whole catalogue, 27 of 626 references — 4.3% — disagree, 20 of them
+ * truncations to a stem and 7 corruptions that are not even a prefix of the
+ * right answer. Neither failure is visible from the row, since one is a real
+ * product stem and the other is merely a short string, so a fill-rate check
+ * sees 100%. The `model=` QUERY PARAMETER IS AUTHORITATIVE and `.ciopmodel` is
+ * believed only on single-reference PDPs; the disagreement is written to
+ * `rawSpecs` so it stays countable.
  *
  * SPECS ARE READ BY NUMERIC `attribute-id`, NEVER BY LABEL, because the site
  * serves five locales off one product record and the `<h6>` label is translated
@@ -728,6 +730,10 @@
  * number preceding ITS OWN symbol. Shock resistance sits in attribute 35 on 41%
  * of pages and inside the Functions prose on another 41%, sometimes
  * parenthesised mid-sentence, so reading only the dedicated attribute halves it.
+ * The live A/m ladder is NOT the published one: there is no 12,000 tier, it runs
+ * 4,800 (390 references), 80,000 (204) and 200,000 (16), and one 200,000
+ * reference pairs it as `200,000A/m (2,500 Gauss)` rather than the 1,000 Gauss
+ * every other spelling uses. Tube counts run 6 to 66.
  *
  * IMAGE TAGGING IS THE FLEET'S BEST LUME SIGNAL. Ball photographs every watch
  * lit and unlit and files the dark shot under `_night`, which maps straight onto
@@ -756,8 +762,13 @@
  * NO PRICE, NO STOCK — a REFUSAL rather than an absence: every PDP renders a
  * price, a struck-through RRP and an availability string, and `rawSpecs` is
  * built from the attribute-id ALLOWLIST rather than a DOM sweep so none of them
- * has a path through. See `src/modules/ball-watch/README.md` in the extractors
- * repo.
+ * has a path through. Measured end to end: 626 references discovered in 8
+ * requests, 621 emitted, 0 fetch errors, 634 fetches, 1218 images of which 1205
+ * tagged (98.9%, including 553 `lume`), 2748 variant edges, 37 distinct
+ * calibres. The five non-emitting URLs are one strap, one soft 404 serving an
+ * empty product body under HTTP 200, and three nested duplicates of base pages
+ * whose every reference emitted from the un-nested path. See
+ * `src/modules/ball-watch/README.md` in the extractors repo.
  */
 export type ExtractorId =
   | 'omega'
