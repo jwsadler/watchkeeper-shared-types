@@ -115,6 +115,32 @@ export interface CalibreTierOverrides {
    */
   antiShockSystem?: string;
 
+  /**
+   * Shock resistance in G-force override (e.g. 5000). Numeric, REPLACES the
+   * base `CalibreData.shockResistanceG` when set. Absent means no change from
+   * base. Common case: a tier-level shock upgrade like Ball's Amortiser®
+   * anti-shock system raises tolerance above the base movement's rating.
+   */
+  shockResistanceG?: number;
+
+  /**
+   * Anti-magnetic rating in A/m override (e.g. 4800, 80000). Numeric,
+   * REPLACES the base `CalibreData.antiMagneticAm` when set. Absent means no
+   * change from base. Common case: a brand-specific tier adding a soft-iron
+   * inner case (Ball Engineer II, IWC Ingenieur) that lifts the movement's
+   * effective magnetic tolerance well beyond the base calibre's rating.
+   */
+  antiMagneticAm?: number;
+
+  /**
+   * Anti-magnetic rating in Gauss override (e.g. 60, 1000). Numeric,
+   * REPLACES the base `CalibreData.antiMagneticGauss` when set. Absent means
+   * no change from base. Mirrors `antiMagneticAm` in the alternate unit —
+   * populate whichever the source cites; consumers may derive one from the
+   * other (1 Gauss ≈ 80 A/m) but the stored shape mirrors base exactly.
+   */
+  antiMagneticGauss?: number;
+
   escapement?: string;
 
   // Complications
