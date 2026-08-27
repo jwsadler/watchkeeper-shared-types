@@ -768,8 +768,97 @@
  * empty product body under HTTP 200, and three nested duplicates of base pages
  * whose every reference emitted from the un-nested path. See
  * `src/modules/ball-watch/README.md` in the extractors repo.
+ *
+ * `piaget` — SERVER-RENDERED HTML WITH VUE HYDRATED OVER THE TOP at
+ * piaget.com/ca-en. The breadcrumb, title, gallery slider and both spec panels
+ * are all in the first response, so the module OPENS NO BROWSER. Akamai Bot
+ * Manager is in the request path — `ak_bmsc`, `bm_sz`, `bm_mi` and a
+ * `server-timing: ak_p` — and is currently PASSIVE: 231 requests per full run,
+ * never challenged.
+ *
+ * THERE IS NO PAGINATION TO CONFIGURE, AND THAT IS A `robots.txt` FACT rather
+ * than a gap in the investigation. `all-watches` server-renders 151 product
+ * cards and declares `:has-load-more="true"`; the rest is behind a Vue
+ * load-more calling a `listProducts` route, and a wildcard `Disallow` on
+ * `listProducts` is the FIRST rule in piaget.com/robots.txt. Five
+ * query-parameter shortcuts were
+ * tried — `?page=2`, `?p=2`, `?offset=100`, `?size=500`, `?nbProducts=500` —
+ * and every one returned the identical 2,529,404-byte document with the
+ * identical 151 cards. So the category walk IS the pagination. DISCOVERY IS
+ * TWO SOURCES UNIONED because neither is complete: the sitemap alone yields
+ * 153, the category walk alone 167, the union 178, with 11 sitemap-only (high
+ * jewellery, cobalt tourbillons, a Métiers d'Art) and 25 category-only
+ * references the sitemap has dropped. Either half loses 6–14% of the
+ * catalogue — the Breitling shape, and the same answer. The category list is
+ * read from the sitemap rather than hard-coded, minus the 42 of 93 non-product
+ * `/watches/` URLs that are STRAP PRODUCT PAGES and can never hold a listing;
+ * excluding them saves 42 fetches and changes the union by zero.
+ *
+ * THE KILLER TRAP IS THAT CASE IS LOAD-BEARING. The Characteristics panel
+ * publishes two different facts under the same word four rows apart on 165 of
+ * 178 pages: `STRAP BUCKLE` is the buckle's MATERIAL (`Gold`) and
+ * `Strap buckle` is its TYPE (`Ardillon buckle`). A case-insensitive label map —
+ * the obvious way to write one — writes `Gold` into `strapBuckleType` on nine
+ * watches in ten and reports a 100% fill rate doing it. Every label match in
+ * the module is case-sensitive, asserted against `CASE_COLLIDING_LABEL_PAIRS`.
+ *
+ * SPECS ARE PANEL-SCOPED, keyed on `(panel, label)` pairs throughout, because
+ * `MOVEMENT TYPE` appears in both product panels on 103 pages and the movement
+ * panel's own `Diameter (mm)` (20.2 mm) would otherwise land in `caseSize`
+ * beside the case's 38 mm. Each panel is rendered TWICE — mobile accordion and
+ * desktop tabs — so the parser dedupes on the pair and keeps the first;
+ * `Daily Care & Services` is dropped as editorial. Two smaller shapes were
+ * found only by the full 178-page run and not by any sample: the five 910P
+ * Altiplano references render the MOVEMENT PAGE'S vocabulary (`Movement type`,
+ * `Shape`, `Functions`, `Thickness (mm)`) instead of the shouted spellings, all
+ * five parsing cleanly with healthy fill rates while `Hours, Minutes` went
+ * silently missing from `functions[]`; and 13 pages render three breadcrumbs
+ * with no family, so reading crumb 2 unconditionally files thirteen watches
+ * under a collection called "White Gold Diamond Watch". `CASE DIAMETER` covers
+ * only 136 of 178, so the size is a three-way chain down through
+ * `Case dimension` (18, `45 x 43 mm`) and `Wrist size` (8, cuffs and bangles),
+ * and `Wrist size` is NOT `lugToLug` and is not mapped to it.
+ *
+ * THE CALIBRE IS NOT IN THE SPEC PANEL — it is the "More about the movement"
+ * link, `/ca-en/movement/1205p1-automatic-ultra-thin-movement` → `1205P1`, 16
+ * calibres over 108 of 178 pages. `1160pblue` is the one that needed a rule,
+ * since a blind uppercase gives `1160PBLUE` rather than `1160P Blue`. NO
+ * MOVEMENT PAGE IS EVER FETCHED: the PDP's own panel describes THIS watch,
+ * where G0A51500 declares a 40-hour power reserve against the shared 430P
+ * page's "Approx. 43". The code is emitted unprefixed — the brand is already on
+ * the row. The reference is the URL slug tail uppercased, present on 178 of
+ * 178, with JSON-LD `sku` agreeing on all 142 pages that publish structured
+ * data; the other 36 publish none, which is why the URL leads.
+ *
+ * IMAGES ARE THE FLEET WEAK POINT AND ARE HONESTLY REPORTED: 578 images over
+ * 178 watches, 178 tagged, 30.8%. The URLs are `<recipe>/<40-hex content
+ * hash>.jpg` so the filename means nothing, and `alt` is empty on 400 of 578.
+ * The one signal is structural — the hero uses a `new-product-banner-*` CDN
+ * recipe and no other slide ever does, 178/178 against 0/400 — and seven heroes
+ * were downloaded and looked at before that earned `dial`. Positions 1+ ship
+ * UNTAGGED because the convention genuinely varies (three-quarter, side,
+ * caseback and editorial all appear at p2), and raising the number would mean
+ * inventing a convention Piaget does not follow. `variantRefs` is OMITTED
+ * rather than emptied: there is no variant selector, no metal swatch rail, no
+ * `product-variations`/`declination` markup and zero product cross-links after
+ * the spec block on 178 of 178 pages, and shared-types distinguishes "asked and
+ * none" from "never asked". Grouping on the product name would find clusters —
+ * 22 pages are titled "Limelight Gala watch" — but that turns a similarity
+ * judgement into a quotation, and the cluster spans 26 mm and 32 mm cases.
+ *
+ * NO PRICE, NO STOCK — a REFUSAL rather than an absence, and a doubled one,
+ * because Piaget publishes commerce data two ways: JSON-LD `offers.price` and
+ * `offers.priceCurrency` as a real integer and `"CAD"` on 142 of 178 pages, and
+ * a `.pdp-banner__price` carrying either a formatted price or "Price available
+ * upon request". The structural refusal is that the JSON-LD reader takes four
+ * keys BY NAME (`sku`, `name`, `description`, `gtin13`) rather than spreading
+ * the object, and `rawSpecs` is built from a panel-scoped label ALLOWLIST
+ * rather than a DOM sweep, so neither shape has a path through. Measured end to
+ * end on ca-en: 178 of 178 emitted, 0 fetch errors, 0 skipped, 231 requests, 0
+ * reference disagreements, 16 distinct calibres. `full` and `new-only`; no
+ * `heritage`. See `src/modules/piaget/README.md` in the extractors repo.
  */
-export type ExtractorId = 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille' | 'audemars-piguet' | 'jacob-and-co' | 'iwc' | 'nomos-glashuette' | 'christopher-ward' | 'muehle-glashuette' | 'swatch' | 'tutima' | 'casio-gshock' | 'casio-babyg' | 'casio-edifice' | 'casio-protrek' | 'casio-collection' | 'vacheron-constantin' | 'longines' | 'a-lange-soehne' | 'seiko' | 'citizen' | 'chopard' | 'bulova' | 'caravelle' | 'parmigiani-fleurier' | 'ball-watch';
+export type ExtractorId = 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille' | 'audemars-piguet' | 'jacob-and-co' | 'iwc' | 'nomos-glashuette' | 'christopher-ward' | 'muehle-glashuette' | 'swatch' | 'tutima' | 'casio-gshock' | 'casio-babyg' | 'casio-edifice' | 'casio-protrek' | 'casio-collection' | 'vacheron-constantin' | 'longines' | 'a-lange-soehne' | 'seiko' | 'citizen' | 'chopard' | 'bulova' | 'caravelle' | 'parmigiani-fleurier' | 'ball-watch' | 'piaget';
 /**
  * How much of a source's catalogue a run asks for.
  *
