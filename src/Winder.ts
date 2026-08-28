@@ -109,6 +109,66 @@ export interface WinderEntry {
    */
   imageStoragePath?: string | null;
 
+  /**
+   * Max programmable delay before the first winding cycle, in hours.
+   *
+   * Wolf Atlas line documents 255. Only populated when a specific hour figure
+   * is published by the manufacturer.
+   */
+  startDelayMaxHours?: number | null;
+
+  /**
+   * Security specifications, for a winder built into a safe or vault.
+   *
+   * Only populated when {@link WinderEntry.isSafe} is true. Nested rather than
+   * flattened onto WinderEntry to keep the top level clean for the ~90% of
+   * winders that are not safes — a dozen always-null security columns on every
+   * ordinary winder would be noise in the editor and in every consumer.
+   *
+   * If `isSafe` is false or null, `safeSpecs` must be null. The editor UI
+   * enforces this, and so does the write path — a bulk enrichment apply does
+   * not go through the form.
+   */
+  safeSpecs?: {
+    /** Security standard, as certified (e.g. "EN 1143-1 Grade I", "UL RSC", "VdS Class 0"). */
+    certification?: string | null;
+    /** Certified fire endurance, in minutes (e.g. 60). */
+    fireRatingMinutes?: number | null;
+    /**
+     * Maximum internal temperature held during the fire rating, in Celsius —
+     * the UL Class 350 style figure (e.g. 175). Meaningless without
+     * `fireRatingMinutes`, which says for how long it was held.
+     */
+    fireMaxInternalTempC?: number | null;
+    /**
+     * Weight in kilograms. An anti-theft proxy rather than a spec in its own
+     * right: it is what decides whether the safe can simply be carried away,
+     * and therefore whether it needs anchoring.
+     */
+    weightKg?: number | null;
+    /** How the safe is opened. */
+    lockingMechanism?:
+      | 'key'
+      | 'combination'
+      | 'electronic_keypad'
+      | 'biometric'
+      | 'dual'
+      | null;
+    /** Number of locking bolts (Wolf and Buben & Zörweg both cite these). */
+    lockingBoltCount?: number | null;
+    /** Body steel gauge, in millimetres. */
+    wallThicknessMm?: number | null;
+    /** Ships pre-drilled for floor or wall anchoring. */
+    hasAnchorPoints?: boolean | null;
+    /**
+     * Insurer-recognised cash rating, verbatim including its currency and
+     * scheme (e.g. "$5,000 UL", "€65,000 EN"). A string rather than a number
+     * because the scheme is part of the claim and the figure is meaningless
+     * without it.
+     */
+    insuranceCashRating?: string | null;
+  } | null;
+
   /** Long-form marketing / positioning copy. */
   description?: string | null;
   /** Alternative / AKA model names. */
