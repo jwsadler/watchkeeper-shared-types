@@ -91,6 +91,24 @@ export interface WinderEntry {
    */
   priceTierSlug?: string | null;
 
+  /**
+   * Firebase Storage path of the curated stock image for this model, uploaded
+   * by an admin — `admin/winders/{docId}/{timestamp}.jpg`.
+   *
+   * A PATH, not a download URL, matching {@link CalibreImage.storagePath}: the
+   * RN app signs it with `getDownloadURL()` at render, and the path sits inside
+   * the storage-resize-images `INCLUDE_PATH_LIST` so a 384x384 variant exists
+   * alongside it for list thumbnails.
+   *
+   * ONE image, not a gallery. This is the picture the app shows for a winder
+   * whose owner has not photographed their own — a user upload on the
+   * {@link UserWinder} instance always wins over it.
+   *
+   * Nullable like every other spec field here: AI enrichment never populates
+   * it, so it is null until an admin uploads.
+   */
+  imageStoragePath?: string | null;
+
   /** Long-form marketing / positioning copy. */
   description?: string | null;
   /** Alternative / AKA model names. */
