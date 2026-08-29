@@ -178,6 +178,22 @@ export interface WatchReference {
   case?: CaseInfo;
   production?: ProductionInfo;
   strap?: StrapInfo;
+  /**
+   * True when the bracelet is physically integrated into the case — Audemars
+   * Piguet Royal Oak, Patek Philippe Nautilus, Vacheron Overseas, Chopard
+   * Alpine Eagle, Tissot PRX.
+   *
+   * A CASE-CONSTRUCTION fact, which is why it sits here rather than on
+   * {@link StrapInfo}. An integrated watch still has strap details — the
+   * bracelet has its own material and width — so nesting it there would both
+   * misfile it and make it vanish whenever `strap` is absent.
+   *
+   * Distinct from a bracelet that mounts to the case on lugs: those can be
+   * swapped for a strap, an integrated design cannot. That difference is the
+   * point of the flag — consumers use it to decide whether offering an
+   * aftermarket strap makes any sense for this model.
+   */
+  hasIntegratedBracelet?: boolean;
   dialAndHands?: DialInfo;
   /**
    * Pointer to the linked electronic module (`electronicModules/{moduleId}`),
