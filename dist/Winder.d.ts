@@ -134,11 +134,29 @@ export interface WinderEntry {
         /** Certified fire endurance, in minutes (e.g. 60). */
         fireRatingMinutes?: number | null;
         /**
-         * Maximum internal temperature held during the fire rating, in Celsius —
-         * the UL Class 350 style figure (e.g. 175). Meaningless without
-         * `fireRatingMinutes`, which says for how long it was held.
+         * Maximum INTERIOR temperature the safe holds during the fire test, in
+         * Celsius (e.g. 177 — the 350°F of UL Class 350).
+         *
+         * The protective half of the pair: what the watches inside are kept below.
+         * Meaningless without `fireRatingMinutes`, which says for how long, and
+         * only half the spec without `fireExternalTempC`, which says against what.
          */
         fireMaxInternalTempC?: number | null;
+        /**
+         * The EXTERNAL fire the safe is tested against, in Celsius (e.g. 927 — the
+         * 1,700°F of UL Class 350).
+         *
+         * The exposure half of the pair. Together the three fire fields state one
+         * class: UL Class 350 at 60 minutes is `fireExternalTempC: 927`,
+         * `fireMaxInternalTempC: 177`, `fireRatingMinutes: 60` — a furnace at 927°C
+         * for an hour with the interior never passing 177°C. A rating quoting only
+         * the interior figure is half a spec: it says what the safe protects
+         * against without saying how fierce a fire it was proven against.
+         *
+         * Populate only what the manufacturer publishes. The two temperatures are
+         * not derivable from one another except through a named class.
+         */
+        fireExternalTempC?: number | null;
         /**
          * Weight in kilograms. An anti-theft proxy rather than a spec in its own
          * right: it is what decides whether the safe can simply be carried away,
