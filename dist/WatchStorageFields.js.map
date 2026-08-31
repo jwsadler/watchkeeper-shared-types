@@ -1,1 +1,1 @@
-{"version":3,"file":"WatchStorageFields.js","sourceRoot":"","sources":["../src/WatchStorageFields.ts"],"names":[],"mappings":";;;AA8CA;;;;;;;GAOG;AACU,QAAA,wBAAwB,GAAG;IACtC,iBAAiB;IACjB,eAAe;IACf,YAAY;CACJ,CAAC"}
+{"version":3,"file":"WatchStorageFields.js","sourceRoot":"","sources":["../src/WatchStorageFields.ts"],"names":[],"mappings":";;;AAuHA;;;;;;;;;;;;GAYG;AACU,QAAA,wBAAwB,GAAG;IACtC,iBAAiB;IACjB,eAAe;IACf,YAAY;IACZ,wBAAwB;CAChB,CAAC"}
