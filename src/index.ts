@@ -24,11 +24,12 @@ export type { CalibreAliasDetail } from './CalibreAliasDetail';
 export type { LookupValue, LookupCollection } from './LookupTypes';
 export type { StorageLocationCategory } from './StorageLocation';
 export { STORAGE_LOCATION_CATEGORIES } from './StorageLocation';
-export type { WinderEntry } from './Winder';
+export type { WinderEntry, StorageApplianceKind } from './Winder';
 export type { UserWinder } from './UserWinder';
 export type {
   WatchStorageFields,
   WatchStorageFieldKey,
+  StorageLocationDetails,
   OmitWatchStorageFields,
 } from './WatchStorageFields';
 export { WATCH_STORAGE_FIELD_KEYS } from './WatchStorageFields';

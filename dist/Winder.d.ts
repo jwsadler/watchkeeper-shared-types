@@ -1,4 +1,25 @@
 /**
+ * What KIND of storage appliance a catalog entry describes.
+ *
+ * The catalog is one collection, not two. A safe and a winder share ~70% of
+ * their fields — make, model, country, materials, price tier, lock, image,
+ * description, aliases, provenance — and the six that are winder-only
+ * (`turnsPerDay`, `turnsPerDayRange`, `rotationDirection`,
+ * `rotationProgramSlugs`, `startDelayMaxHours`, and partly `powerSourceSlugs`)
+ * are already nullable. Splitting them into two entities would fork the
+ * catalog, its Algolia index, its rules, its admin CRUD and ~6,800 lines of RN
+ * picker/flow/detail machinery to gain six absent fields.
+ *
+ * It also matches the products: Buben & Zörweg build safes WITH winders inside.
+ * {@link WinderEntry.isSafe} exists precisely because that object is one thing,
+ * and a hard entity split would force an arbitrary call on exactly the models
+ * at the top of this market.
+ *
+ * ABSENT MEANS `winder`. Every entry catalogued before this field existed is a
+ * winder, so no backfill is needed and none should be run — consumers default.
+ */
+export type StorageApplianceKind = 'winder' | 'safe';
+/**
  * A watch winder entry in the admin-curated winder catalog.
  * Path: winders/{docId} — doc id is the slug `<make-slug>-<model-slug>`.
  *
@@ -13,6 +34,11 @@
  * first add a {@link UserWinder} instance that points here, and the watch
  * references that. See {@link WatchStorageFields.winderUserRef}.
  *
+ * Despite the name, this is the catalog of physical storage APPLIANCES, not
+ * winders alone — see {@link WinderEntry.applianceKind}. The collection and the
+ * type keep their historical names because renaming them would churn both
+ * consumers, the Algolia index and the Storage paths for no behavioural gain.
+ *
  * Every spec field is nullable: AI enrichment fills only what it can verify and
  * prefers null over a plausible-sounding guess.
  *
@@ -23,6 +49,18 @@
 export interface WinderEntry {
     /** Slug doc id: `<make-slug>-<model-slug>` (e.g., "wolf-cub-single-winder"). */
     id: string;
+    /**
+     * Whether this entry is a winder or a safe. Absent means `winder` — see
+     * {@link StorageApplianceKind}.
+     *
+     * Orthogonal to {@link WinderEntry.isSafe}, and the two must not be
+     * conflated. `isSafe` means "this WINDER is built into a safe" (a rotor plus
+     * security); `applianceKind: 'safe'` means "this is a safe" (security, no
+     * rotor). A `'safe'` entry should carry `isSafe: true` so every existing
+     * consumer of the security block lights up unchanged, and must leave the six
+     * winding fields null.
+     */
+    applianceKind?: StorageApplianceKind | null;
     /**
      * Manufacturer slug, lookup-backed via `lookup_winder_manufacturers`
      * (e.g., "wolf", "barrington", "orbita"). Controlled vocabulary — an admin
@@ -80,9 +118,22 @@ export interface WinderEntry {
     /** Doubles as a display case (glass front / vitrine). */
     hasDisplayCase?: boolean | null;
     /**
-     * True when the winder itself is integrated into a safe (e.g. Buben & Zörweg
-     * Object series). Watch storage category stays `winder` — this flag is for a
-     * secondary safe overlay on the badge, not category reassignment.
+     * True when the entry has the security properties of a safe, and the gate on
+     * {@link WinderEntry.safeSpecs}.
+     *
+     * Its meaning depends on {@link WinderEntry.applianceKind}, and the two must
+     * not be conflated:
+     *   - on a WINDER entry it means the winder is integrated into a safe (e.g.
+     *     Buben & Zörweg Object series). The watch's storage category stays
+     *     `winder`; this is a secondary safe overlay on the badge, not category
+     *     reassignment.
+     *   - on an `applianceKind: 'safe'` entry it is simply true, and the watch's
+     *     storage category is `personal_safe`.
+     *
+     * A safe entry sets it for a reason beyond bookkeeping: every existing
+     * consumer of the security block — spec resolution, the admin editor's
+     * conditional form, the insurance PDF — is already gated on this flag, so
+     * setting it lights all of them up for safes with no change of their own.
      *
      * Distinct from {@link WinderEntry.hasLock}, which only means the case locks.
      */
