@@ -32,6 +32,19 @@ export interface UserWinder {
     serialNumber?: string;
     /** ISO 8601 date string (client clock). */
     purchaseDate?: string;
+    /**
+     * How much of {@link purchaseDate} the owner actually knew.
+     *
+     * A purchase date is routinely remembered as a year, or a month and a year,
+     * and nothing narrower. The date itself is always stored as a full ISO
+     * string, so without this a year-only answer is indistinguishable from the
+     * 1st of January — the reader has no way to tell a real day from a padded
+     * one, and re-rendering promotes the guess into a fact.
+     *
+     * Mirrors the same pairing on an owned watch's purchase details. Absent means
+     * the date was never narrowed, and consumers should treat it as a full date.
+     */
+    purchaseDateFormat?: 'year' | 'month-year' | 'full-date';
     /** Purchase price in `purchaseCurrency`. */
     purchasePrice?: number;
     /** ISO 4217 currency code for `purchasePrice` (e.g., "GBP"). */
