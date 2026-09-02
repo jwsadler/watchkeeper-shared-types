@@ -88,9 +88,10 @@ export interface WatchStorageFields {
      * unambiguous. ENCRYPTED at rest.
      *
      * ⚠️ THE NAME IS HISTORICAL AND IS NOT BEING CHANGED. It now points at any
-     * catalogued storage appliance, safes included — see
+     * catalogued storage appliance — safes and display cases included — see
      * {@link WinderEntry.applianceKind}. Set when the watch's category carries
-     * the `hasAppliance` property (today `winder` and `personal_safe`). Renaming
+     * the `hasAppliance` property (today `winder`, `personal_safe` and
+     * `display_case`). Renaming
      * it would mean decrypting, rewriting and re-encrypting every watch document
      * in every collection to buy nothing but a better word.
      */

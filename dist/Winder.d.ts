@@ -1,24 +1,80 @@
 /**
- * What KIND of storage appliance a catalog entry describes.
+ * What KIND of storage appliance a catalog entry describes, PRIMARILY.
  *
- * The catalog is one collection, not two. A safe and a winder share ~70% of
- * their fields — make, model, country, materials, price tier, lock, image,
- * description, aliases, provenance — and the six that are winder-only
- * (`turnsPerDay`, `turnsPerDayRange`, `rotationDirection`,
- * `rotationProgramSlugs`, `startDelayMaxHours`, and partly `powerSourceSlugs`)
- * are already nullable. Splitting them into two entities would fork the
- * catalog, its Algolia index, its rules, its admin CRUD and ~6,800 lines of RN
- * picker/flow/detail machinery to gain six absent fields.
+ * The catalog is one collection, not three. A safe, a display case and a winder
+ * share most of their fields — make, model, country, materials, price tier,
+ * lock, capacity, image, description, aliases, provenance — and the five that
+ * are winder-only (`turnsPerDay`, `turnsPerDayRange`, `rotationDirection`,
+ * `rotationProgramSlugs`, `startDelayMaxHours`) are already nullable. Splitting
+ * them into separate entities would fork the catalog, its Algolia index, its
+ * rules, its admin CRUD and ~6,800 lines of RN picker/flow/detail machinery to
+ * gain a handful of absent fields.
  *
- * It also matches the products: Buben & Zörweg build safes WITH winders inside.
- * {@link WinderEntry.isSafe} exists precisely because that object is one thing,
- * and a hard entity split would force an arbitrary call on exactly the models
- * at the top of this market.
+ * It also matches the products: Buben & Zörweg build safes WITH winders inside,
+ * behind a lockable crystal door. {@link WinderEntry.isSafe} and
+ * {@link WinderEntry.hasDisplayCase} exist precisely because that object is one
+ * thing, and a hard entity split would force an arbitrary call on exactly the
+ * models at the top of this market.
  *
- * ABSENT MEANS `winder`. Every entry catalogued before this field existed is a
- * winder, so no backfill is needed and none should be run — consumers default.
+ * ## One value, plus two flags — NOT an array
+ *
+ * An appliance is frequently more than one of these at once, and that is
+ * recorded by the two boolean flags rather than by a list of kinds:
+ *
+ * ```
+ * Wolf Cub Single      'winder'        —              —
+ * Wolf Athos 20        'safe'          isSafe         —
+ * Barrington Modern 4  'winder'        —              hasDisplayCase
+ * B&Z Collector 45     'winder'        isSafe         hasDisplayCase
+ * Wolf Windsor 10      'display_case'  —              hasDisplayCase
+ * ```
+ *
+ * A `StorageApplianceKind[]` was considered and rejected. The flags are not a
+ * redundant encoding of such an array: `isSafe` on a WINDER means "this winder
+ * is built into a safe", which is a different claim from "this is a safe", and
+ * an array flattens the two. Primacy is also load-bearing — it drives the
+ * default label, the placeholder glyph, the insurance-document row label and
+ * the winding-suppression rule — and an array has nowhere to put it without
+ * reinventing a discriminator as "the first element". Finally the flags are
+ * already populated across the catalog, so the flag model needs no backfill,
+ * while an array would need either a migration of every document or a permanent
+ * read-time reconstruction from the very flags it was meant to replace.
+ *
+ * Consumers that want the set for display purposes should DERIVE it.
+ *
+ * ## The three-rung ladder
+ *
+ * Exactly one rung fires, and the order is the whole rule:
+ *
+ * ```
+ * winds?                       → 'winder'        (even if it also protects and displays)
+ * else hardened security body? → 'safe'          (even if it has a viewing window)
+ * else                         → 'display_case'
+ * ```
+ *
+ * The tie-break is whether it WINDS, not whether it protects: a safe misfiled
+ * as a winder merely shows an empty winding section, while a winder misfiled as
+ * a safe has its turns-per-day suppressed everywhere. When in doubt, `winder`.
+ *
+ * ## Naming
+ *
+ * The slug is the appliance's OWN name. Where a `lookup_storage_locations`
+ * category slug already is that name the two coincide (`winder`,
+ * `display_case`); where it is not, they differ (`personal_safe` → `safe`).
+ * `display_case` rather than `display` because "display" is not a noun for the
+ * object, and every label would have to append "case" anyway.
+ *
+ * ## ⚠️ ABSENT MEANS `winder`, and writers must keep it that way
+ *
+ * Every entry catalogued before this field existed is a winder, so no backfill
+ * is needed and none should be run — consumers default. Write paths therefore
+ * store `'safe' | 'display_case' | null` and NEVER the literal `'winder'`: an
+ * editor always holds one of the three values, so writing it through would
+ * stamp an explicit `'winder'` onto every entry anyone opens and saves,
+ * inventing data the document never carried, one edit at a time, across the
+ * whole catalog.
  */
-export type StorageApplianceKind = 'winder' | 'safe';
+export type StorageApplianceKind = 'winder' | 'safe' | 'display_case';
 /**
  * A watch winder entry in the admin-curated winder catalog.
  * Path: winders/{docId} — doc id is the slug `<make-slug>-<model-slug>`.
@@ -50,15 +106,23 @@ export interface WinderEntry {
     /** Slug doc id: `<make-slug>-<model-slug>` (e.g., "wolf-cub-single-winder"). */
     id: string;
     /**
-     * Whether this entry is a winder or a safe. Absent means `winder` — see
-     * {@link StorageApplianceKind}.
+     * What this entry PRIMARILY is — winder, safe or display case. Absent means
+     * `winder`; see {@link StorageApplianceKind} for the ladder that decides it
+     * and for why this is one value rather than an array.
      *
-     * Orthogonal to {@link WinderEntry.isSafe}, and the two must not be
-     * conflated. `isSafe` means "this WINDER is built into a safe" (a rotor plus
-     * security); `applianceKind: 'safe'` means "this is a safe" (security, no
-     * rotor). A `'safe'` entry should carry `isSafe: true` so every existing
-     * consumer of the security block lights up unchanged, and must leave the six
-     * winding fields null.
+     * Orthogonal to {@link WinderEntry.isSafe} and
+     * {@link WinderEntry.hasDisplayCase}, and none of the three may be conflated.
+     * `isSafe` means "this WINDER is built into a safe" (a rotor plus security);
+     * `applianceKind: 'safe'` means "this IS a safe" (security, no rotor). The
+     * same distinction holds one kind over for `hasDisplayCase`.
+     *
+     * Each non-winder value forces its flag, so every existing consumer of the
+     * matching block lights up unchanged:
+     *
+     *   - `'safe'` carries `isSafe: true`, and leaves the five winding fields null.
+     *   - `'display_case'` carries `hasDisplayCase: true`, and leaves the five
+     *     winding fields AND `isSafe`/`safeSpecs` null — by the ladder, a
+     *     hardened body makes it a `'safe'` with a window, not a display case.
      */
     applianceKind?: StorageApplianceKind | null;
     /**
@@ -76,7 +140,19 @@ export interface WinderEntry {
     displayName?: string;
     /** Country of manufacture (e.g., "Germany", "Italy"). */
     countryOfManufacture?: string;
-    /** Number of watch slots: 1, 2, 4, 6, 12, … */
+    /**
+     * How many watches the appliance holds: 1, 2, 4, 6, 12, …
+     *
+     * ⚠️ APPLIES TO ALL THREE KINDS, and only its label changes. A winder's are
+     * rotor positions ("slots"); a safe's and a display case's are watch
+     * CAPACITY (a Wolf Athos 20 Piece holds 20, a Wolf Windsor 10 Piece holds
+     * 10). Suppressing it on a non-winder is a bug, not a simplification — it
+     * blanks a figure the manufacturer prints on the box.
+     *
+     * Numbered positions within that capacity are OPTIONAL on a non-winder: a
+     * watch may simply be loose inside. Consumers offer a position and never
+     * require one.
+     */
     slotCount?: number | null;
     /**
      * Every turns-per-day setting the winder supports
@@ -115,7 +191,34 @@ export interface WinderEntry {
     isQuiet?: boolean | null;
     /** Has a lockable case. */
     hasLock?: boolean | null;
-    /** Doubles as a display case (glass front / vitrine). */
+    /**
+     * True when the entry IS a display case — a glazed surface the watches are
+     * meant to be viewed through — and the gate on
+     * {@link WinderEntry.displayCaseSpecs}.
+     *
+     * The exact structural twin of {@link WinderEntry.isSafe}, one kind over, and
+     * its meaning likewise depends on {@link WinderEntry.applianceKind}:
+     *   - on a WINDER or SAFE entry it means the appliance ALSO displays — a
+     *     Barrington Modern 4 behind glass, a Buben & Zörweg Collector behind a
+     *     crystal door, a safe with a viewing window. The watch's storage
+     *     category stays whatever the owner filed it under.
+     *   - on an `applianceKind: 'display_case'` entry it is simply true.
+     *
+     * It is what makes display cases discoverable with NO BACKFILL: the picker
+     * predicate is `applianceKind === 'display_case' || hasDisplayCase === true`,
+     * and this flag has been collected for as long as the catalog has existed, so
+     * every glazed appliance already in it becomes findable the moment consumers
+     * ship the third kind.
+     *
+     * ⚠️ ITS MEANING TIGHTENED when display cases became a kind. It was
+     * previously enriched as "glass front, vitrine, OR a viewing window", which
+     * is true of cheap dust covers; it now means "is a display case". Entries
+     * enriched under the loose reading will surface in the display-case picker
+     * until re-enriched or corrected by a curator. That is the price of needing
+     * no backfill, and it was taken deliberately.
+     *
+     * Distinct from {@link WinderEntry.hasLock}, which only means the case locks.
+     */
     hasDisplayCase?: boolean | null;
     /**
      * True when the entry has the security properties of a safe, and the gate on
@@ -129,6 +232,10 @@ export interface WinderEntry {
      *     reassignment.
      *   - on an `applianceKind: 'safe'` entry it is simply true, and the watch's
      *     storage category is `personal_safe`.
+     *   - on an `applianceKind: 'display_case'` entry it must be false or null.
+     *     The ladder in {@link StorageApplianceKind} sends anything with a
+     *     hardened security body to `'safe'` before it can reach the display
+     *     rung, so a display case that protects is a safe with a window.
      *
      * A safe entry sets it for a reason beyond bookkeeping: every existing
      * consumer of the security block — spec resolution, the admin editor's
@@ -229,6 +336,67 @@ export interface WinderEntry {
          * without it.
          */
         insuranceCashRating?: string | null;
+    } | null;
+    /**
+     * Display specifications, for an appliance the watches are viewed through.
+     *
+     * Gated on {@link WinderEntry.hasDisplayCase}, NOT on
+     * `applianceKind === 'display_case'` — deliberately, and exactly as
+     * {@link WinderEntry.safeSpecs} is gated on `isSafe` rather than on
+     * `applianceKind === 'safe'`. A glass-fronted winder has real glazing and a
+     * real UV answer, and a Buben & Zörweg Collector renders all three spec
+     * blocks because it genuinely is all three things. If `hasDisplayCase` is
+     * false or null, `displayCaseSpecs` must be null; the editor UI enforces
+     * this, and so does the write path — a bulk enrichment apply does not go
+     * through the form.
+     *
+     * Nested rather than flattened onto WinderEntry for the same reason
+     * `safeSpecs` is: seven always-null display columns on every ordinary winder
+     * would be noise in the editor and in every consumer.
+     *
+     * ⚠️ CAPACITY IS NOT HERE. A display case's capacity is
+     * {@link WinderEntry.slotCount}, the same field a winder and a safe use — a
+     * Wolf Windsor 10 Piece holds 10 in ten numbered positions. Only the word
+     * "slots" fails to carry across, and that is a label, not a field.
+     *
+     * ⚠️ DIMENSIONS ARE NOT HERE EITHER, though display cases publish them. A
+     * winder and a safe have dimensions too, so they belong at the top level of
+     * WinderEntry whenever someone adds them; putting them here would lock a
+     * cross-kind fact to one kind.
+     */
+    displayCaseSpecs?: {
+        /**
+         * What the watches are viewed through. Glass and acrylic age and scratch
+         * very differently, which is the practical reason a collector cares.
+         */
+        glazing?: 'glass' | 'tempered_glass' | 'acrylic' | 'crystal' | null;
+        /**
+         * The glazing filters ultraviolet light.
+         *
+         * The one display spec with a conservation consequence: it is what decides
+         * whether dials, lume and straps fade in daylight. Museum-grade acrylic
+         * reaches ~99%, ordinary acrylic blocks UVB but only about a third of UVA,
+         * and plain glass filters very little — so an unqualified "UV protection"
+         * claim is worth nothing without the manufacturer stating it.
+         */
+        hasUvFiltering?: boolean | null;
+        /** Integrated lighting (LED strips, fibre optics, a lit vitrine). */
+        hasIllumination?: boolean | null;
+        /** A built-in humidity gauge — it MEASURES only. */
+        hasHygrometer?: boolean | null;
+        /**
+         * ACTIVE humidity regulation — a humidor compartment or a sealed,
+         * conditioned interior. Distinct from `hasHygrometer`, which merely reads
+         * the number; the pair are frequently confused in marketing copy.
+         */
+        hasHumidityControl?: boolean | null;
+        /** How the case is sited. */
+        mountingStyle?: 'tabletop' | 'wall_mounted' | 'freestanding' | 'drawer_insert' | null;
+        /**
+         * Closed storage below or beside the display bed, for watches and
+         * accessories not on show (Barrington Modern, most Wolf boxes).
+         */
+        hasDrawer?: boolean | null;
     } | null;
     /** Long-form marketing / positioning copy. */
     description?: string | null;
