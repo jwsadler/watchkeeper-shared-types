@@ -857,8 +857,53 @@
  * end on ca-en: 178 of 178 emitted, 0 fetch errors, 0 skipped, 231 requests, 0
  * reference disagreements, 16 distinct calibres. `full` and `new-only`; no
  * `heritage`. See `src/modules/piaget/README.md` in the extractors repo.
+ *
+ * `hamilton` — CLASSIC MAGENTO 2 LUMA at hamiltonwatch.com, and the point worth
+ * carrying is that it is NOT the Longines stack despite both brands being Swatch
+ * Group and both storefronts being Magento 2. Longines runs Next.js and ships
+ * raw GraphQL responses inside `__NEXT_DATA__`; Hamilton runs requirejs,
+ * `x-magento-init` and fotorama, and server-renders the RESOLVED specification
+ * strings into the HTML, so there is no embedded attribute dictionary because
+ * nothing arrives unresolved.
+ *
+ * CURL CANNOT REACH THIS ORIGIN AND NODE CAN: HTTP/2 answers `INTERNAL_ERROR`
+ * and HTTP/1.1 tarpits to a 60s timeout having received zero bytes, while
+ * longines.com answers normally from the same machine, and Node `fetch` gets 200
+ * in ~230ms with only a User-Agent. That inverts the Christopher Ward case and
+ * means anyone probing with curl reports a bot wall that is not there. No
+ * browser, no stealth, no proxy.
+ *
+ * TWO SOURCES. An open, unauthenticated GraphQL endpoint supplies discovery and
+ * the gallery; the PDP supplies every specification. GraphQL returns the
+ * `hamilton_*` attributes as NUMERIC OPTION IDS with no dictionary anywhere on
+ * the origin, and does not expose `Caliber`, `Thickness` or `Strap reference` at
+ * any name, so a GraphQL-only module would ship the catalogue with no calibres.
+ * It is POSTed only: `robots.txt` ends `Disallow: /*?`, which bans every query
+ * string including the grid's own `?p=` pagination and `GET /graphql?query=`.
+ *
+ * NO STORE IS THE CATALOGUE — the Longines shape again. The union across the 39
+ * stores that exist is 313 watches; the largest single store is KOREAN at 522
+ * products, en-ca has 477, and 7 watches are served by no English store at all.
+ * Two of the 41 store codes the sitemap index names are not stores. A missing
+ * product returns a real 404 rather than Longines' soft 200.
+ *
+ * `full` ONLY, and the absence of `new-only` is a finding rather than a gap.
+ * Hamilton badges 8 new releases and publishes no way to query them:
+ * `new_from_date` is unused (null on all 8, set on 3 of 475, not filterable),
+ * no custom attribute exists, `hamilton_status` is lifecycle rather than
+ * newness, and the novelties category MISSES 2 OF THE 8 badged watches —
+ * measured twice, which inverts Longines, where novelties was a strict superset
+ * and became the `new-only` crawl. The badge is emitted into `rawSpecs` as
+ * `Hamilton New Badge` on every row, so newness is reconcilable from a full run.
+ *
+ * Full run: 313 of 313 emitted, 0 fetch errors, 0 skipped, 414 requests, 33
+ * calibres, `imageUrl` on 313, 59.8% of images tagged, 1 reference
+ * disagreement. NO PRICE, NO STOCK — filled on every product in both the JSON-LD
+ * the parser reads and the GraphQL response discovery receives, and neither is
+ * emitted nor requested. See `src/modules/hamilton/README.md` in the extractors
+ * repo.
  */
-export type ExtractorId = 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille' | 'audemars-piguet' | 'jacob-and-co' | 'iwc' | 'nomos-glashuette' | 'christopher-ward' | 'muehle-glashuette' | 'swatch' | 'tutima' | 'casio-gshock' | 'casio-babyg' | 'casio-edifice' | 'casio-protrek' | 'casio-collection' | 'vacheron-constantin' | 'longines' | 'a-lange-soehne' | 'seiko' | 'citizen' | 'chopard' | 'bulova' | 'caravelle' | 'parmigiani-fleurier' | 'ball-watch' | 'piaget';
+export type ExtractorId = 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille' | 'audemars-piguet' | 'jacob-and-co' | 'iwc' | 'nomos-glashuette' | 'christopher-ward' | 'muehle-glashuette' | 'swatch' | 'tutima' | 'casio-gshock' | 'casio-babyg' | 'casio-edifice' | 'casio-protrek' | 'casio-collection' | 'vacheron-constantin' | 'longines' | 'a-lange-soehne' | 'seiko' | 'citizen' | 'chopard' | 'bulova' | 'caravelle' | 'parmigiani-fleurier' | 'ball-watch' | 'piaget' | 'hamilton';
 /**
  * How much of a source's catalogue a run asks for.
  *
