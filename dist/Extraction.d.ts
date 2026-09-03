@@ -902,8 +902,65 @@
  * the parser reads and the GraphQL response discovery receives, and neither is
  * emitted nor requested. See `src/modules/hamilton/README.md` in the extractors
  * repo.
+ *
+ * `zenith` — VUE STOREFRONT 1.x over an ElasticSearch catalogue at
+ * zenith-watches.com, and the entry that has to lead with an ACCESS CAVEAT
+ * rather than a run: THIS MODULE HAS NEVER COMPLETED A CRAWL FROM THE
+ * EXTRACTORS SERVICE'S OWN RUNTIME.
+ *
+ * ZENITH REFUSES AUTOMATION OUTRIGHT, WHICH IS NOT THE SAME AS REFUSING
+ * DATACENTRE IPs. Measured 2026-09-03 from a RESIDENTIAL address: flat HTTP 403
+ * to `node:https`, to stealth Playwright HEADLESS and to stealth Playwright
+ * HEADFUL, four attempts each, every attempt firing an Akamai sensor POST and
+ * earning a fresh `_abck` that converted nothing. A genuine browser on the same
+ * connection is offered the interactive behavioural challenge instead of a
+ * deny, so this is CLIENT CLASSIFICATION and a residential address does not
+ * clear it — nor does the stealth fingerprint that clears Rolex and IWC. An
+ * `_abck` minted in a cleared Chrome and injected into Playwright turned the
+ * 403 into a 200 CARRYING 2.5 KB OF CHALLENGE PAGE, which is why that module
+ * gates on the response BODY and never on the status line.
+ *
+ * THERE IS NO SIDE DOOR: the ElasticSearch host, every `/api/*` path,
+ * `/graphql` and every asset path on the image CDN return 403 identically. Only
+ * `robots.txt` and the small sitemaps answer, while the product and category
+ * sitemaps TARPIT — zero bytes at 180 seconds. The fixtures behind that
+ * module's tests were captured from a DIFFERENT egress that Akamai cleared
+ * silently, so its parser is proven against genuine payloads and its crawl path
+ * is not proven at all. Expect a residential proxy or a rendering service, and
+ * re-probe from any new runtime before assuming access.
+ *
+ * DISCOVERY AND EXTRACTION ARE ONE PASS, because the collection record IS the
+ * full ES document — every `option_value_*`, all seventeen complication flags,
+ * the functions prose, the gallery and the Akeneo spec-sheet URL. There is no
+ * per-product fetch at all; 33 watches cost 3 requests. The SITEMAP IS WRONG
+ * ABOUT THE FAMILIES IN BOTH DIRECTIONS — it names two collections that are not
+ * families and omits two that are — so the five come from the live DOM filter.
+ * Pagination is NOT a URL parameter (the router strips `?page=`), so the module
+ * re-points the SPA's OWN captured search URL at a new offset, inheriting its
+ * filter, category, sort and short-lived guest token rather than reconstructing
+ * a query; `size >= 25` hangs at the edge.
+ *
+ * THREE FIELDS LOOK MAPPABLE AND ARE POISON, each caught only by reading VALUES
+ * across three families rather than trusting a field name. `caliber` is a
+ * movement SIZE in lignes, BYTE-IDENTICAL on every record measured, and routed
+ * to a calibre it would manufacture one bogus calibre catalogue-wide at a 100%
+ * fill rate — the Casio module-number failure exactly. `buckle` is a part code,
+ * identical on all three. `finishes` describes the OSCILLATING WEIGHT, a
+ * movement finish rather than a dial one. All three go to `rawSpecs` alone.
+ * What reaches `movement` is the calibre FAMILY, never the specific calibre,
+ * which Zenith publishes only in prose.
+ *
+ * IMAGES SHIP UNTAGGED ON PURPOSE: no caption, alt text or label exists
+ * anywhere in the record, the only candidate signal is a filename token run,
+ * and the CDN refuses that runtime so not one pixel was ever verified —
+ * following Christopher Ward and Swatch rather than repeating the Rolex and
+ * NOMOS mis-tagging. NO PRICE, NO STOCK — filled on every record in both the ES
+ * document the parser reads and the JSON-LD on every product page, and the
+ * refusal is a STATED DENYLIST of nineteen field names asserted by test,
+ * because `rawSpecs` copies what it is handed. `full` only. See
+ * `src/modules/zenith/README.md` in the extractors repo.
  */
-export type ExtractorId = 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille' | 'audemars-piguet' | 'jacob-and-co' | 'iwc' | 'nomos-glashuette' | 'christopher-ward' | 'muehle-glashuette' | 'swatch' | 'tutima' | 'casio-gshock' | 'casio-babyg' | 'casio-edifice' | 'casio-protrek' | 'casio-collection' | 'vacheron-constantin' | 'longines' | 'a-lange-soehne' | 'seiko' | 'citizen' | 'chopard' | 'bulova' | 'caravelle' | 'parmigiani-fleurier' | 'ball-watch' | 'piaget' | 'hamilton';
+export type ExtractorId = 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille' | 'audemars-piguet' | 'jacob-and-co' | 'iwc' | 'nomos-glashuette' | 'christopher-ward' | 'muehle-glashuette' | 'swatch' | 'tutima' | 'casio-gshock' | 'casio-babyg' | 'casio-edifice' | 'casio-protrek' | 'casio-collection' | 'vacheron-constantin' | 'longines' | 'a-lange-soehne' | 'seiko' | 'citizen' | 'chopard' | 'bulova' | 'caravelle' | 'parmigiani-fleurier' | 'ball-watch' | 'piaget' | 'hamilton' | 'zenith';
 /**
  * How much of a source's catalogue a run asks for.
  *
