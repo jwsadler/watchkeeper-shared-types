@@ -1085,6 +1085,7 @@ export interface ExtractedCalibre {
  */
 export type ImageTag =
   | 'dial'
+  | 'date'
   | 'caseback'
   | 'crown'
   | 'movement'
