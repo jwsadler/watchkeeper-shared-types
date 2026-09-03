@@ -1028,7 +1028,7 @@ export interface ExtractedCalibre {
  * chip the gallery cannot render. An extractor signals its primary shot the way
  * it always has — `imageUrl`, and position 0 of the array.
  */
-export type ImageTag = 'dial' | 'caseback' | 'crown' | 'movement' | 'bracelet' | 'clasp' | 'bezel' | 'lume' | 'strap' | 'side' | 'wrist' | 'box' | 'papers';
+export type ImageTag = 'dial' | 'date' | 'caseback' | 'crown' | 'movement' | 'bracelet' | 'clasp' | 'bezel' | 'lume' | 'strap' | 'side' | 'wrist' | 'box' | 'papers';
 /**
  * One product image with whatever the extractor could infer about its content.
  *
