@@ -959,8 +959,110 @@
  * refusal is a STATED DENYLIST of nineteen field names asserted by test,
  * because `rawSpecs` copies what it is handed. `full` only. See
  * `src/modules/zenith/README.md` in the extractors repo.
+ *
+ * `grand-seiko` — SITECORE 10.4 SERVER-RENDERED HTML behind Azure Front Door at
+ * grand-seiko.com, and the second id the `seiko` entry above anticipated rather
+ * than a widening of it. The two are separate sites with separate catalogues
+ * and no reference in common; `seiko` records the same boundary from its side.
+ *
+ * THE MOST OPEN ORIGIN IN THIS FLEET, which is worth stating because it is the
+ * opposite of zenith. `robots.txt` is THIRTEEN BYTES — `User-agent: *`, no
+ * `Disallow`, no crawl delay. `curl`, an empty UA and `python-requests` are all
+ * served 200. There is no Cloudflare, Akamai or Datadome header, no `__cf_bm`,
+ * `_abck` or `datadome` cookie, and no sensor script anywhere. A full run from
+ * PLAIN NODE completed 71 sitemaps and 221 product pages at HTTP 200 on every
+ * request with zero retries. `ctx.browser` is accepted and never touched and
+ * `ctx.proxy` is ignored; the 750 ms per worker at concurrency 6 is courtesy
+ * and not compliance.
+ *
+ * ENGLISH ONLY, AND THE ARITHMETIC IS THE SCOPE DECISION: 290 references exist
+ * worldwide, 221 are reachable in English, 214 are emitted. The 69 that are
+ * declined live only in Japanese or Chinese locales — `jp-ja` 38, `cn-zh` 28,
+ * `hk-zh` 15, `tw-zh` 2, with one each in `id-id`, `ch-de` and `ch-fr` — and
+ * those locales render the page in their own language DOWN TO THE SPEC VALUES,
+ * so emitting them would put `ヘリテージコレクション` into `collection` and
+ * Japanese strings into `caseMaterial` and `waterRes` across a quarter of the
+ * catalogue. `GrandSeikoDiscovery.declined` names every one of the 69 with its
+ * carrier locales and the run log reports the count, because a gap that is
+ * measured and reported is a scope decision and the same gap unreported is a
+ * bug.
+ *
+ * THE CATALOGUE CANNOT BE UNIONED ACROSS LANGUAGES AND THEN READ IN ENGLISH,
+ * which INVERTS LONGINES exactly. On Longines any locale answers for any slug
+ * and a miss is a 200 with an empty payload; here a reference does not exist at
+ * a locale whose sitemap omits it. Four `jp-ja`-only references requested from
+ * `us-en` in all three slug forms gave 12 requests and 12 soft 404s, and all
+ * four served correctly from `jp-ja`. A miss is HTTP 200 carrying an ~85 KB
+ * "404 Page Not Found" body with a full nav, footer and featured rail, so it
+ * parses into a PLAUSIBLE SHELL rather than an obviously empty one — detected
+ * on the `<h1>` and on the absence of the spec block, never on the status line.
+ *
+ * TWO STALE BENELUX SITEMAPS ARE THE ACCEPTED LOSS. `be-en` and `nl-en` both
+ * list seven references that NEITHER SERVES — SBGC221, SBGC223, SBGD209,
+ * SBGP001, SBGW260, SBGW293 and SBGX346 — all 14 requests answering the
+ * 200-with-404-body page, and two of the seven existing in `jp-ja` only. The
+ * module walks EVERY English locale claiming a reference before giving up, so
+ * the loss is proven rather than assumed and the error names each locale tried.
+ * Those seven are the whole distance between 221 discovered and 214 emitted.
+ *
+ * THE MOVEMENT FAMILY IS READ AND NOT DERIVED, on three signals ordered by how
+ * directly the source states the answer: the calibre link's own hub segment in
+ * Grand Seiko's published taxonomy (`/collections/movement/springdrive/9r65`)
+ * carries 199 of 214, the `Movement Type` row carries 13, and the calibre
+ * prefix carries the last 2. ALL THREE ARE LOAD-BEARING and a 45-page sample
+ * did not show it: fifteen references have no hub page, the sample saw only
+ * quartz among them, and "no hub means quartz" looked safe until `9S61` turned
+ * out to be MECHANICAL with a `Movement Type` of `Self-winding with
+ * manual-winding` that names no family at all. Starting at the prefix map — as
+ * this module's brief proposed — would discard a fact the source publishes on
+ * 93% of pages in favour of a guess, with nothing anywhere to notice a
+ * disagreement. Emitted: Mechanical 111, Spring Drive 70, Quartz 33.
+ *
+ * A PDP RENDERS ~57 IMAGES AND ABOUT THREE ARE THE PRODUCT. The rest are
+ * megamenu art, the header, social icons and a featured rail of ~38 OTHER
+ * references whose markup is the same shape as the product's, so no container
+ * separates them — and the recon capture for this module duly reported
+ * "galleries of 50 to 57 images per page" because it was counting the
+ * navigation. The only signal is the ASSET PATH: a path SEGMENT equal to the
+ * reference, or the reference plus one region letter, never a substring, since
+ * a substring test on a four-letter-three-digit code against paths carrying
+ * dates and dimensions is a coin flip. 693 images across 214 references, mean
+ * 3.24, NONE with zero. Tagging is filename-only at 321 of 693 (46%) — dial
+ * 250, movement 27, side 18, caseback 11, clasp 5 — plus one cross-field rule
+ * that recognises the movement shot by the calibre already read off the spec
+ * table. `alt` is empty on four in five so `tagsFromText` is never called. The
+ * untagged remainder ships `autoTagged: false`, an explicit "the extractor
+ * looked and found nothing", because inventing "slot 2 is the dial" is what
+ * shipped 1465 imageless Rolex pages.
+ *
+ * NO PRICE, NO CURRENCY, NO STOCK — and this is a REFUSAL rather than an
+ * absence. Grand Seiko renders a filled price on 205 of the 214 emitted
+ * references, in the same `<div class="_body">` that carries the reference and
+ * the collection, two lines from every identity field the module reads. The
+ * denylist is structural and stated: the parser reads `p._price` FOR ITS
+ * EXISTENCE ONLY and returns a boolean, `GrandSeikoPdp` has no field a price
+ * could land in, and the run log reports how many pages had their price
+ * declined — so "Grand Seiko publishes no price" and "this module refused Grand
+ * Seiko's price" are not the same empty column. `frequency` is withheld on the
+ * same principle: the calibre families make it derivable but the source states
+ * it nowhere, and the calibre-linked enrichment path is where it belongs.
+ *
+ * `new-only` IS NOT SUPPORTED AND THAT IS A FINDING, not an omission. There is
+ * no `IsNew` flag as on Seiko, no launch date, no `New` badge as on Hamilton,
+ * no novelties category as on Longines and no watchfinder facet. The only
+ * remaining route is diffing against a previous run, which `ExtractorMode`
+ * forbids. `full` only.
+ *
+ * ONE THING TO CONFIRM BEFORE THE FIRST LIVE JOB: the `seiko` entry above
+ * states `watchBrands/grand-seiko` was verified live as a distinct document.
+ * This module's own README declines to inherit that — it is second-hand
+ * evidence about a different document, and per `brandSlug.ts` the failure mode
+ * is not an error but a SUCCESSFUL WRITE TO THE WRONG PLACE, the IWC lesson.
+ * The slug is `buildBrandSlug('Grand Seiko')` and never the longer form, which
+ * derives `grand-seiko-watch` and no such document exists. See
+ * `src/modules/grand-seiko/README.md` in the extractors repo.
  */
-export type ExtractorId = 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille' | 'audemars-piguet' | 'jacob-and-co' | 'iwc' | 'nomos-glashuette' | 'christopher-ward' | 'muehle-glashuette' | 'swatch' | 'tutima' | 'casio-gshock' | 'casio-babyg' | 'casio-edifice' | 'casio-protrek' | 'casio-collection' | 'vacheron-constantin' | 'longines' | 'a-lange-soehne' | 'seiko' | 'citizen' | 'chopard' | 'bulova' | 'caravelle' | 'parmigiani-fleurier' | 'ball-watch' | 'piaget' | 'hamilton' | 'zenith';
+export type ExtractorId = 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille' | 'audemars-piguet' | 'jacob-and-co' | 'iwc' | 'nomos-glashuette' | 'christopher-ward' | 'muehle-glashuette' | 'swatch' | 'tutima' | 'casio-gshock' | 'casio-babyg' | 'casio-edifice' | 'casio-protrek' | 'casio-collection' | 'vacheron-constantin' | 'longines' | 'a-lange-soehne' | 'seiko' | 'citizen' | 'chopard' | 'bulova' | 'caravelle' | 'parmigiani-fleurier' | 'ball-watch' | 'piaget' | 'hamilton' | 'zenith' | 'grand-seiko';
 /**
  * How much of a source's catalogue a run asks for.
  *
