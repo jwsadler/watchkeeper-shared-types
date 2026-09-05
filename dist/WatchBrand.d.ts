@@ -1,3 +1,4 @@
+import type { TimelineEvent } from './TimelineEvent';
 /**
  * Watch Brand — shared across admin app and WatchKeeper RN app.
  *
@@ -86,6 +87,19 @@ export interface WatchBrand {
      * `undefined` as "not yet computed", not as zero.
      */
     parentReferenceCount?: number;
+    /**
+     * Chronological history, rendered as a timeline in both the admin and RN.
+     * Curator-authored and/or AI-enriched; absent or empty means the RN renders
+     * no timeline section at all rather than a placeholder. See
+     * {@link TimelineEvent} for why `date` is a string and `description` is
+     * rich-text HTML.
+     *
+     * The brand-level counterpart of {@link MovementManufacturer.history}, and the
+     * phase-2 consumer that `TimelineEvent` was given its own module for. Same
+     * type, same semantics, same editor — a brand and a manufacturer differ in
+     * what they have a history OF, not in how it is stored.
+     */
+    history?: TimelineEvent[];
     createdAt?: Date;
     updatedAt?: Date;
 }
