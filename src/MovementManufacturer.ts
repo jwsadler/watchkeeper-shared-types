@@ -106,6 +106,13 @@ export interface MovementManufacturer {
    * rich-text HTML.
    */
   history?: TimelineEvent[];
+  /**
+   * When true, the manufacturer's timeline link is NOT shown from its primary
+   * brand's pages. Absent/undefined means false — the link is shown. Only
+   * meaningful alongside {@link MovementManufacturer.primaryBrandId}; it
+   * suppresses one surface and does not hide the timeline anywhere else.
+   */
+  hideTimelineFromPrimaryBrand?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
