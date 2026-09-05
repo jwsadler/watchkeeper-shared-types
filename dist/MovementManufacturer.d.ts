@@ -1,3 +1,4 @@
+import type { TimelineEvent } from './TimelineEvent';
 /**
  * Movement Manufacturer — first-class entity for movement makers
  * (ETA, Sellita, Miyota, in-house manufactures, etc.).
@@ -96,6 +97,14 @@ export interface MovementManufacturer {
      * ambiguous ref that misidentified the maker).
      */
     brandExclusions?: string[];
+    /**
+     * Chronological history, rendered as a timeline in both the admin and RN.
+     * Curator-authored and/or AI-enriched; absent or empty means the RN renders
+     * no timeline section at all rather than a placeholder. See
+     * {@link TimelineEvent} for why `date` is a string and `description` is
+     * rich-text HTML.
+     */
+    history?: TimelineEvent[];
     createdAt?: Date;
     updatedAt?: Date;
 }
