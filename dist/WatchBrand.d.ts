@@ -1,4 +1,4 @@
-import type { TimelineEvent } from './TimelineEvent';
+import type { TimelineEvent, TimelineEventImage } from './TimelineEvent';
 /**
  * Watch Brand — shared across admin app and WatchKeeper RN app.
  *
@@ -100,6 +100,19 @@ export interface WatchBrand {
      * what they have a history OF, not in how it is stored.
      */
     history?: TimelineEvent[];
+    /**
+     * Standalone hero banner image for the history timeline call-to-action.
+     * Overrides the default, which is to fall back to the first event's image —
+     * so a timeline whose opening event has no image, or whose opening image is
+     * a poor banner, can still lead with something deliberate. Absent means use
+     * that fallback.
+     *
+     * Reuses {@link TimelineEventImage} rather than declaring its own shape: it
+     * is the same kind of thing, stored the same way, uploaded by the same
+     * editor, and it carries the same `aiSuggestion` affordance for a curator who
+     * has not sourced a banner yet.
+     */
+    historyHeroImage?: TimelineEventImage;
     createdAt?: Date;
     updatedAt?: Date;
 }
