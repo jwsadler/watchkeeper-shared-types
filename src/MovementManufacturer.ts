@@ -1,4 +1,4 @@
-import type { TimelineEvent } from './TimelineEvent';
+import type { TimelineEvent, TimelineEventImage } from './TimelineEvent';
 
 /**
  * Movement Manufacturer — first-class entity for movement makers
@@ -106,6 +106,19 @@ export interface MovementManufacturer {
    * rich-text HTML.
    */
   history?: TimelineEvent[];
+  /**
+   * Standalone hero banner image for the history timeline call-to-action.
+   * Overrides the default, which is to fall back to the first event's image —
+   * so a timeline whose opening event has no image, or whose opening image is
+   * a poor banner, can still lead with something deliberate. Absent means use
+   * that fallback.
+   *
+   * Reuses {@link TimelineEventImage} rather than declaring its own shape: it
+   * is the same kind of thing, stored the same way, uploaded by the same
+   * editor, and it carries the same `aiSuggestion` affordance for a curator who
+   * has not sourced a banner yet.
+   */
+  historyHeroImage?: TimelineEventImage;
   /**
    * When true, the manufacturer's timeline link is NOT shown from its primary
    * brand's pages. Absent/undefined means false — the link is shown. Only
