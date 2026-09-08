@@ -1062,6 +1062,131 @@
  * The slug is `buildBrandSlug('Grand Seiko')` and never the longer form, which
  * derives `grand-seiko-watch` and no such document exists. See
  * `src/modules/grand-seiko/README.md` in the extractors repo.
+ *
+ * `bell-ross` — SHOPIFY ONLINE STORE 2.0 at bellross.com, server-rendered, and
+ * THE FIRST SHOPIFY MODULE IN THIS FLEET. The Shopify half is hoisted into
+ * `src/lib/shopify.ts` in the extractors repo — endpoints, short-return
+ * pagination, the 429 retry and a typed `ShopifyProduct` — so the next Shopify
+ * brand rebuilds none of it. 556 watch products become 428 canonical
+ * references and 273 are emitted.
+ *
+ * DISCOVERY IS THE WHOLE SHOP, NOT THE FEATURED COLLECTION, and this reverses
+ * what the brief for this module specified. `/en/collections/toutes-nos-montres`
+ * returns 130 products in a single call and is seductive for exactly that
+ * reason; it is the CURRENT SEASON. 556 products are watch-typed and 426 of
+ * them sit outside it — `br-03-92-diver-blue`, `br-01-cyber-skull`, same SKU
+ * grammar, and 226 carrying the same full specification panel. This is the
+ * NOMOS finding on a different stack, where the store listing was the
+ * purchasable subset rather than the catalogue. So the module walks
+ * `/en/products.json?limit=250&page=N` — four pages, ending on a SHORT RETURN
+ * rather than a count — and filters on `product_type`, a rule proven in both
+ * directions: 0 of 556 watch-typed products carry a non-BR SKU and 0 of 231
+ * non-watch products carry a BR one.
+ *
+ * THE `Accept` HEADER DECIDES WHAT THE URL RETURNS, which is the trap that cost
+ * a whole run. `/products/<handle>` CONTENT-NEGOTIATES: ask with
+ * `application/json` and Shopify serves 4.7 KB of product JSON, ask with
+ * `text/html` and it serves the 1.7 MB page, same URL and same 200. A blanket
+ * `Accept: application/json, text/html` on the shared helper turned every PDP
+ * fetch into a JSON fetch, the parser found no panel, and the run EMITTED 0 OF
+ * 428 REFERENCES WHILE REPORTING THEM ALL AS "no spec panel" — a plausible
+ * failure with no error in it, invisible to a fixture test that reads HTML off
+ * disk, and caught only against the live site.
+ *
+ * SHOPIFY THROTTLES AND THE RECON SAID IT DID NOT: 6 of 130 PDP fetches
+ * answered 429 at concurrency 6, all six succeeding on the first retry. Without
+ * one a module silently loses ~5% of its catalogue and cannot tell that from a
+ * store missing those products. SIX ATTEMPTS, NOT FOUR — a four-attempt budget
+ * was exhausted on 10 requests of a 550-request run. Cloudflare sits in front
+ * and passes through: no challenge, no JS gate, no `cf_clearance`.
+ *
+ * THE LOCALE TRAP IS INVERTED. Shopify's default locale here is FRENCH on the
+ * bare path, and English is `/en`. THERE IS NO `/fr` — asking for one 404s — so
+ * "drop the prefix for French" and "add `/fr` for French" are both wrong, in
+ * opposite directions. Every URL this module builds carries `/en`. The French
+ * leak reaches `product_type` too, where `Montre` appears on 74 records of the
+ * English endpoint against `Watch` on 482, and is normalised.
+ *
+ * STRAP OPTIONS ARE SEPARATE SHOPIFY PRODUCTS AND ONE WATCH. Each carries its
+ * own handle, PDP, GTIN and gallery while the SKU says otherwise —
+ * `BR05A-BL-ST/SRB` and `BR05A-BL-ST/SST` are one reference in two straps. But
+ * A BARE `/`-SPLIT IS NOT THE RULE: six SKUs carry no slash at all
+ * (`BR0394-BL-CE-S/-M/-L`), and those are bracelet SIZES of a single product,
+ * which a slash-split alone turns from two products into six references. The
+ * size is stripped ON THE VARIANT TITLE rather than on the trailing letter —
+ * Shopify already states which variants are sizes — because matching `-S$`
+ * blindly would eventually eat a reference that genuinely ends in one. The rule
+ * is cross-validated against `title`, a field the SKU never touches: 34
+ * references span more than one handle, all 34 share a single product title, 0
+ * titles span more than one reference. Agreement in BOTH directions over the
+ * whole collection, rather than the five samples that would have made the naive
+ * rule look right. Straps become `variantDetails`; sizes reach `rawSpecs`,
+ * because a size is a fitting and not a different watch.
+ *
+ * 155 OF THE 428 REFERENCES HAVE NO SPECIFICATION PANEL ANYWHERE — BRS Officer,
+ * PW1, BR-01 Tourbillon, WW1, older lines whose Shopify record was never given
+ * the field. They are SKIPPED AND NAMED rather than emitted as a title with
+ * nothing behind it, and the run log reports the count, so the gap is a
+ * documented scope decision rather than a silent hole. What the panel does
+ * carry is STRUCTURED MARKUP and not a prose blob: eight `<p><strong>Label
+ * :</strong>` rows inside one `<details>`. The recon recorded it as a flattened
+ * string and proposed splitting on `Label :`, which breaks on any value carrying
+ * a colon — and the chronograph `Functions` values do. Third source in this
+ * fleet where a list-shaped block was reported as a string; see
+ * `nomos-glashuette` and `grand-seiko`. Every PDP renders FOUR panels of which
+ * THREE ARE THE FOOTER's Brand / Services / Contact navigation, told apart only
+ * by the summary's class, so scoping on the panel class alone reads footer
+ * links as specifications on every page.
+ *
+ * JEWELS AND FREQUENCY ARE PUBLISHED, WHICH REVERSES THE BRIEF AGAIN. Both were
+ * carried forward as unpublished-anywhere, and that is TRUE OF THE FEATURED
+ * COLLECTION AND FALSE OF THE CATALOGUE: both are written into the `Movement`
+ * prose on 33 of the 273 emitted references, concentrated in the manufacture and
+ * skeleton lines — BR-X1, Cyber Skull, WW1 — which are exactly the products a
+ * module trusting the collection endpoint never sees. THE OTHER 240 ARE LEFT
+ * UNSET AND NOT FILLED FROM THE CALIBRE. 38 calibres cover 273 references and
+ * `BR-CAL.321` alone covers 20, so the lookup would be cheap and would be this
+ * module asserting specifications the source never stated; the calibre-linked
+ * enrichment path is where that belongs. Frequency is only ever `21,600` or
+ * `28,800`, and the jewels pattern requires the word immediately after the
+ * number so a `56-hour power reserve` cannot be read as a jewel count.
+ *
+ * TWENTY OF THE 556 WATCH PDPs LABEL THE PANEL IN FRENCH on the English
+ * storefront — `Mouvement`, `Boîtier`, `Étanchéité` — and no page mixes the two.
+ * THE VALUES ARE ENGLISH ON ALL TWENTY: Bell & Ross translated the content and
+ * left the field names behind, so a bilingual label map is a COMPLETE fix and
+ * not a mitigation, confirmed by 8 references read off French-labelled pages
+ * emitting 0 French values. A first reading called the values French too and was
+ * wrong — those pages say `100 metres.`, which is British English and not
+ * `mètres` — and acting on it would have meant suppressing perfectly good data.
+ * It is source content rather than locale routing: the same references are
+ * French-labelled at `/en`, `/en-us`, `/de` and `/es` alike.
+ *
+ * IMAGES ARE TAGGED OFF FRENCH STUDIO FILENAMES, because there is no other
+ * signal: this store sends NO `alt` FIELD AT ALL — absent, not empty — and
+ * `variant_ids` is `[]` on every record, so an image cannot be attributed to the
+ * variant it shows. `soldat`/`face` is the front-on shot, `dos` the back, `pers`
+ * the three-quarter, `ecrin` the presentation box. `lib/imageTags.tagsFromText`
+ * is never called; its vocabulary is English prose and finds `bracelet` and
+ * nothing else over these stems. 582 of 1,211 images tagged (48%). THE OBVIOUS
+ * LUME RULE IS A MODEL NAME: Bell & Ross sells watches CALLED Lum — `BR-03 GMT
+ * Green Lum` — so a bare `lum` token fires on 64 images of which 8 are lume
+ * shots and, being tested before `soldat`, STEALS THE DIAL TAG from those
+ * models' front shots. Dropping it took `dial` from 180 to 193. A rule that
+ * fires on the model name is worse than no rule: it puts a wrong tag in front of
+ * a curator and displaces a right one.
+ *
+ * NO PRICE, NO CURRENCY, NO STOCK, and the refusal is STRUCTURAL AT TWO LEVELS.
+ * Shopify sends `price`, `compare_at_price` and `available` on every variant and
+ * the JSON-LD carries `offers.price`, so `lib/shopify.ts`'s `ShopifyVariant` is
+ * an ALLOWLIST DECLARING NONE OF THE THREE — the numbers do not cross the JSON
+ * boundary into ANY Shopify module, not just this one — and `extract.ts` reads
+ * the JSON-LD `offers` object for its existence only, returning a boolean. The
+ * run log reports how many pages carried a price this module declined.
+ * `new-only` is NOT SUPPORTED and that is a finding: Shopify's `published_at`
+ * and `created_at` are when the RECORD was made, so a re-listed archive
+ * reference gets a fresh one, and there is no novelty tag, badge or collection.
+ * `full` only. See `src/modules/bell-ross/README.md` in the extractors repo.
  */
 export type ExtractorId =
   | 'omega'
@@ -1097,7 +1222,8 @@ export type ExtractorId =
   | 'piaget'
   | 'hamilton'
   | 'zenith'
-  | 'grand-seiko';
+  | 'grand-seiko'
+  | 'bell-ross';
 
 /**
  * How much of a source's catalogue a run asks for.
