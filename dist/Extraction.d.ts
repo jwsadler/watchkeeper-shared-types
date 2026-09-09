@@ -1186,8 +1186,113 @@
  * and `created_at` are when the RECORD was made, so a re-listed archive
  * reference gets a fresh one, and there is no novelty tag, badge or collection.
  * `full` only. See `src/modules/bell-ross/README.md` in the extractors repo.
+ *
+ * `laco` — SHOPWARE 6 at laco.de, server-rendered, and one of the most open
+ * origins in the fleet: vanilla `curl` gets 200, `robots.txt` allows the whole
+ * crawl path with no `Crawl-delay`, and a full run of 293 requests met no
+ * throttling and no challenge. Shopware's `/store-api/…` answers `412
+ * SALES_CHANNEL_NOT_FOUND` without an `sw-access-key` that is only bootstrapped
+ * into inline JS, so this reads SSR HTML rather than JSON. 290 product URLs
+ * become 244 canonical references and 236 are emitted.
+ *
+ * DISCOVERY IS THE SITEMAP AND NEVER THE COLLECTION LISTINGS, which would miss
+ * 30 products outright: the 22 `classics` references have no listing page and
+ * no navigation entry, and eight more live one path segment shallower and
+ * belong to no listing at all. NOMOS rejects its store listing for the same
+ * reason on the same platform. The `.xml.gz` is a gzip PAYLOAD rather than a
+ * gzip content-encoding, so `fetch` does not decompress it and `node:zlib`
+ * does — decided on the magic number rather than the file extension.
+ *
+ * THE REFERENCE GRAMMAR IS WIDER THAN SIX DIGITS and the obvious pattern reads
+ * 219 of 290. 73 URLs carry dotted or hyphenated suffixes, and THE SUFFIXES
+ * MEAN THREE DIFFERENT THINGS — which is the whole shape of this module.
+ * `.mb` and `.rb` are STRAP VARIANTS, metal bracelet and rubber band, each its
+ * own Shopware product with its own SKU and price: measured across all 38, 31
+ * match their base on movement, case, dial, diameter, height, lug-to-lug and
+ * waterproof, and the other 7 differ only by Laco's own copy-editing —
+ * `automatic` against `Automatic`, one page saying 25 jewels where its sibling
+ * says 26 for the same Sellita SW 200. What DOES differ on every pair is
+ * `Strap:`, `weight:` and `Arm circumference:`. But `.2` and `.d` are DIFFERENT
+ * WATCHES and stay separate references: Zürich 42 is quartz at 42.0 mm with
+ * mineral glass, Zürich.2 40 a Ronda 503 at 40.0 mm with sapphire, and
+ * Zürich.2.D 40 a Ronda 505 with a date. And `.0` is the STRAP CONFIGURATOR for
+ * eight references — same `<h1>` name, six spec rows instead of thirteen, and
+ * four to five times the photography — so it folds into its base and
+ * contributes its gallery, which is the reason to merge it rather than drop it.
+ * Treating every dotted suffix alike would collapse three watches into one.
+ *
+ * THE NAME IS THE `<h1>`'s SECOND SPAN, on 290 of 290, and NEVER the JSON-LD
+ * `name`, which is the Shopware MASTER product's name: `862106.mb` renders
+ * `Himalaya 42 MB` in the heading and reports `Himalaya` in the structured
+ * block. The 22 `classics` orphans render an EMPTY collection span — their
+ * missing listing page seen from the other end, since Shopware has no category
+ * to name in the breadcrumb — and the URL segment carries it instead.
+ *
+ * THE JSON-LD `<script>` CARRIES A CSP NONCE BEFORE THE TYPE, so a pattern
+ * anchored on `<script type="application/ld+json">` matches nothing and the
+ * page looks like it publishes no structured data at all. Its `image` is an
+ * ARRAY OF `ImageObject` rather than of strings, so a string filter returns an
+ * empty gallery on every page while the array plainly has entries. And
+ * `ImageObject.name` is a stale Shopware asset label — all five images on a
+ * Himalaya are named `Dortmund` — which is the Rolex alt-text failure in a
+ * different field, so tagging is filename-only and the vocabulary is bilingual:
+ * `wristshot`, `back`/`rueckseite`, `side`, `front`, `luminova`.
+ *
+ * THE SPEC SHEET SPELLS FIFTEEN FIELDS THIRTY-SEVEN WAYS, a worse spread than
+ * Mühle's 43-for-9, and it carries four separate hazards. CASE:
+ * `waterproof:` on 191 pages against `Waterproof:` on 47, and the same split on
+ * diameter, height, weight and lug width. A DOUBLE COLON: `Height::` on 8
+ * pages, plus one with no colon at all, so stripping exactly one leaves a key
+ * that matches nothing. LACO'S OWN TYPOS: `Heigth:` and `Lug ot lug:` are the
+ * only spelling on the pages that carry them. And GERMAN ON THE ENGLISH SITE:
+ * `Etui:` on 33 pages, a tenth of the catalogue, which is the Mühle defect at
+ * ten times the scale. Labels are lower-cased with ALL trailing colons stripped
+ * and looked up in a bilingual map; an UNRECOGNISED LABEL IS KEPT under its own
+ * key and reported rather than dropped, because that is how the next spelling
+ * arrives.
+ *
+ * DIMENSIONS ARE IN ROWS ON 236 PAGES AND IN THE `Case:` PROSE ON 35 MORE, so
+ * both parsers ship and neither is a rare fallback. The prose grammar is
+ * `Ø 34 mm`, `case diameter 42 mm`, `18 mm lug width` with the number BEFORE
+ * the label, and `hight 12 mm` — read by marker, never by position, because the
+ * `Case:` value is a comma-separated list whose order varies. `Glass:` exists
+ * on three pages of 290 and `Case back:` on NONE, so crystal and case back are
+ * mined from that same prose, where a crystal is named on 259 pages and a case
+ * back on 162. German decimal commas — `42,0 mm` — are normalised inside the
+ * dimension fields only, with `rawSpecs` keeping the source string.
+ *
+ * THE MOVEMENT ROW CARRIES TWO CALIBRES on 243 of 282: Laco's own designation
+ * and the ebauche it is built on, `<br>`-separated. BOTH ARE EMITTED and
+ * neither is derived from the other — `movement` takes `Laco 200` because that
+ * is what Laco calls the watch's calibre, and `rawSpecs` takes `Sellita SW 200`
+ * so the calibre registry can reconcile the two across brands. 17 house
+ * calibres and 40 base movements across the catalogue. 31 references name no
+ * Laco calibre at all — the page says `High quality quartz movement` or
+ * `Ronda 515` outright — and the field is left unset rather than guessed.
+ *
+ * THE ARCHIVE IS A STATUS OVERLAY AND NOT A SECOND CATALOGUE. It is read once,
+ * discovers nothing — all 136 of its canonical references are already in the
+ * sitemap — and stamps `rawSpecs.isArchive`. THE PILL IS THE SIGNAL, NOT THE
+ * PAGE: 157 product cards carry 154 "discontinued" pills, and the three
+ * without are current watches sharing the page, so reading presence as
+ * discontinuation over-counts by three. `offers.availability` reaches
+ * `rawSpecs` as an orthogonal signal and is nearly balanced across the
+ * catalogue, so it catches discontinued-but-not-yet-archived references the
+ * pill misses.
+ *
+ * NO PRICE, NO CURRENCY, NO STOCK: a filled price, currency and availability
+ * sit in the JSON-LD `offers` block the parser already reads on 288 of 290
+ * pages, and that object is read for its EXISTENCE ONLY, returning a boolean
+ * that no caller can turn back into a number. `availability` is kept as a
+ * DIFFERENT question — not a quantity, not a price, not a sellability flag —
+ * in `rawSpecs` and on no named field. Eight products render no spec sheet at
+ * all and are counted and named rather than emitted as empty shells.
+ * `new-only` is NOT SUPPORTED and that is a finding: Shopware publishes no
+ * release date here and Laco adds no novelty flag, so the only status signal is
+ * the archive pill, which answers the opposite question. `full` only. See
+ * `src/modules/laco/README.md` in the extractors repo.
  */
-export type ExtractorId = 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille' | 'audemars-piguet' | 'jacob-and-co' | 'iwc' | 'nomos-glashuette' | 'christopher-ward' | 'muehle-glashuette' | 'swatch' | 'tutima' | 'casio-gshock' | 'casio-babyg' | 'casio-edifice' | 'casio-protrek' | 'casio-collection' | 'vacheron-constantin' | 'longines' | 'a-lange-soehne' | 'seiko' | 'citizen' | 'chopard' | 'bulova' | 'caravelle' | 'parmigiani-fleurier' | 'ball-watch' | 'piaget' | 'hamilton' | 'zenith' | 'grand-seiko' | 'bell-ross';
+export type ExtractorId = 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille' | 'audemars-piguet' | 'jacob-and-co' | 'iwc' | 'nomos-glashuette' | 'christopher-ward' | 'muehle-glashuette' | 'swatch' | 'tutima' | 'casio-gshock' | 'casio-babyg' | 'casio-edifice' | 'casio-protrek' | 'casio-collection' | 'vacheron-constantin' | 'longines' | 'a-lange-soehne' | 'seiko' | 'citizen' | 'chopard' | 'bulova' | 'caravelle' | 'parmigiani-fleurier' | 'ball-watch' | 'piaget' | 'hamilton' | 'zenith' | 'grand-seiko' | 'bell-ross' | 'laco';
 /**
  * How much of a source's catalogue a run asks for.
  *
