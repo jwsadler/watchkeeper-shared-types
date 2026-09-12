@@ -1292,6 +1292,73 @@
  * release date here and Laco adds no novelty flag, so the only status signal is
  * the archive pill, which answers the opposite question. `full` only. See
  * `src/modules/laco/README.md` in the extractors repo.
+ *
+ * `glycine` — SHOPIFY at glycinewatches.com, server-rendered, no bot
+ * management and no `Crawl-delay`. The SECOND Shopify module, reusing
+ * `src/lib/shopify.ts` with no change to it. 408 products, 408 references,
+ * 1:1, all 408 emitted in 410 requests with zero errors; 21 of 26
+ * specification fields fill at 100%.
+ *
+ * EVERY SPECIFICATION IS INSIDE A `<template>` ELEMENT, whose content is a
+ * SEPARATE DOCUMENT FRAGMENT that `querySelectorAll` cannot reach. Measured on
+ * a saved PDP: 52 `<p>` on a 636 KB page, and ZERO matches for the spec
+ * selectors. A parser written the obvious way returns no rows at all while
+ * reporting every page as having no spec panel — a tidy, uniform, entirely
+ * wrong result, and the one this module actually produced on all nine fixtures
+ * before the fix. The trap is Audemars Piguet's and Vacheron's reached from a
+ * different direction: there the templates were Vue slots, here a Shopify app
+ * section that clones its content on mount. ONLY THE PRODUCT-TABS TEMPLATE IS
+ * UNWRAPPED — a PDP carries EIGHT and the other seven are theme chrome
+ * (drawer, modal, popover, header search, video, nav sidebar, quick-buy), so
+ * AP's strip-every-template would promote a nav sidebar and a quick-buy
+ * product card into the document tree.
+ *
+ * THE SECTION IS PART OF THE FACT. Specifications are eight question/answer
+ * tabs of which five carry rows — Product Details, Case, Dial, Band, Movement
+ * — and THREE LABELS APPEAR UNDER MORE THAN ONE SECTION: `Material` under
+ * Case, Dial AND Band, `Color` under Dial and Band, `Type` under Dial and
+ * Movement. The sections DISAGREE on 408 of 408, 260 of 408 and 408 of 408
+ * respectively, so a flat `label -> value` map is wrong on EVERY WATCH IN THE
+ * CATALOGUE: it keeps whichever the walk saw last, which for `Material` is the
+ * Band, putting `Leather` in `caseMaterial` on 108 watches and `Nylon` on 71
+ * when `Case/Material` is only ever one of three values. Every row is keyed
+ * `Section/Label`, in `rawSpecs` as well as in the parser. PAIRING IS
+ * STRUCTURAL rather than positional — each tab is its own container holding
+ * one question and one answer — because zipping the two document-wide lists by
+ * index shifts every heading by one when a tab is malformed, filing `Case`
+ * values under `Dial` and `Band` under `Movement` with every value real, every
+ * key wrong and the row count unchanged.
+ *
+ * VALUES ARRIVE PRE-NORMALISED (`40.0 mm`, `200.0 m`) so nothing parses a
+ * unit, and `Product Details/Case Size` DUPLICATES `Case/Diameter` on 408 of
+ * 408 and is emitted once. The calibre needs the `-N` SUFFIX KEPT — `SW200`
+ * and `SW330` are different movements from `SW200-1` and `SW330-2`, and a
+ * `\b` does not help because a word boundary sits between `0` and `-`. 48
+ * rows publish the winding type twice (`SW200-1 Automatic Automatic`), which
+ * is Glycine's own data entry and is collapsed narrowly with the original kept
+ * in `rawSpecs`. NO FREQUENCY IS PUBLISHED ANYWHERE and none is invented.
+ *
+ * THE IMAGE RULE IS POSITIONAL AND SAYS SO. Shopify sends no `alt` and no
+ * `variant_ids` on any of the 938 images, and the filename is either the bare
+ * reference — which says WHICH WATCH, never which view — or a numeric CMS id.
+ * What licensed reading the slot order is that GLYCINE DOCUMENTS ITS OWN
+ * CONVENTION: 17 products name assets `_B` (Back) and `_R` (Right), and on
+ * every one they sit at positions 2 and 3. The pixels were then checked
+ * directly — position 1 dial on 5 of 5, position 2 caseback on 11 of 11 and
+ * position 3 side on 9 of 9, ON THREE-IMAGE PRODUCTS. A TWO-IMAGE GALLERY'S
+ * SECOND SLOT IS NOT THE SAME SLOT — one sampled product puts a side profile
+ * where others put a caseback — so it ships UNTAGGED and the rule carries a
+ * length guard instead of being written `position -> tag`. 876 of 938 tagged,
+ * and all 62 untagged are exactly those slots.
+ *
+ * NO PRICE, NO CURRENCY, NO STOCK: all 408 pages fill `offers.price`, and the
+ * object is read for its EXISTENCE ONLY, returning a boolean no caller can
+ * turn back into a number, while `lib/shopify.ts`'s `ShopifyVariant` does not
+ * DECLARE `price`, `compare_at_price` or `available` at all. `new-only` is NOT
+ * SUPPORTED and that is a finding: Shopify's `published_at` and `created_at`
+ * are when the RECORD was made, and Glycine adds no novelty tag or badge. No
+ * `heritage` either — there is no archive or legacy section to mark. `full`
+ * only. See `src/modules/glycine/README.md` in the extractors repo.
  */
 export type ExtractorId =
   | 'omega'
@@ -1329,7 +1396,8 @@ export type ExtractorId =
   | 'zenith'
   | 'grand-seiko'
   | 'bell-ross'
-  | 'laco';
+  | 'laco'
+  | 'glycine';
 
 /**
  * How much of a source's catalogue a run asks for.
