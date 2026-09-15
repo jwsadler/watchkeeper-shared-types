@@ -11,6 +11,7 @@ export type { StrapInfo } from './StrapInfo';
 export type { WatchBrand } from './WatchBrand';
 export type { MovementManufacturer } from './MovementManufacturer';
 export type { TimelineEvent, TimelineEventImage } from './TimelineEvent';
+export type { ParentOrganization, ParentOrgOwnershipEvent } from './ParentOrganization';
 export type { DerivationSettings } from './DerivationSettings';
 export type { WatchLink } from './WatchLink';
 export type { WatchReference, ReferenceSource } from './WatchReference';

@@ -41,6 +41,14 @@ export interface MovementManufacturer {
     /** Parent organization, e.g. "Swatch Group". */
     parentOrg?: string;
     /**
+     * FK to the owning organization in `parent_organizations/{parentOrgId}`.
+     * Lives alongside the free-text {@link MovementManufacturer.parentOrg}
+     * through the parent-org migration; Phase 5 drops the string field. The
+     * legacy `parent_organization` lookup collection is separate and stays alive
+     * indefinitely for older clients. Nothing reads or writes this yet.
+     */
+    parentOrgId?: string;
+    /**
      * True for generic / third-party movement makers (ETA, Sellita, Miyota,
      * Ronda, Soprod, etc.). False for in-house manufactures whose movements
      * are exclusive to a single brand.
