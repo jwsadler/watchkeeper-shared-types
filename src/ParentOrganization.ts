@@ -71,6 +71,17 @@ export interface ParentOrganization {
    */
   history?: TimelineEvent[];
   /**
+   * Standalone hero banner image for the history timeline call-to-action —
+   * same field, meaning and editor as {@link WatchBrand.historyHeroImage} and
+   * {@link MovementManufacturer.historyHeroImage}. Overrides the default, which
+   * is to fall back to the first event's image; absent means use that fallback.
+   *
+   * Reuses {@link TimelineEventImage} rather than declaring its own shape, for
+   * the same reasons the brand and manufacturer fields do: the same kind of
+   * thing, stored the same way, uploaded by the same editor.
+   */
+  historyHeroImage?: TimelineEventImage;
+  /**
    * Structured ownership facts — acquisitions, divestitures, absorptions —
    * with foreign keys to the entities involved. Deliberately separate from
    * {@link ParentOrganization.history}: `history` is curated narrative,
