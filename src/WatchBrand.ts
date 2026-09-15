@@ -48,6 +48,14 @@ export interface WatchBrand {
   information?: string;
   /** Parent organization (e.g., "Swatch Group", "LVMH", "Richemont") */
   parentOrg?: string;
+  /**
+   * FK to the owning organization in `parent_organizations/{parentOrgId}`.
+   * Lives alongside the free-text {@link WatchBrand.parentOrg} through the
+   * parent-org migration; Phase 5 drops the string field. The legacy
+   * `parent_organization` lookup collection is separate and stays alive
+   * indefinitely for older clients. Nothing reads or writes this yet.
+   */
+  parentOrgId?: string;
   /** Hero/scenic image for brand detail (storage path or URL) */
   heroImage?: string;
   /** Optional attribution — URL the hero image was sourced from (shown in RN). */
