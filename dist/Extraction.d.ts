@@ -144,7 +144,17 @@
  * them. They are five ids because an operator wants to run Baby-G without
  * re-crawling G-Shock, not because they are five sources.
  *
- * `casio-gshock` is implemented. `casio-babyg`, `casio-edifice`,
+ * THE G-SHOCK LINE WAS RENAMED `casio-gshock` -> `g-shock` in v1.116.0. It
+ * had declared the brand document `casio` from its first commit, so every
+ * G-Shock reference it produced was imported under `watchBrands/casio`; all
+ * 1,776 were confirmed G-Shock on 2026-09-16 and moved to `watchBrands/g-shock`,
+ * and the id now names the brand it emits. The ORIGIN did not change — it is
+ * still casio.com's `/watches/gshock/` line — so the five-line reasoning above
+ * still holds. `casio-gshock` was REMOVED rather than kept as a deprecated
+ * member, by decision: any stored `extraction_jobs` document or admin last-run
+ * lookup carrying the old string will no longer narrow to `ExtractorId`.
+ *
+ * `g-shock` is implemented. `casio-babyg`, `casio-edifice`,
  * `casio-protrek` and `casio-collection` are RESERVED — they name lines that
  * exist and are already reachable through the same two endpoints, and they are
  * added now so that filling one is a `LineConfig` literal in the extractors
@@ -504,8 +514,8 @@
  *
  * `bulova` AND `caravelle` ARE ONE CODE MODULE AND TWO IDS, and they enter this
  * union together in one bump because splitting them would only create a version
- * where half of that module can be registered. `casio-gshock` and its four
- * siblings are the precedent for one factory behind several ids, but those five
+ * where half of that module can be registered. `g-shock` (formerly
+ * `casio-gshock`) and its four siblings are the precedent for one factory behind several ids, but those five
  * are lines of ONE brand family; these two are SEPARATELY REGISTERED BRANDS —
  * `watchBrands/bulova` and `watchBrands/caravelle` are distinct documents — sold
  * out of one Salesforce Commerce Cloud storefront at `bulova.com/ca/en`.
@@ -1359,7 +1369,7 @@
  * `heritage` either — there is no archive or legacy section to mark. `full`
  * only. See `src/modules/glycine/README.md` in the extractors repo.
  */
-export type ExtractorId = 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille' | 'audemars-piguet' | 'jacob-and-co' | 'iwc' | 'nomos-glashuette' | 'christopher-ward' | 'muehle-glashuette' | 'swatch' | 'tutima' | 'casio-gshock' | 'casio-babyg' | 'casio-edifice' | 'casio-protrek' | 'casio-collection' | 'vacheron-constantin' | 'longines' | 'a-lange-soehne' | 'seiko' | 'citizen' | 'chopard' | 'bulova' | 'caravelle' | 'parmigiani-fleurier' | 'ball-watch' | 'piaget' | 'hamilton' | 'zenith' | 'grand-seiko' | 'bell-ross' | 'laco' | 'glycine';
+export type ExtractorId = 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille' | 'audemars-piguet' | 'jacob-and-co' | 'iwc' | 'nomos-glashuette' | 'christopher-ward' | 'muehle-glashuette' | 'swatch' | 'tutima' | 'g-shock' | 'casio-babyg' | 'casio-edifice' | 'casio-protrek' | 'casio-collection' | 'vacheron-constantin' | 'longines' | 'a-lange-soehne' | 'seiko' | 'citizen' | 'chopard' | 'bulova' | 'caravelle' | 'parmigiani-fleurier' | 'ball-watch' | 'piaget' | 'hamilton' | 'zenith' | 'grand-seiko' | 'bell-ross' | 'laco' | 'glycine';
 /**
  * How much of a source's catalogue a run asks for.
  *
