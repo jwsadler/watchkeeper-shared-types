@@ -1369,6 +1369,42 @@
  * are when the RECORD was made, and Glycine adds no novelty tag or badge. No
  * `heritage` either — there is no archive or legacy section to mark. `full`
  * only. See `src/modules/glycine/README.md` in the extractors repo.
+ *
+ * `casio`, `baby-g`, `edifice`, `pro-trek`, `sheen` AND `oceanus` ARE
+ * PRE-AUTHORISED (v1.117.0): none has a module yet. They enter together, ahead
+ * of the extractors, because each Casio-family line is getting its own brand
+ * document after G-Shock's references were moved out of `watchBrands/casio`,
+ * and one union bump now spares five later round-trips through this file. Each
+ * names the brand it will emit, the same convention `g-shock` adopted in
+ * v1.116.0.
+ *
+ * Every one is a line on casio.com rather than a site of its own — the
+ * dedicated domains were checked and are redirects, expired certificates or
+ * link hubs — and each is served by the same AEM JSON endpoints as `g-shock`:
+ *
+ *     id          casio.com line slug   ca-en    us    sg
+ *     casio       /watches/casio/         231    592  1373
+ *     baby-g      /watches/babyg/          48    139   381
+ *     edifice     /watches/edifice/        36    118   368
+ *     pro-trek    /watches/protrek/         6     52    58
+ *     sheen       /watches/sheen/           -      -   128
+ *     oceanus     /watches/oceanus/         -     26     -
+ *
+ * (Watch product URLs per locale sitemap, measured 2026-09-16. Note `pro-trek`
+ * is hyphenated as a brand id while the site's slug is `protrek`, and that
+ * `sheen` and `oceanus` do not exist on `ca-en` at all.)
+ *
+ * TWO CONSEQUENCES FOR THE EXTRACTORS REPO:
+ *
+ * 1. Its registry is exhaustive over this union, so the FIRST re-pin to
+ *    v1.117.0 or later must list all six in `UnimplementedExtractorId` in
+ *    `src/core/registry.ts`, or it will not type-check. Each moves out of that
+ *    list into `registry` when its module is built — and only then does the
+ *    fleet count in `test/serverApp.test.ts` change.
+ * 2. The four older reserved ids `casio-babyg`, `casio-edifice`,
+ *    `casio-protrek` and `casio-collection` name the SAME lines as `baby-g`,
+ *    `edifice`, `pro-trek` and `casio`. They are left in place here rather
+ *    than removed silently; retiring them is a separate decision.
  */
 export type ExtractorId =
   | 'omega'
@@ -1407,7 +1443,13 @@ export type ExtractorId =
   | 'grand-seiko'
   | 'bell-ross'
   | 'laco'
-  | 'glycine';
+  | 'glycine'
+  | 'casio'
+  | 'baby-g'
+  | 'edifice'
+  | 'pro-trek'
+  | 'sheen'
+  | 'oceanus';
 
 /**
  * How much of a source's catalogue a run asks for.
