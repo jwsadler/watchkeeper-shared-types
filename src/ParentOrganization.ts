@@ -82,7 +82,8 @@ export interface ParentOrganization {
    */
   historyHeroImage?: TimelineEventImage;
   /**
-   * Structured ownership facts — acquisitions, divestitures, absorptions —
+   * Structured ownership facts — acquisitions, divestitures, absorptions, and
+   * the takeovers and spin-outs this organization was itself the subject of —
    * with foreign keys to the entities involved. Deliberately separate from
    * {@link ParentOrganization.history}: `history` is curated narrative,
    * `ownershipEvents` is queryable data. Stored as an array on this document,
@@ -105,24 +106,63 @@ export interface ParentOrganization {
  * `"1988"`, `"circa 1985"`, `"Between 1943 and 1948"` — and is never a JS
  * `Date`.
  *
- * There is no `direction` field: `type` already carries it (`acquired` is
- * inbound to this organization, `divested` is outbound).
+ * There is no `direction` field: `type` already carries it. This organization
+ * is the ACTOR in `acquired` and `divested`, and the SUBJECT of `acquired_by`
+ * and `divested_from`; `founded` and `renamed` are about the organization
+ * itself. Every event is read from this organization's side.
  */
 export interface ParentOrgOwnershipEvent {
   /** Stable id within the array, so an event can be edited without relying on its index. */
   id: string;
   /** Free-form date string. NOT a JS `Date` — see {@link TimelineEvent.date}. */
   date: string;
-  type: 'acquired' | 'divested' | 'founded' | 'absorbed' | 'renamed' | 'other';
+  /**
+   * What happened, read from this organization's side.
+   *
+   * - `acquired` — this organization took control of the target.
+   * - `divested` — this organization sold or spun off the target.
+   * - `acquired_by` — this organization ITSELF was taken over. The target is
+   *   the buyer.
+   * - `divested_from` — this organization ITSELF was sold off or spun out. The
+   *   target is the former parent it left.
+   * - `absorbed` — the target was merged in and ceased to exist separately.
+   * - `founded` — this organization created the target.
+   * - `renamed` — the target changed name.
+   *
+   * A change of control is never `other`: an inbound takeover is `acquired_by`
+   * and a spin-out is `divested_from`.
+   */
+  type:
+    | 'acquired'
+    | 'divested'
+    | 'acquired_by'
+    | 'divested_from'
+    | 'founded'
+    | 'absorbed'
+    | 'renamed'
+    | 'other';
   /** Which collection {@link ParentOrgOwnershipEvent.targetId} points into. */
   targetType: 'brand' | 'manufacturer' | 'parentOrg';
   /**
    * FK into `watchBrands`, `movement_manufacturers` or `parent_organizations`,
-   * per `targetType`. For events about the organization itself (`founded`,
-   * `renamed`), this is the organization's own id.
+   * per `targetType`.
+   *
+   * It is always the OTHER party to the event, except for the two types that
+   * are about the organization itself (`founded`, `renamed`), where it is the
+   * organization's own id. So on `acquired_by` it is the buyer and on
+   * `divested_from` it is the former parent — both `parentOrg` — rather than
+   * this organization. There is deliberately no `newOwnerId`: one field holds
+   * the counterparty whichever way the deal ran.
    */
   targetId: string;
-  /** FK to the prior owner in `parent_organizations`, when known. */
+  /**
+   * FK to the prior owner in `parent_organizations`, when known — whoever held
+   * the target immediately before this event.
+   *
+   * On `acquired_by` the target is the buyer, so this is who held THIS
+   * organization before them, not the buyer. On `divested_from` the target
+   * already IS the former parent, so it adds nothing and is normally absent.
+   */
   previousOwnerId?: string;
   description?: string;
   /** URL the event was sourced from — provenance for a factual claim. */
