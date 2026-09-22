@@ -52,4 +52,14 @@ export interface ElectronicsInfo {
    * the shared module doc.
    */
   textColor?: string;
+  /**
+   * Per-ref backlight colour for digital watches — the colour the display glows
+   * when lit (e.g. the blue-green of a Casio EL panel, the white of an LED
+   * light). Distinct from `lightType`, which is the illumination TECHNOLOGY and
+   * is module-owned. Lives on the ref, not the shared module doc: watches that
+   * share one module can light in different colours. Lookup-backed via
+   * `lookup_text_colors`, shared with `textColor` (both are colours of light on
+   * the display).
+   */
+  backlightColor?: string;
 }
