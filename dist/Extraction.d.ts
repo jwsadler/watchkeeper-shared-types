@@ -1404,8 +1404,15 @@
  *    `casio-protrek` and `casio-collection` name the SAME lines as `baby-g`,
  *    `edifice`, `pro-trek` and `casio`. They are left in place here rather
  *    than removed silently; retiring them is a separate decision.
+ *
+ * `unimatic` is unimaticwatches.com — a Shopify storefront, the second custom
+ * Shopify module after `bell-ross` and the same shape: the brand's featured
+ * `/collections/watches` holds 36 products while the shop holds 249 watches,
+ * so the module reads shop-wide `products.json` rather than the collection.
+ * One brand document, `watchBrands/unimatic`, which already exists; the id, the
+ * brand doc and `buildBrandSlug('Unimatic')` are all the one string.
  */
-export type ExtractorId = 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille' | 'audemars-piguet' | 'jacob-and-co' | 'iwc' | 'nomos-glashuette' | 'christopher-ward' | 'muehle-glashuette' | 'swatch' | 'tutima' | 'g-shock' | 'casio-babyg' | 'casio-edifice' | 'casio-protrek' | 'casio-collection' | 'vacheron-constantin' | 'longines' | 'a-lange-soehne' | 'seiko' | 'citizen' | 'chopard' | 'bulova' | 'caravelle' | 'parmigiani-fleurier' | 'ball-watch' | 'piaget' | 'hamilton' | 'zenith' | 'grand-seiko' | 'bell-ross' | 'laco' | 'glycine' | 'casio' | 'baby-g' | 'edifice' | 'pro-trek' | 'sheen' | 'oceanus';
+export type ExtractorId = 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille' | 'audemars-piguet' | 'jacob-and-co' | 'iwc' | 'nomos-glashuette' | 'christopher-ward' | 'muehle-glashuette' | 'swatch' | 'tutima' | 'g-shock' | 'casio-babyg' | 'casio-edifice' | 'casio-protrek' | 'casio-collection' | 'vacheron-constantin' | 'longines' | 'a-lange-soehne' | 'seiko' | 'citizen' | 'chopard' | 'bulova' | 'caravelle' | 'parmigiani-fleurier' | 'ball-watch' | 'piaget' | 'hamilton' | 'zenith' | 'grand-seiko' | 'bell-ross' | 'laco' | 'glycine' | 'casio' | 'baby-g' | 'edifice' | 'pro-trek' | 'sheen' | 'oceanus' | 'unimatic';
 /**
  * How much of a source's catalogue a run asks for.
  *

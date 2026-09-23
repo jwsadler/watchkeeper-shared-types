@@ -1405,6 +1405,13 @@
  *    `casio-protrek` and `casio-collection` name the SAME lines as `baby-g`,
  *    `edifice`, `pro-trek` and `casio`. They are left in place here rather
  *    than removed silently; retiring them is a separate decision.
+ *
+ * `unimatic` is unimaticwatches.com — a Shopify storefront, the second custom
+ * Shopify module after `bell-ross` and the same shape: the brand's featured
+ * `/collections/watches` holds 36 products while the shop holds 249 watches,
+ * so the module reads shop-wide `products.json` rather than the collection.
+ * One brand document, `watchBrands/unimatic`, which already exists; the id, the
+ * brand doc and `buildBrandSlug('Unimatic')` are all the one string.
  */
 export type ExtractorId =
   | 'omega'
@@ -1449,7 +1456,8 @@ export type ExtractorId =
   | 'edifice'
   | 'pro-trek'
   | 'sheen'
-  | 'oceanus';
+  | 'oceanus'
+  | 'unimatic';
 
 /**
  * How much of a source's catalogue a run asks for.
