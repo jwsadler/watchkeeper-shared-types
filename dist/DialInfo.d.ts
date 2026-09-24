@@ -7,8 +7,35 @@ export interface DialInfo {
     color?: string;
     /** Dial material (e.g., "Lacquer", "Enamel") */
     material?: string;
-    /** e.g., "Sunburst", "Matte", "Glossy" */
+    /**
+     * The dial's SURFACE TREATMENT — sunburst, matte, guilloché, opaline.
+     * SINGLE-select, backed by `lookup_dial_finish`.
+     *
+     * Surface only. What the dial is MADE OF is `material`, and structural or
+     * decorative attributes — skeletonisation, a sandwich construction, an inlay,
+     * gem setting — are `dialFeatures` below. The three were one field until
+     * v1.121.0, so older documents may still carry a structural value here.
+     */
     finish?: string;
+    /**
+     * Structural and decorative attributes of the dial: skeletonisation, an
+     * exhibition aperture, a sandwich construction, a stone or meteorite inlay,
+     * gem setting, engraved or enamelled artwork. MULTI-select, stored
+     * comma-joined (`"skeletonized, open_heart"`) like `indexColor` /
+     * `handTypes` / `subdialTypes`, and backed by `lookup_dial_features`.
+     *
+     * Three sibling fields divide the dial between them, and the boundaries are
+     * what keep them from collapsing into each other:
+     *  - `material` — what the WHOLE dial is made of. A dial cut from meteorite
+     *    is `material: meteorite`; a meteorite INLAY is a feature here.
+     *  - `finish` — how the surface is treated.
+     *  - `dialFeatures` — what has been done to, or set into, the dial.
+     *
+     * Deliberately NOT the place for facts another field already holds: how the
+     * markers are constructed is `indexes`, how the brand mark is applied is
+     * `logoType`, and luminous material is the `lume*` fields.
+     */
+    dialFeatures?: string;
     /**
      * HOW the hour markers are constructed — applied / printed / painted /
      * sandwich / engraved. Multi-select, backed by `lookup_dial_marker_type`
