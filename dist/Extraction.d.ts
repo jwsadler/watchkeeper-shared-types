@@ -1746,6 +1746,20 @@ export interface ExtractedWatch {
     powerReserve?: string;
     frequency?: string;
     caseMaterial?: string;
+    /**
+     * How the case surface is treated — `polished`, `bead_blasted`,
+     * `satin_brushed`, `polished_brushed`. Backed by `lookup_case_finishes`,
+     * distinct from `caseMaterial` (what it is made of) and `caseCoating` (what
+     * is applied on top).
+     *
+     * THE ONLY MISSING PIECE OF AN OTHERWISE COMPLETE PATH. `CaseInfo.finish`
+     * has always existed, `BulkImport` already reads `entry.caseFinish` into it,
+     * and admin's enrichment map already points `caseFinish` at its lookup —
+     * this interface was the one gap, so a module that had read the finish had
+     * nowhere to put it. Sinn states it on 86.5% of its archive in the same line
+     * as the material (`Case made of stainless steel, polished`).
+     */
+    caseFinish?: string;
     caseSize?: string;
     caseHeight?: string;
     caseShape?: string;
@@ -1755,12 +1769,41 @@ export interface ExtractedWatch {
     waterRes?: string;
     crystal?: string;
     glass?: string;
+    /**
+     * Mirrors `CaseInfo.isLowPressureResistant` — see there for why this is a
+     * boolean and not a rating.
+     *
+     * WIRING NOTE, the same one `limitedEditionCount` carries: `BulkImport`
+     * builds `caseInfo` from named entry properties, so this reaches
+     * `case.isLowPressureResistant` only once that build reads it.
+     */
+    isLowPressureResistant?: boolean;
     bezel?: string;
     bezelType?: string;
     crownType?: string;
     dialColor?: string;
     dialFinish?: string;
     dialIndexes?: string;
+    /**
+     * WHAT the hour markers are — `arabic`, `roman`, `stick`, `dot`, `baton` —
+     * against `dialIndexes`, which is HOW they are constructed (applied,
+     * printed, sandwich, engraved). A dial can have printed (indexes) arabic
+     * (numerals), which is why these are two fields and not one.
+     *
+     * Mirrors `DialInfo.numerals`, backed by `lookup_dial_numerals`, and
+     * comma-joined for the multi-select the way `dateWheelTextColor` is —
+     * `DialInfo.numerals` is a `string[]` and this flat mirror is not.
+     *
+     * THE SPLIT ALREADY EXISTS EVERYWHERE ELSE. `dialIndexes` shared
+     * `lookup_dial_numerals` until the marker-type split, admin's enrichment map
+     * has pointed `dialNumerals` at its own lookup since, and the stored prompt
+     * asks for both. This interface was the last place without the second half,
+     * so an extractor reading a source that states the distinction — Sinn writes
+     * `Numbers coated with luminescent colour` against `Indices coated with
+     * luminescent colour` on the same page — had nowhere to put it and the
+     * numerals were guessed downstream instead.
+     */
+    dialNumerals?: string;
     dialMaterial?: string;
     hands?: string;
     handsColor?: string;
@@ -1806,6 +1849,28 @@ export interface ExtractedWatch {
     strapBuckleType?: string;
     functions?: string[];
     productionYears?: string;
+    /**
+     * The limited edition, where the source states one.
+     *
+     * These mirror `ProductionInfo.isLimited` and `ProductionInfo.limitedSize`,
+     * and `limitedEditionCount` is deliberately NOT called `limitedSize`: it is
+     * the name admin already uses for this number on the suggestion side
+     * (`AIPromptsEditor` offers `limitedEditionCount`, `ReferenceEditor` renders
+     * it against the stored `limitedSize`), and naming the mirror after the
+     * storage field would leave the extractor and the enrichment prompt
+     * disagreeing about one value. The same call `strapBuckleType` made.
+     *
+     * ONE THING TO CHECK WHEN WIRING AN EXTRACTOR TO THESE: `BulkImport` reads
+     * the count off the entry as `limitedQty`, a third spelling that predates
+     * both, so emitting `limitedEditionCount` alone is a silent no-op until that
+     * read accepts it.
+     *
+     * `isLimited` WITHOUT A COUNT IS MEANINGFUL and the pair is not required to
+     * arrive together: a source can say a watch is a limited edition without
+     * saying how many were made. A count without the flag is not — set both.
+     */
+    isLimited?: boolean;
+    limitedEditionCount?: number;
     calibre?: ExtractedCalibre;
     /**
      * References of the watches that are this one in a different finish — the
