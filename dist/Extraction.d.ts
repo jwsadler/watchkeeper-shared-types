@@ -1746,6 +1746,20 @@ export interface ExtractedWatch {
     powerReserve?: string;
     frequency?: string;
     caseMaterial?: string;
+    /**
+     * How the case surface is treated — `polished`, `bead_blasted`,
+     * `satin_brushed`, `polished_brushed`. Backed by `lookup_case_finishes`,
+     * distinct from `caseMaterial` (what it is made of) and `caseCoating` (what
+     * is applied on top).
+     *
+     * THE ONLY MISSING PIECE OF AN OTHERWISE COMPLETE PATH. `CaseInfo.finish`
+     * has always existed, `BulkImport` already reads `entry.caseFinish` into it,
+     * and admin's enrichment map already points `caseFinish` at its lookup —
+     * this interface was the one gap, so a module that had read the finish had
+     * nowhere to put it. Sinn states it on 86.5% of its archive in the same line
+     * as the material (`Case made of stainless steel, polished`).
+     */
+    caseFinish?: string;
     caseSize?: string;
     caseHeight?: string;
     caseShape?: string;
@@ -1755,6 +1769,15 @@ export interface ExtractedWatch {
     waterRes?: string;
     crystal?: string;
     glass?: string;
+    /**
+     * Mirrors `CaseInfo.isLowPressureResistant` — see there for why this is a
+     * boolean and not a rating.
+     *
+     * WIRING NOTE, the same one `limitedEditionCount` carries: `BulkImport`
+     * builds `caseInfo` from named entry properties, so this reaches
+     * `case.isLowPressureResistant` only once that build reads it.
+     */
+    isLowPressureResistant?: boolean;
     bezel?: string;
     bezelType?: string;
     crownType?: string;
