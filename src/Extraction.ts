@@ -1412,6 +1412,15 @@
  * so the module reads shop-wide `products.json` rather than the collection.
  * One brand document, `watchBrands/unimatic`, which already exists; the id, the
  * brand doc and `buildBrandSlug('Unimatic')` are all the one string.
+ *
+ * `sinn` is sinn.de — Sinn Spezialuhren, Frankfurt. An OXID eShop behind a
+ * `smoxy` JavaScript challenge, so the module is browser-driven: the challenge
+ * clears once per browser context and every page after it is a cheap
+ * in-context fetch. Its catalogue is two DISJOINT halves — 171 current
+ * references and 209 archived ones sharing no slug at all — which the module
+ * splits across `full` and `heritage` rather than folding into one list. One
+ * brand document, `watchBrands/sinn`, which already exists; the id, the brand
+ * doc and `buildBrandSlug('Sinn')` are all the one string.
  */
 export type ExtractorId =
   | 'omega'
@@ -1457,7 +1466,8 @@ export type ExtractorId =
   | 'pro-trek'
   | 'sheen'
   | 'oceanus'
-  | 'unimatic';
+  | 'unimatic'
+  | 'sinn';
 
 /**
  * How much of a source's catalogue a run asks for.
