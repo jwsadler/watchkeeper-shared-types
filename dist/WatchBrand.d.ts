@@ -121,6 +121,62 @@ export interface WatchBrand {
      * has not sourced a banner yet.
      */
     historyHeroImage?: TimelineEventImage;
+    /**
+     * Links to records in external data sources (e.g. the Microbrand Atlas
+     * reviewer import flow). All optional and additive.
+     */
+    externalRefs?: {
+        microbrandAtlas?: {
+            id: string;
+            slug: string;
+            fetchedAt: Date;
+        };
+    };
+    /**
+     * Per-field provenance stamp. Keyed by the WatchBrand field path
+     * (e.g. "country", "founder.name"). `rawValue` preserves whatever the
+     * source gave us before any normalisation.
+     */
+    fieldSources?: Record<string, {
+        source: string;
+        importedAt: Date;
+        rawValue: unknown;
+    }>;
+    /**
+     * Headquarters geolocation. Separate from {@link WatchBrand.mainAddress},
+     * which is a free-text postal address.
+     */
+    location?: {
+        lat: number;
+        lng: number;
+    };
+    /**
+     * True when the brand's own storefront runs on Shopify.
+     *
+     * NOT the same thing as {@link WatchBrand.shopifyEnabled} /
+     * {@link WatchBrand.shopifyUrl}: those control WK's own Shopify
+     * product-import for the brand's catalogue, not "the brand's website is a
+     * Shopify store". Do not fold this into `shopifyEnabled` — doing so would
+     * silently enable product imports for every Shopify-hosted brand.
+     */
+    isShopifyBrand?: boolean;
+    /**
+     * Founder / primary person. `name` is a single string — co-founders arrive
+     * packed into one string from upstream sources and are not split into an
+     * array. `lastEditAt` mirrors the upstream `last_founder_edit`, an ISO-8601
+     * string that is only ever displayed, never compared — hence `string`
+     * rather than `Date`.
+     */
+    founder?: {
+        name?: string;
+        managed?: boolean;
+        lastEditAt?: string;
+    };
+    /**
+     * Brand's Instagram profile URL. Flat field to mirror the upstream shape
+     * and keep the type tiny; a future `socialLinks` object can supersede it.
+     */
+    instagramUrl?: string;
     createdAt?: Date;
     updatedAt?: Date;
 }
