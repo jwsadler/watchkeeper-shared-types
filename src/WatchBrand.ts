@@ -183,6 +183,28 @@ export interface WatchBrand {
    * and keep the type tiny; a future `socialLinks` object can supersede it.
    */
   instagramUrl?: string;
+  // --- Brand location detail ---
+  /** Primary headquarters city. Free text. */
+  city?: string;
+  /**
+   * Sub-national region of the headquarters — US state, UK county, Canadian
+   * province, etc. Free text; no fixed vocabulary.
+   */
+  stateRegion?: string;
+  /**
+   * Where the watches are assembled. Free text at country/city granularity.
+   * Can differ from {@link WatchBrand.country}, which is where the brand is
+   * based.
+   */
+  assemblyLocation?: string;
+  /** Where the watches are designed. Free text. */
+  designLocation?: string;
+  /**
+   * True when a curator has researched and locked {@link WatchBrand.country}.
+   * Downstream UIs disable overwrites of the country while this is set, so an
+   * import cannot clobber a verified value.
+   */
+  countryVerified?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
