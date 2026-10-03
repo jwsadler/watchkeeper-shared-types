@@ -62,6 +62,14 @@ export interface WatchBrand {
   heroImageSourceUrl?: string;
   /** When true, always show hero image instead of map even if address exists */
   useHeroImage?: boolean;
+  /**
+   * When true, render the brand logo over the hero image with no background
+   * card — just the glyph on the photo. Default (undefined/false) keeps the
+   * existing opaque white card behind the logo. Curator opt-in: only safe
+   * when the logo asset itself has transparency and reads clearly on the
+   * particular hero image. No automatic detection — the curator decides.
+   */
+  logoHeroTransparent?: boolean;
   /** Whether this is a microbrand */
   isMicroBrand?: boolean;
   // Shopify integration
