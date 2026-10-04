@@ -169,6 +169,17 @@ export interface WatchBrand {
      */
     isShopifyBrand?: boolean;
     /**
+     * Normalised ecommerce platform from Microbrand Atlas (shopify |
+     * woocommerce | wix | squarespace | bigcommerce | magento | custom | …).
+     * An open `string`, not a union — the upstream list is not closed.
+     *
+     * Overlaps {@link WatchBrand.isShopifyBrand} for the Shopify case: a brand
+     * imported before this field existed can carry `isShopifyBrand: true` with
+     * no `ecommercePlatform`, so consumers checking for Shopify should accept
+     * either.
+     */
+    ecommercePlatform?: string;
+    /**
      * Founder / primary person. `name` is a single string — co-founders arrive
      * packed into one string from upstream sources and are not split into an
      * array. `lastEditAt` mirrors the upstream `last_founder_edit`, an ISO-8601
