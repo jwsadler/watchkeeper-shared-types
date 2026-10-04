@@ -6,9 +6,9 @@ TypeScript type definitions shared across watch-admin, watchlock, and watchkeepe
 ## Rules for Claude Code tasks
 
 1. **James merges every PR here personally.** Do NOT enable auto-merge. Open the PR and stop.
-2. **Every PR MUST include rebuilt `dist/*.d.ts`.** Run `npm run build` and commit the regenerated files.
+2. **Every PR MUST include rebuilt `dist/*.d.ts`.** Run `npm run build` and commit the regenerated files. Docs-only PRs (no `src/` changes) are exempt from dist rebuild and version bump.
 3. **Verify only `.d.ts` + `.d.ts.map` change.** Baseline-diff dist/ against pre-change main to confirm no `.js` files changed; the package is type-only.
-4. **Bump `package.json` version** on every PR (patch for additive optional fields, minor for new types or non-additive changes). Use semver.
+4. **Bump `package.json` version** on every PR (minor for additive optional fields and new types, major for non-additive breaking changes). Use semver. Docs-only PRs (no `src/` changes) are exempt from dist rebuild and version bump.
 5. **Downstream repos pin by SHA**, so after James merges, the merged main commit SHA is what downstream admin/watchlock PRs reference.
 
 ## Commands
@@ -22,4 +22,4 @@ TypeScript type definitions shared across watch-admin, watchlock, and watchkeepe
 - `package.json` — version is the only field downstream repos care about.
 
 ## Known trap
-- Field name collisions on `WatchBrand`: `shopifyEnabled` / `isShopifyBrand` / `showProductLinks` / `ecommercePlatform` are all distinct — see watch-admin's AGENTS.md for the semantic map.
+- Field name collisions on `WatchBrand`: `shopifyEnabled` / `isShopifyBrand` / `ecommercePlatform` are all distinct — see watch-admin's AGENTS.md for the semantic map.
