@@ -224,6 +224,41 @@ export interface WatchBrand {
    * import cannot clobber a verified value.
    */
   countryVerified?: boolean;
+  // --- Brand identity + lifecycle ---
+  /**
+   * Lifecycle state. Missing/undefined is treated as `'active'`.
+   *
+   * - `active`   — currently producing watches.
+   * - `dormant`  — the brand exists but has not released in years.
+   * - `defunct`  — out of business, no longer producing.
+   * - `revived`  — relaunched and producing again; see
+   *   {@link WatchBrand.yearRevived} and {@link WatchBrand.predecessorBrand}.
+   * - `absorbed` — folded into, or continued under, another brand.
+   *
+   * Pairs with the admin's `acquisitions[]`, which captures who absorbed the
+   * brand. That array lives on the admin's own WatchBrand extension, not in
+   * this package.
+   *
+   * The five values match the admin's existing local `BrandStatus` alias
+   * exactly, and `absorbed` is deliberate — existing brand documents already
+   * carry it, so it must not be renamed.
+   */
+  status?: 'active' | 'dormant' | 'defunct' | 'revived' | 'absorbed';
+  /**
+   * Year the brand was revived under its modern incarnation (4-digit). Only
+   * meaningful when `status === 'revived'`.
+   */
+  yearRevived?: number;
+  /**
+   * Ownership structure. `subsidiary` implies {@link WatchBrand.parentOrg} and
+   * {@link WatchBrand.parentOrgId} are set.
+   */
+  ownershipType?: 'independent' | 'family-owned' | 'private-equity' | 'public' | 'subsidiary';
+  /**
+   * When today's brand is a revival of an earlier distinct brand, the name of
+   * that predecessor. Free text, not a brand id.
+   */
+  predecessorBrand?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
