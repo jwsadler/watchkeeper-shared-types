@@ -133,6 +133,78 @@ export interface MovementManufacturer {
      * suppresses one surface and does not hide the timeline anywhere else.
      */
     hideTimelineFromPrimaryBrand?: boolean;
+    /**
+     * Founder / primary person. Minimal shape mirroring {@link WatchBrand.founder}:
+     * `name` is a single string — co-founders packed into one string, not an array.
+     * Most movement manufacturers have no single founder (they emerged out of
+     * mergers of older ebauche houses), so this field is often absent.
+     */
+    founder?: {
+        name?: string;
+    };
+    /** Primary headquarters city. Free text. */
+    city?: string;
+    /**
+     * Sub-national region of the headquarters — Swiss canton, Japanese prefecture,
+     * US state, German state, etc. Free text; no fixed vocabulary.
+     */
+    stateRegion?: string;
+    /**
+     * Where the movements are actually assembled — the main manufacturing site,
+     * free text at country or city granularity. Often differs from a mailing
+     * address (ETA: Grenchen; Miyota: Kaizuka; Sellita: La Chaux-de-Fonds).
+     */
+    assemblyLocation?: string;
+    /**
+     * Manufacturer's Instagram profile URL. Flat field, mirroring
+     * {@link WatchBrand.instagramUrl}. Many manufacturers do not have one.
+     */
+    instagramUrl?: string;
+    /**
+     * Lifecycle state. Missing/undefined is treated as `'active'`.
+     *
+     * - `active`   — currently producing.
+     * - `dormant`  — still exists but has released nothing in years.
+     * - `defunct`  — out of business, no longer producing.
+     * - `revived`  — relaunched and producing again; see
+     *   {@link MovementManufacturer.yearRevived} and
+     *   {@link MovementManufacturer.predecessorManufacturer}.
+     * - `absorbed` — folded into, or continued under, another manufacturer
+     *   (Valjoux, Peseux, Unitas, Lemania are classic examples).
+     *
+     * Values intentionally match {@link WatchBrand.status} exactly, so the admin's
+     * local `BrandStatus` alias can be reused for both entities.
+     */
+    status?: 'active' | 'dormant' | 'defunct' | 'revived' | 'absorbed';
+    /**
+     * Year the manufacturer was revived under its modern incarnation (4-digit).
+     * Only meaningful when `status === 'revived'`.
+     */
+    yearRevived?: number;
+    /**
+     * Year the manufacturer ceased trading or was folded in (4-digit). Only
+     * meaningful when `status === 'defunct'` or `status === 'absorbed'`.
+     *
+     * Mirrors the admin's local extension of the same name — hoisted into shared
+     * types so the AI-enrichment output validator can share the field semantics
+     * with the client. {@link WatchBrand} deliberately does NOT carry `yearCeased`:
+     * absorbed/defunct brands rarely have a clean cease year, where manufacturers
+     * (Valjoux, Peseux, Unitas, Lemania) do.
+     */
+    yearCeased?: number;
+    /**
+     * Ownership structure. Values intentionally match
+     * {@link WatchBrand.ownershipType} so the admin can reuse one enum for both.
+     * `subsidiary` implies {@link MovementManufacturer.parentOrg} /
+     * {@link MovementManufacturer.parentOrgId} are set.
+     */
+    ownershipType?: 'independent' | 'family-owned' | 'private-equity' | 'public' | 'subsidiary';
+    /**
+     * When today's manufacturer is a revival of an earlier distinct manufacturer
+     * (not just a rename), the name of that predecessor. Free text, not an id.
+     * Mirrors {@link WatchBrand.predecessorBrand}.
+     */
+    predecessorManufacturer?: string;
     createdAt?: Date;
     updatedAt?: Date;
 }
