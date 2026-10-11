@@ -1435,6 +1435,28 @@
  * `full` and `new-only`; Connected smartwatches are excluded. The id equals
  * `buildBrandSlug('TAG Heuer')`; whether `watchBrands/tag-heuer` exists in
  * Firestore was NOT verified when this member was added.
+ *
+ * `tudor`, `patek-philippe` and `jaeger-lecoultre` were added together, ahead
+ * of their modules, so the three could be built in sequence against one
+ * release. Until a module registers, each must be listed in
+ * `UnimplementedExtractorId` in the extractors' `src/core/registry.ts`.
+ *
+ * `tudor` is tudorwatch.com — Next.js with Algolia search behind Akamai
+ * client-data cookies (`akacd_…`, no `_abck`), which the shared stealth browser
+ * passes. Every watch's whole record, specifications included, is embedded in
+ * the server HTML of its detail page; discovery is the English sitemap, about
+ * 211 references. `full` and `new-only`; the site has no vintage product
+ * catalogue. The id equals `buildBrandSlug('Tudor')`.
+ *
+ * `patek-philippe` is patek.com and `jaeger-lecoultre` is
+ * jaeger-lecoultre.com. NEITHER HAD BEEN SCOUTED when these members were
+ * added: nothing is known here about their platform, access or catalogue
+ * shape, and this comment should be replaced with what the scouts find. The
+ * ids equal `buildBrandSlug('Patek Philippe')` and
+ * `buildBrandSlug('Jaeger-LeCoultre')`.
+ *
+ * Whether `watchBrands/tudor`, `watchBrands/patek-philippe` and
+ * `watchBrands/jaeger-lecoultre` exist in Firestore was NOT verified.
  */
 export type ExtractorId =
   | 'omega'
@@ -1482,7 +1504,10 @@ export type ExtractorId =
   | 'oceanus'
   | 'unimatic'
   | 'sinn'
-  | 'tag-heuer';
+  | 'tag-heuer'
+  | 'tudor'
+  | 'patek-philippe'
+  | 'jaeger-lecoultre';
 
 /**
  * How much of a source's catalogue a run asks for.
