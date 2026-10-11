@@ -1420,8 +1420,22 @@
  * splits across `full` and `heritage` rather than folding into one list. One
  * brand document, `watchBrands/sinn`, which already exists; the id, the brand
  * doc and `buildBrandSlug('Sinn')` are all the one string.
+ *
+ * `tag-heuer` is tagheuer.com — TAG Heuer, La Chaux-de-Fonds. Salesforce
+ * Commerce Cloud behind an Akamai Bot Manager configuration that refuses every
+ * HTML page to plain clients and to the stealth browser alike, so the module
+ * never asks for one: it discovers from the open product sitemap and reads each
+ * watch from the storefront's own `Product-Variation` JSON controller, which
+ * Akamai does not gate. No browser, no clearance cookie. The price of that
+ * route is THIN CASE SPECS — the JSON carries identity, family, calibre,
+ * movement type, size and materials, but thickness, water resistance, lug
+ * width, power reserve, frequency, bezel and case back are published only on
+ * the gated page and are not emitted. Canada / English, 251 references,
+ * `full` and `new-only`; Connected smartwatches are excluded. The id equals
+ * `buildBrandSlug('TAG Heuer')`; whether `watchBrands/tag-heuer` exists in
+ * Firestore was NOT verified when this member was added.
  */
-export type ExtractorId = 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille' | 'audemars-piguet' | 'jacob-and-co' | 'iwc' | 'nomos-glashuette' | 'christopher-ward' | 'muehle-glashuette' | 'swatch' | 'tutima' | 'g-shock' | 'casio-babyg' | 'casio-edifice' | 'casio-protrek' | 'casio-collection' | 'vacheron-constantin' | 'longines' | 'a-lange-soehne' | 'seiko' | 'citizen' | 'chopard' | 'bulova' | 'caravelle' | 'parmigiani-fleurier' | 'ball-watch' | 'piaget' | 'hamilton' | 'zenith' | 'grand-seiko' | 'bell-ross' | 'laco' | 'glycine' | 'casio' | 'baby-g' | 'edifice' | 'pro-trek' | 'sheen' | 'oceanus' | 'unimatic' | 'sinn';
+export type ExtractorId = 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille' | 'audemars-piguet' | 'jacob-and-co' | 'iwc' | 'nomos-glashuette' | 'christopher-ward' | 'muehle-glashuette' | 'swatch' | 'tutima' | 'g-shock' | 'casio-babyg' | 'casio-edifice' | 'casio-protrek' | 'casio-collection' | 'vacheron-constantin' | 'longines' | 'a-lange-soehne' | 'seiko' | 'citizen' | 'chopard' | 'bulova' | 'caravelle' | 'parmigiani-fleurier' | 'ball-watch' | 'piaget' | 'hamilton' | 'zenith' | 'grand-seiko' | 'bell-ross' | 'laco' | 'glycine' | 'casio' | 'baby-g' | 'edifice' | 'pro-trek' | 'sheen' | 'oceanus' | 'unimatic' | 'sinn' | 'tag-heuer';
 /**
  * How much of a source's catalogue a run asks for.
  *
