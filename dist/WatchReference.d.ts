@@ -257,6 +257,37 @@ export interface WatchReference {
      */
     shopifyVariantId?: string;
     /**
+     * How this reference came to be under THIS brand, when an import had more
+     * than one brand to choose from.
+     *
+     * A shop can sell several dial brands — TimeFactors' Shopify carries Smiths,
+     * Precista and Sewills alongside its own lines — and bulk import routes each
+     * product to one of the importing brand and the brands it has acquired:
+     *
+     * - `'detection'` — the import chose the brand itself, from the shop's
+     *   structured fields (the Shopify vendor, in the first instance), and the
+     *   admin left it.
+     * - `'user'` — the admin picked a different brand from the one detection
+     *   proposed. This is the audit trail for a brand assignment made by hand
+     *   at import time.
+     *
+     * ABSENT on every reference imported before this existed and on every
+     * import that had only one brand to route to — which is nearly all of them.
+     * Absent therefore means "there was no choice to record", not "detected".
+     *
+     * WHAT IS DELIBERATELY NOT STORED HERE. The assigned brand is `brandId` (and
+     * the document's own path); the source product is {@link shopifyProductId};
+     * the shop is the host of `productUrl`. Repeating any of them here would be a
+     * second copy that could disagree with the first.
+     *
+     * A later import finds this reference by its composite Shopify doc id under
+     * each candidate brand and keeps it where it is, so the choice recorded here
+     * outlives a change to the shop's vendor field.
+     */
+    brandAssignedBy?: 'detection' | 'user';
+    /** When {@link brandAssignedBy} was last set. Absent exactly when it is. */
+    brandAssignedAt?: Date;
+    /**
      * Doc id of this reference's PARENT ref, when this doc is a variant.
      *
      * Variants are Shopify-product variations of one canonical model — strap
