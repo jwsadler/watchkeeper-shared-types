@@ -13,16 +13,19 @@ import type { WatchLink } from './WatchLink';
 /**
  * Which import pipeline produced a reference doc. Mirrors the admin
  * `ImportSourceKind` set (`shopify` / `generic` / `json-feed` / `manual`) plus
- * `ai_curation` for AI-assembled refs. `'shopify'` is the only value that
- * changes doc-identity semantics (composite product+variant id keys); all
- * others keep ref-string-derived identity.
+ * `ai_curation` for AI-assembled refs, and `square_online` for refs imported
+ * from a Square Online / Weebly storefront category (admin kind
+ * `square-online`). `'shopify'` and `'square_online'` change doc-identity
+ * semantics (composite store-product id keys: `shopify__{productId}__{variantId}`,
+ * `square__{siteId}__{productId}`); all others keep ref-string-derived identity.
  */
 export type ReferenceSource =
   | 'shopify'
   | 'generic'
   | 'json_feed'
   | 'manual'
-  | 'ai_curation';
+  | 'ai_curation'
+  | 'square_online';
 
 /**
  * Canonical watch reference document stored in Firestore.
