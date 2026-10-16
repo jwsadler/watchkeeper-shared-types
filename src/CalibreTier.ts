@@ -1,3 +1,4 @@
+import type { CalibreImage } from './CalibreImage';
 /**
  * A tier variant of a base calibre. Manufacturers often tier calibres
  * (e.g. Sellita SW200-1 base / Elaboré / Top / Chronometer) with
@@ -42,6 +43,28 @@ export interface CalibreTier {
    * the application layer, not the type layer.
    */
   brandId?: string;
+
+  /**
+   * The movement manufacturer(s) of THIS tier, when they differ from the base
+   * calibre's — e.g. Towson's Benzinger-decorated Valjoux 7750 tier:
+   * `manufacturerId: 'valjoux'`, `additionalManufacturerIds: ['benzinger']`.
+   * Same semantics as {@link CalibreEntry.manufacturerId} /
+   * {@link CalibreEntry.additionalManufacturerIds} (the additional list
+   * excludes the primary). Absent = the base calibre's manufacturer(s).
+   *
+   * Written by the admin "reclassify calibre as a tier" wizard, which carries
+   * the source calibre's manufacturers over instead of dropping them.
+   */
+  manufacturerId?: string;
+  additionalManufacturerIds?: string[];
+
+  /**
+   * Images specific to this tier (e.g. the modified movement), same shape as
+   * {@link CalibreEntry.images}. Storage-backed images live under the TARGET
+   * calibre's `calibres/{calibreId}/images/` prefix as their own copies.
+   * Absent = none (the base calibre's images apply).
+   */
+  images?: CalibreImage[];
 
   /** Field overrides for this tier. Applied on top of the base calibre. */
   overrides: CalibreTierOverrides;
