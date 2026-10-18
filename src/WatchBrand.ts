@@ -12,6 +12,21 @@ export interface WatchBrand {
   description?: string;
   /** AI-generated brand description (populated from enrichment) */
   aiDescription?: string;
+  /**
+   * Rich-text description: HTML from the admin's TipTap editor (the article
+   * body format — `p`, `strong`, `em`, `ul`/`ol`/`li`, `h2`/`h3`, and `a`
+   * carrying `watchkeeper://open/{kind}/{id}` with `data-wk-entity` /
+   * `data-wk-id` / `data-wk-label`). Optional: absent on every entity until it
+   * is edited or enriched in rich form.
+   *
+   * DUAL STORAGE — `description` and `aiDescription` stay PLAIN TEXT for app
+   * builds that predate this field. Every admin save that writes
+   * `descriptionRich` writes its plain-text extraction to `description` in the
+   * same write, so the legacy field never goes stale. App builds that know
+   * this field (behind the `richBrandManufacturerDescriptions` flag) prefer it
+   * and fall back to `aiDescription || description` when it is absent.
+   */
+  descriptionRich?: string;
   alternativeNames?: string[];
   abbreviations?: string[];
   windingDirections?: string[];
