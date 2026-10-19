@@ -1457,6 +1457,13 @@
  *
  * Whether `watchBrands/tudor`, `watchBrands/patek-philippe` and
  * `watchBrands/jaeger-lecoultre` exist in Firestore was NOT verified.
+ *
+ * `panerai` is panerai.com — Officine Panerai. Its module declares all three
+ * modes, `full`, `new-only` and `heritage`; platform, access and catalogue
+ * shape are not recorded here and belong in the module's README in the
+ * extractors repo. The id equals `buildBrandSlug('Panerai')`; whether
+ * `watchBrands/panerai` exists in Firestore was NOT verified when this member
+ * was added.
  */
 export type ExtractorId =
   | 'omega'
@@ -1507,7 +1514,8 @@ export type ExtractorId =
   | 'tag-heuer'
   | 'tudor'
   | 'patek-philippe'
-  | 'jaeger-lecoultre';
+  | 'jaeger-lecoultre'
+  | 'panerai';
 
 /**
  * How much of a source's catalogue a run asks for.
