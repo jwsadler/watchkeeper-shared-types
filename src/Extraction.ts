@@ -1464,6 +1464,13 @@
  * extractors repo. The id equals `buildBrandSlug('Panerai')`; whether
  * `watchBrands/panerai` exists in Firestore was NOT verified when this member
  * was added.
+ *
+ * `guinand` is Guinand. Its module declares two modes, `full` and `heritage`,
+ * and deliberately omits `new-only`: the source publishes no new-releases feed
+ * to read. Platform, access and catalogue shape are not recorded here and
+ * belong in the module's README in the extractors repo. The id equals
+ * `buildBrandSlug('Guinand')`; whether `watchBrands/guinand` exists in
+ * Firestore was NOT verified when this member was added.
  */
 export type ExtractorId =
   | 'omega'
@@ -1515,7 +1522,8 @@ export type ExtractorId =
   | 'tudor'
   | 'patek-philippe'
   | 'jaeger-lecoultre'
-  | 'panerai';
+  | 'panerai'
+  | 'guinand';
 
 /**
  * How much of a source's catalogue a run asks for.
