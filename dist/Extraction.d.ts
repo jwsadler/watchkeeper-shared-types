@@ -1463,8 +1463,15 @@
  * extractors repo. The id equals `buildBrandSlug('Panerai')`; whether
  * `watchBrands/panerai` exists in Firestore was NOT verified when this member
  * was added.
+ *
+ * `guinand` is Guinand. Its module declares two modes, `full` and `heritage`,
+ * and deliberately omits `new-only`: the source publishes no new-releases feed
+ * to read. Platform, access and catalogue shape are not recorded here and
+ * belong in the module's README in the extractors repo. The id equals
+ * `buildBrandSlug('Guinand')`; whether `watchBrands/guinand` exists in
+ * Firestore was NOT verified when this member was added.
  */
-export type ExtractorId = 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille' | 'audemars-piguet' | 'jacob-and-co' | 'iwc' | 'nomos-glashuette' | 'christopher-ward' | 'muehle-glashuette' | 'swatch' | 'tutima' | 'g-shock' | 'casio-babyg' | 'casio-edifice' | 'casio-protrek' | 'casio-collection' | 'vacheron-constantin' | 'longines' | 'a-lange-soehne' | 'seiko' | 'citizen' | 'chopard' | 'bulova' | 'caravelle' | 'parmigiani-fleurier' | 'ball-watch' | 'piaget' | 'hamilton' | 'zenith' | 'grand-seiko' | 'bell-ross' | 'laco' | 'glycine' | 'casio' | 'baby-g' | 'edifice' | 'pro-trek' | 'sheen' | 'oceanus' | 'unimatic' | 'sinn' | 'tag-heuer' | 'tudor' | 'patek-philippe' | 'jaeger-lecoultre' | 'panerai';
+export type ExtractorId = 'omega' | 'lang-heyne' | 'rolex' | 'cartier' | 'glashutte-original' | 'breitling' | 'richard-mille' | 'audemars-piguet' | 'jacob-and-co' | 'iwc' | 'nomos-glashuette' | 'christopher-ward' | 'muehle-glashuette' | 'swatch' | 'tutima' | 'g-shock' | 'casio-babyg' | 'casio-edifice' | 'casio-protrek' | 'casio-collection' | 'vacheron-constantin' | 'longines' | 'a-lange-soehne' | 'seiko' | 'citizen' | 'chopard' | 'bulova' | 'caravelle' | 'parmigiani-fleurier' | 'ball-watch' | 'piaget' | 'hamilton' | 'zenith' | 'grand-seiko' | 'bell-ross' | 'laco' | 'glycine' | 'casio' | 'baby-g' | 'edifice' | 'pro-trek' | 'sheen' | 'oceanus' | 'unimatic' | 'sinn' | 'tag-heuer' | 'tudor' | 'patek-philippe' | 'jaeger-lecoultre' | 'panerai' | 'guinand';
 /**
  * How much of a source's catalogue a run asks for.
  *
