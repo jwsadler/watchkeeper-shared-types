@@ -1,4 +1,5 @@
 import type { TimelineEvent, TimelineEventImage } from './TimelineEvent';
+import type { TierVocabularyEntry } from './TierVocabularyEntry';
 
 /**
  * Movement Manufacturer — first-class entity for movement makers
@@ -223,6 +224,13 @@ export interface MovementManufacturer {
    * Mirrors {@link WatchBrand.predecessorBrand}.
    */
   predecessorManufacturer?: string;
+  /**
+   * The manufacturer's own tier names (e.g. Sellita's Standard / Elaboré /
+   * Top / Chronometer), with their alternative spellings. Families can add to
+   * or override this list via {@link CalibreFamily.tierVocabulary}. Absent
+   * means no vocabulary has been curated.
+   */
+  tierVocabulary?: TierVocabularyEntry[];
   createdAt?: Date;
   updatedAt?: Date;
 }

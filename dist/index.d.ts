@@ -17,6 +17,7 @@ export type { WatchLink } from './WatchLink';
 export type { WatchReference, ReferenceSource } from './WatchReference';
 export type { CalibreData } from './CalibreData';
 export type { CalibreTier, CalibreTierOverrides } from './CalibreTier';
+export type { TierVocabularyEntry } from './TierVocabularyEntry';
 export type { CalibreCacheSnapshot } from './CalibreCacheSnapshot';
 export type { CalibreOverrides } from './CalibreOverrides';
 export type { CalibreEntry } from './CalibreEntry';

@@ -1,3 +1,4 @@
+import type { TierVocabularyEntry } from './TierVocabularyEntry';
 /**
  * A grouping of calibres under a single manufacturer (e.g. Sellita SW200 family).
  * Calibres reference a family via CalibreEntry.familyId. The base calibre is the
@@ -34,6 +35,13 @@ export interface CalibreFamily {
      * class. Market positioning, not lineage (cf. inspiredBy). Typically 2-3 entries.
      */
     functionalCompetitor?: CalibreFamilyFunctionalCompetitor[];
+    /**
+     * Family-level tier vocabulary, same shape as
+     * {@link MovementManufacturer.tierVocabulary}. Additions to and overrides of
+     * the manufacturer's list for this family only. Absent means the family
+     * uses the manufacturer's vocabulary unchanged.
+     */
+    tierVocabulary?: TierVocabularyEntry[];
     createdAt?: Date;
     updatedAt?: Date;
 }
